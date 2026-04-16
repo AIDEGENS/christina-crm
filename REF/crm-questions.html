@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical CRM — Discovery Questions</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 3px rgb(0 0 0/.06)}
+  .card.answered{border-color:#a7f3d0;background:#f0fdf4}
+  .card.answered .q-status{background:#10b981;color:#fff}
+  .card .q-status{background:#fef3c7;color:#92400e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
+  textarea{resize:vertical}
+  .progress-fill{transition:width .5s ease}
+  .cat-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:.5px}
+  .pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .option-btn{transition:all .15s ease}
+  .option-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgb(0 0 0/.08)}
+  .option-btn.selected{ring:2px;border-color:#10b981;background:#f0fdf4}
+  @media print{.no-print{display:none}body{background:#fff}}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+<!-- HEADER -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-30 no-print">
+  <div class="max-w-4xl mx-auto flex items-center justify-between px-6 h-14">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold">?</div>
+      <div>
+        <div class="font-bold text-sm">Discovery questionnaire</div>
+        <div class="text-[11px] text-slate-500">Answer these to unlock the build</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="text-right">
+        <div class="text-xs font-semibold text-slate-700"><span id="answered-count">0</span> / <span id="total-count">20</span> answered</div>
+        <div class="w-32 h-2 bg-slate-100 rounded-full mt-1 overflow-hidden"><div id="progress-bar" class="progress-fill h-full bg-emerald-500 rounded-full" style="width:0%"></div></div>
+      </div>
+      <button onclick="exportAnswers()" class="text-xs font-semibold bg-slate-900 text-white rounded-lg px-3 py-1.5 hover:bg-slate-800">Export answers</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-4xl mx-auto px-6 py-8">
+
+  <!-- INTRO -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">Before we build, I need clarity on 20 things.</h1>
+    <p class="text-slate-600">Type your answers directly in each box below. Click "Export answers" to copy everything as markdown you can paste back to me. Questions marked <span class="inline-block bg-red-100 text-red-700 text-[10px] font-bold px-1.5 py-0.5 rounded">BLOCKING</span> must be answered before Phase 1 starts. The rest can be answered during build.</p>
+  </div>
+
+  <!-- ============ SECTION 1: SCOPE ============ -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="cat-badge bg-red-100 text-red-700">Blocking</span>
+      <h2 class="text-lg font-bold">Scope & client</h2>
+    </div>
+
+    <div class="space-y-4" id="section-scope">
+
+      <!-- Q1 -->
+      <div class="card p-5 question-card" data-id="1">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">1</span>
+            <div>
+              <div class="font-semibold text-sm">Is this the same pilot client as the claims scrubber?</div>
+              <div class="text-xs text-slate-500 mt-1">Same EIN? Same agency? Or a separate business with a separate BAA chain?</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'Yes, same client and EIN')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Yes, same client</button>
+            <button onclick="selectOption(this,'Different client, different EIN')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Different client</button>
+            <button onclick="selectOption(this,'Same client, but separate location/EIN')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Same client, separate location</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Add detail if needed..." oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="card p-5 question-card" data-id="2">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">2</span>
+            <div>
+              <div class="font-semibold text-sm">"2 accounts at $8k/mo on WellSky" — what does that mean?</div>
+              <div class="text-xs text-slate-500 mt-1">This changes our pricing comparison and multi-tenant strategy.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'2 user seats')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">2 user seats</button>
+            <button onclick="selectOption(this,'2 agency locations')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">2 locations</button>
+            <button onclick="selectOption(this,'2 WellSky modules (e.g. HH + Hospice)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">2 modules (HH + Hospice)</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="What exactly are they paying $8k/mo for?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="card p-5 question-card" data-id="3">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">3</span>
+            <div>
+              <div class="font-semibold text-sm">Are we replacing ALL of WellSky, or just the referral/BD layer in v1?</div>
+              <div class="text-xs text-slate-500 mt-1">I strongly recommend replacing BD/referral first, keeping WellSky for clinical + billing. But if the client wants full rip-and-replace, we need a different timeline.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'Referral/BD layer only (recommended)')" class="option-btn text-xs font-medium border border-emerald-200 rounded-lg px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800">BD/referral only (rec.)</button>
+            <button onclick="selectOption(this,'Full WellSky replacement')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Full replacement</button>
+            <button onclick="selectOption(this,'Not sure yet — start with BD/referral, decide later')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Start small, decide later</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Any additional context..." oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="card p-5 question-card" data-id="4">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">4</span>
+            <div>
+              <div class="font-semibold text-sm">One-client custom product or vertical SaaS you'll resell?</div>
+              <div class="text-xs text-slate-500 mt-1">This changes architecture dramatically. Multi-tenant from day 1 either way, but SaaS = onboarding flows, self-serve signup, marketing site, different pricing strategy.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'One client only for now')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">One client only</button>
+            <button onclick="selectOption(this,'Vertical SaaS — plan to resell to other HH/hospice agencies')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Vertical SaaS (resell)</button>
+            <button onclick="selectOption(this,'Start with one, scale if it works')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Start one, scale later</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="What's the long-term vision?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 2: WELLSKY ============ -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="cat-badge bg-red-100 text-red-700">Blocking</span>
+      <h2 class="text-lg font-bold">WellSky intelligence</h2>
+    </div>
+
+    <div class="space-y-4" id="section-wellsky">
+
+      <!-- Q5 -->
+      <div class="card p-5 question-card" data-id="5">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">5</span>
+            <div>
+              <div class="font-semibold text-sm">Top 5 things the client actually likes about WellSky</div>
+              <div class="text-xs text-slate-500 mt-1">This becomes our feature floor — we must match these or the client won't switch. Can you ask them directly or relay from conversations?</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="4" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. " oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="card p-5 question-card" data-id="6">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">6</span>
+            <div>
+              <div class="font-semibold text-sm">Top 5 things the client hates about WellSky</div>
+              <div class="text-xs text-slate-500 mt-1">This is our sales wedge. The things they complain about most become our headline differentiators.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="4" placeholder="1. &#10;2. &#10;3. &#10;4. &#10;5. " oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="card p-5 question-card" data-id="7">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">7</span>
+            <div>
+              <div class="font-semibold text-sm">Can the client's WellSky admin export CSV reports?</div>
+              <div class="text-xs text-slate-500 mt-1">We need org list, contact list, and 6-12 months of referral history to seed the CRM. WellSky's API is gated — CSV is the realistic path.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'Yes, they can export CSV')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Yes, CSV export</button>
+            <button onclick="selectOption(this,'They have SFTP exports configured')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">SFTP exports</button>
+            <button onclick="selectOption(this,'Not sure — need to check with their admin')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Not sure yet</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Any detail on their WellSky setup..." oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 3: REFERRAL OPS ============ -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="cat-badge bg-red-100 text-red-700">Blocking</span>
+      <h2 class="text-lg font-bold">Referral operations</h2>
+    </div>
+
+    <div class="space-y-4" id="section-ops">
+
+      <!-- Q8 -->
+      <div class="card p-5 question-card" data-id="8">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">8</span>
+            <div>
+              <div class="font-semibold text-sm">How do referrals come in today?</div>
+              <div class="text-xs text-slate-500 mt-1">This determines which intake channel we build first. If 80% is fax, we lead with AI fax parsing. If they use an e-referral portal (CarePort, Navihealth), we need to integrate with that.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="grid grid-cols-4 gap-2 mb-3">
+            <div class="border border-slate-200 rounded-lg p-3 text-center">
+              <div class="text-xs font-bold text-slate-700 mb-1">Fax</div>
+              <input type="text" class="w-full text-center text-lg font-bold border-b-2 border-slate-200 focus:border-emerald-500 focus:outline-none pb-1" placeholder="__%" oninput="checkAnswered()">
+            </div>
+            <div class="border border-slate-200 rounded-lg p-3 text-center">
+              <div class="text-xs font-bold text-slate-700 mb-1">Email</div>
+              <input type="text" class="w-full text-center text-lg font-bold border-b-2 border-slate-200 focus:border-emerald-500 focus:outline-none pb-1" placeholder="__%" oninput="checkAnswered()">
+            </div>
+            <div class="border border-slate-200 rounded-lg p-3 text-center">
+              <div class="text-xs font-bold text-slate-700 mb-1">Phone</div>
+              <input type="text" class="w-full text-center text-lg font-bold border-b-2 border-slate-200 focus:border-emerald-500 focus:outline-none pb-1" placeholder="__%" oninput="checkAnswered()">
+            </div>
+            <div class="border border-slate-200 rounded-lg p-3 text-center">
+              <div class="text-xs font-bold text-slate-700 mb-1">e-Referral</div>
+              <input type="text" class="w-full text-center text-lg font-bold border-b-2 border-slate-200 focus:border-emerald-500 focus:outline-none pb-1" placeholder="__%" oninput="checkAnswered()">
+            </div>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Which e-referral portals if any (CarePort, Navihealth, Epic CareLink)?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="card p-5 question-card" data-id="9">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">9</span>
+            <div>
+              <div class="font-semibold text-sm">Who touches a referral first?</div>
+              <div class="text-xs text-slate-500 mt-1">This determines the default pipeline assignment and notification flow.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'BD rep receives it from the source')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">BD rep</button>
+            <button onclick="selectOption(this,'Intake coordinator triages from fax/email')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Intake coordinator</button>
+            <button onclick="selectOption(this,'Owner/admin handles everything')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Owner does it all</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="How many people are involved in intake today?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="card p-5 question-card" data-id="10">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">10</span>
+            <div>
+              <div class="font-semibold text-sm">What eFax provider does the client use?</div>
+              <div class="text-xs text-slate-500 mt-1">We need to configure fax-to-email forwarding. Knowing the provider tells us the integration path.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2 flex-wrap">
+            <button onclick="selectOption(this,'SRFax')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">SRFax</button>
+            <button onclick="selectOption(this,'RingCentral Fax')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">RingCentral</button>
+            <button onclick="selectOption(this,'Updox')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Updox</button>
+            <button onclick="selectOption(this,'Concord Fax')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Concord</button>
+            <button onclick="selectOption(this,'Physical fax machine')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Physical fax</button>
+            <button onclick="selectOption(this,'Not sure')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Not sure</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Details..." oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 4: COMMERCIAL ============ -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="cat-badge bg-red-100 text-red-700">Blocking</span>
+      <h2 class="text-lg font-bold">Commercial & pricing</h2>
+    </div>
+
+    <div class="space-y-4" id="section-commercial">
+
+      <!-- Q11 -->
+      <div class="card p-5 question-card" data-id="11">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">11</span>
+            <div>
+              <div class="font-semibold text-sm">Target MRR to charge the client?</div>
+              <div class="text-xs text-slate-500 mt-1">My draft is $2,400/mo (Pro tier). That's 70% less than WellSky with 7.5x the seats. COGS is $340-800/mo so margin is 67-86%.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2 flex-wrap">
+            <button onclick="selectOption(this,'$1,200/mo (Starter — CRM only)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">$1,200 Starter</button>
+            <button onclick="selectOption(this,'$2,400/mo (Pro — CRM + Scrubber)')" class="option-btn text-xs font-medium border border-emerald-200 rounded-lg px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800">$2,400 Pro (rec.)</button>
+            <button onclick="selectOption(this,'$4,000/mo (Enterprise — full suite)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">$4,000 Enterprise</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Custom amount? Founding-customer discount?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="card p-5 question-card" data-id="12">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">12</span>
+            <div>
+              <div class="font-semibold text-sm">When does the client want to see a working pilot?</div>
+              <div class="text-xs text-slate-500 mt-1">This sets our sprint cadence and determines whether we can do a full 10-week build or need an accelerated MVP.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2 flex-wrap">
+            <button onclick="selectOption(this,'2-3 weeks (MVP demo)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">2-3 weeks</button>
+            <button onclick="selectOption(this,'4-6 weeks (v1 pilot)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">4-6 weeks</button>
+            <button onclick="selectOption(this,'8-10 weeks (full build)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">8-10 weeks</button>
+            <button onclick="selectOption(this,'No hard deadline')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">No hard deadline</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Are they actively trying to exit WellSky, or is this opportunistic?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q13 -->
+      <div class="card p-5 question-card" data-id="13">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-red-500 text-white text-xs flex items-center justify-center font-bold shrink-0">13</span>
+            <div>
+              <div class="font-semibold text-sm">White-labeled to your agency, or branded for the client?</div>
+              <div class="text-xs text-slate-500 mt-1">Affects: logo, colors, domain, email sender, support branding.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'White-label under my agency brand')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">My agency brand</button>
+            <button onclick="selectOption(this,'Branded for the client (their logo, their domain)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Client's brand</button>
+            <button onclick="selectOption(this,'Neutral product brand (new name)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">New product brand</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="Product name idea?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 5: INTEGRATIONS ============ -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="cat-badge bg-amber-100 text-amber-700">Important</span>
+      <h2 class="text-lg font-bold">Integrations & tools</h2>
+    </div>
+
+    <div class="space-y-4" id="section-integrations">
+
+      <!-- Q14 -->
+      <div class="card p-5 question-card" data-id="14">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-amber-500 text-white text-xs flex items-center justify-center font-bold shrink-0">14</span>
+            <div>
+              <div class="font-semibold text-sm">Does GHL stay in the picture for this client?</div>
+              <div class="text-xs text-slate-500 mt-1">GHL has <b>NO BAA</b>. If it stays, we can ONLY send non-PHI data (org names, contact names). Never patient data. Need a strict data boundary.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'Yes, GHL stays for marketing/nurture (non-PHI only)')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Yes, keep GHL</button>
+            <button onclick="selectOption(this,'No, CRM replaces GHL entirely')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">No, replace GHL</button>
+            <button onclick="selectOption(this,'Not sure yet')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Not sure</button>
+          </div>
+          <textarea class="w-full border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20" rows="2" placeholder="What does the client use GHL for today?" oninput="checkAnswered()"></textarea>
+        </div>
+      </div>
+
+      <!-- Q15 -->
+      <div class="card p-5 question-card" data-id="15">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-amber-500 text-white text-xs flex items-center justify-center font-bold shrink-0">15</span>
+            <div>
+              <div class="font-semibold text-sm">Does the client need SMS notifications for BD reps?</div>
+              <div class="text-xs text-slate-500 mt-1">Twilio has a BAA. SMS body = "New referral from Mercy General. Login to review." No PHI ever in the text.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'Yes, SMS + email')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Yes, SMS + email</button>
+            <button onclick="selectOption(this,'Email only is fine')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Email only</button>
+            <button onclick="selectOption(this,'Push notifications (PWA) instead')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">PWA push</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q16 -->
+      <div class="card p-5 question-card" data-id="16">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-amber-500 text-white text-xs flex items-center justify-center font-bold shrink-0">16</span>
+            <div>
+              <div class="font-semibold text-sm">QuickBooks or other accounting integration needed in v1?</div>
+              <div class="text-xs text-slate-500 mt-1">The CRM doesn't handle billing (claims platform does). But if they want invoice tracking or expense reporting...</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'No, not needed in v1')" class="option-btn text-xs font-medium border border-emerald-200 rounded-lg px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800">Not in v1</button>
+            <button onclick="selectOption(this,'Yes, need QB integration')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Yes, QuickBooks</button>
+            <button onclick="selectOption(this,'Need payroll integration')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Payroll</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 6: COMPLIANCE ============ -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="cat-badge bg-blue-100 text-blue-700">Can default</span>
+      <h2 class="text-lg font-bold">Compliance & hosting</h2>
+    </div>
+
+    <div class="space-y-4" id="section-compliance">
+
+      <!-- Q17 -->
+      <div class="card p-5 question-card" data-id="17">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-blue-500 text-white text-xs flex items-center justify-center font-bold shrink-0">17</span>
+            <div>
+              <div class="font-semibold text-sm">SOC 2 needed in year 1?</div>
+              <div class="text-xs text-slate-500 mt-1">Default: start Type 1 in Month 6, per the claims platform roadmap. Costs $8-25k/yr (Vanta/Drata).</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'Yes, start Month 6 as planned')" class="option-btn text-xs font-medium border border-emerald-200 rounded-lg px-3 py-1.5 bg-emerald-50 text-emerald-800">Month 6 (default)</button>
+            <button onclick="selectOption(this,'Defer to year 2')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Defer to Y2</button>
+            <button onclick="selectOption(this,'Client requires it sooner')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Sooner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q18 -->
+      <div class="card p-5 question-card" data-id="18">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-blue-500 text-white text-xs flex items-center justify-center font-bold shrink-0">18</span>
+            <div>
+              <div class="font-semibold text-sm">Data residency requirements?</div>
+              <div class="text-xs text-slate-500 mt-1">Default: us-west-2 (Oregon) for all AWS services. Medi-Cal doesn't require California-specific hosting, but some agencies prefer it.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'US-only is fine (default us-west-2)')" class="option-btn text-xs font-medium border border-emerald-200 rounded-lg px-3 py-1.5 bg-emerald-50 text-emerald-800">US-only (default)</button>
+            <button onclick="selectOption(this,'Must be in California')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">California only</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 7: TECHNICAL ============ -->
+  <div class="mb-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="cat-badge bg-blue-100 text-blue-700">Can default</span>
+      <h2 class="text-lg font-bold">Technical decisions</h2>
+    </div>
+
+    <div class="space-y-4" id="section-tech">
+
+      <!-- Q19 -->
+      <div class="card p-5 question-card" data-id="19">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-blue-500 text-white text-xs flex items-center justify-center font-bold shrink-0">19</span>
+            <div>
+              <div class="font-semibold text-sm">Do BD reps need a native mobile app, or is PWA enough?</div>
+              <div class="text-xs text-slate-500 mt-1">Default: responsive PWA (faster to ship, no app store). Native adds 3-4 weeks and app store review.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'PWA is fine (recommended)')" class="option-btn text-xs font-medium border border-emerald-200 rounded-lg px-3 py-1.5 bg-emerald-50 text-emerald-800">PWA (rec.)</button>
+            <button onclick="selectOption(this,'Need native iOS/Android')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Native app</button>
+            <button onclick="selectOption(this,'PWA for v1, native later')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">PWA now, native later</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q20 -->
+      <div class="card p-5 question-card" data-id="20">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div class="flex items-start gap-3">
+            <span class="w-7 h-7 rounded-lg bg-blue-500 text-white text-xs flex items-center justify-center font-bold shrink-0">20</span>
+            <div>
+              <div class="font-semibold text-sm">Monorepo with claims platform, or separate repo?</div>
+              <div class="text-xs text-slate-500 mt-1">Default: same repo (shared types, shared auth middleware, easier to keep in sync). Separate repo if different team or different deploy cadence.</div>
+            </div>
+          </div>
+          <span class="q-status shrink-0">PENDING</span>
+        </div>
+        <div class="pl-10">
+          <div class="flex gap-2 mb-2">
+            <button onclick="selectOption(this,'Same monorepo (recommended)')" class="option-btn text-xs font-medium border border-emerald-200 rounded-lg px-3 py-1.5 bg-emerald-50 text-emerald-800">Monorepo (rec.)</button>
+            <button onclick="selectOption(this,'Separate repo')" class="option-btn text-xs font-medium border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:bg-slate-50">Separate repo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- EXPORT MODAL -->
+<div id="export-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
+  <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-auto">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-bold">Exported answers</h3>
+      <button onclick="document.getElementById('export-modal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <textarea id="export-text" class="w-full border border-slate-200 rounded-lg p-4 text-xs font-mono focus:outline-none" rows="20" readonly></textarea>
+    <button onclick="navigator.clipboard.writeText(document.getElementById('export-text').value);this.textContent='Copied!';setTimeout(()=>this.textContent='Copy to clipboard',2000)" class="mt-3 w-full bg-emerald-600 text-white font-semibold text-sm rounded-lg py-2.5 hover:bg-emerald-700">Copy to clipboard</button>
+  </div>
+</div>
+
+<script>
+function selectOption(btn, value) {
+  const card = btn.closest('.question-card');
+  card.querySelectorAll('.option-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.style.borderColor = '';
+    b.style.background = '';
+  });
+  btn.classList.add('selected');
+  btn.style.borderColor = '#10b981';
+  btn.style.background = '#f0fdf4';
+  const ta = card.querySelector('textarea');
+  if (ta && !ta.value.trim()) ta.value = value;
+  checkAnswered();
+}
+
+function checkAnswered() {
+  let count = 0;
+  document.querySelectorAll('.question-card').forEach(card => {
+    const ta = card.querySelector('textarea');
+    const selected = card.querySelector('.option-btn.selected');
+    const inputs = card.querySelectorAll('input[type="text"]');
+    let hasInput = false;
+    inputs.forEach(i => { if (i.value.trim()) hasInput = true; });
+    if ((ta && ta.value.trim()) || selected || hasInput) {
+      card.classList.add('answered');
+      card.querySelector('.q-status').textContent = 'ANSWERED';
+      count++;
+    } else {
+      card.classList.remove('answered');
+      card.querySelector('.q-status').textContent = 'PENDING';
+    }
+  });
+  document.getElementById('answered-count').textContent = count;
+  const total = document.querySelectorAll('.question-card').length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('progress-bar').style.width = (count/total*100)+'%';
+}
+
+function exportAnswers() {
+  let md = '# Medical CRM — Discovery Answers\n\n';
+  md += 'Exported: ' + new Date().toLocaleDateString() + '\n\n';
+  document.querySelectorAll('.question-card').forEach(card => {
+    const id = card.dataset.id;
+    const q = card.querySelector('.font-semibold.text-sm').textContent;
+    const ta = card.querySelector('textarea');
+    const selected = card.querySelector('.option-btn.selected');
+    const inputs = card.querySelectorAll('input[type="text"]');
+    let answer = '';
+    if (selected) answer = selected.textContent.trim();
+    if (ta && ta.value.trim()) answer += (answer ? ' — ' : '') + ta.value.trim();
+    let inputVals = [];
+    inputs.forEach(i => { if(i.value.trim()) inputVals.push(i.previousElementSibling.textContent + ': ' + i.value.trim()); });
+    if (inputVals.length) answer += (answer ? ' — ' : '') + inputVals.join(', ');
+    const status = answer ? 'ANSWERED' : 'PENDING';
+    md += '## Q' + id + ': ' + q + '\n';
+    md += '**Status:** ' + status + '\n';
+    md += '**Answer:** ' + (answer || '_(not answered)_') + '\n\n';
+  });
+  document.getElementById('export-text').value = md;
+  document.getElementById('export-modal').classList.remove('hidden');
+}
+
+checkAnswered();
+</script>
+</body>
+</html>
