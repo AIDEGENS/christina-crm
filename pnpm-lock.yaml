@@ -71,6 +71,9 @@ importers:
         specifier: ^7.0.0
         version: 7.82.0(next@16.2.4(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
     devDependencies:
+      '@crm/config':
+        specifier: workspace:*
+        version: link:../config
       typescript:
         specifier: ^5.4.0
         version: 5.9.3
@@ -86,6 +89,9 @@ importers:
         specifier: ^3.4.0
         version: 3.4.9
     devDependencies:
+      '@crm/config':
+        specifier: workspace:*
+        version: link:../config
       drizzle-kit:
         specifier: ^0.20.0
         version: 0.20.18
@@ -95,6 +101,9 @@ importers:
 
   packages/ui:
     devDependencies:
+      '@crm/config':
+        specifier: workspace:*
+        version: link:../config
       typescript:
         specifier: ^5.4.0
         version: 5.9.3

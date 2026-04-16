@@ -11,6 +11,7 @@
     "clean": "rm -rf .turbo"
   },
   "devDependencies": {
+    "@crm/config": "workspace:*",
     "typescript": "^5.4.0"
   }
 }
