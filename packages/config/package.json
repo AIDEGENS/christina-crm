@@ -5,6 +5,9 @@
   "files": [
     "tsconfig.base.json"
   ],
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json"
+  },
   "scripts": {
     "typecheck": "echo \"[@crm/config] nothing to typecheck\"",
     "lint": "echo \"[@crm/config] lint placeholder\"",

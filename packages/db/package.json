@@ -8,6 +8,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "echo \"[@crm/db] lint placeholder\"",
     "test": "echo \"[@crm/db] no tests yet\"",
+    "generate": "drizzle-kit generate:pg --name initial_crm_schema",
+    "check": "drizzle-kit check:pg",
     "clean": "rm -rf .turbo"
   },
   "dependencies": {
@@ -15,6 +17,7 @@
     "drizzle-orm": "^0.30.0"
   },
   "devDependencies": {
+    "@crm/config": "workspace:*",
     "drizzle-kit": "^0.20.0",
     "typescript": "^5.4.0"
   }
