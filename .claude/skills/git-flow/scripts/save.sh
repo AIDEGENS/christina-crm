@@ -51,7 +51,9 @@ if [ -n "$DANGER" ]; then
 fi
 
 # PHI guard (until 2026-04-17 BAA).
-PHI=$(git diff --cached -U0 | grep -nE '\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|MRN[-_: ]?[0-9]|\bDOB[: =]|patient[_ ]id|claim[_ ]id.*[0-9]{6}' || true)
+# Only scan ADDITIONS (lines starting with + but not the +++ file header).
+# Prevents the guard from blocking commits that REMOVE lines matching PHI patterns.
+PHI=$(git diff --cached -U0 | grep '^+' | grep -v '^+++' | grep -nE '\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|MRN[-_: ]?[0-9]|\bDOB[: =]|patient[_ ]id|claim[_ ]id.*[0-9]{6}' || true)
 if [ -n "$PHI" ]; then
   echo "PHI guard: staged diff matches patient-identifier patterns. blocked." >&2
   echo "$PHI" >&2

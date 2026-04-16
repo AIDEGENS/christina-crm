@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical CRM — Plan Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Inter',system-ui,sans-serif;}
+  .tab{display:none}.tab.active{display:block}
+  .nav-btn.active{background:rgb(16 185 129/.12);color:#047857;border-color:#10b981}
+  .card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 1px 2px rgb(0 0 0/.04)}
+  .glow{box-shadow:0 0 0 3px rgb(16 185 129/.15)}
+  .pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .flow-arrow{color:#94a3b8;font-size:18px}
+  .timeline-bar{position:relative;height:8px;background:#f1f5f9;border-radius:999px;overflow:hidden}
+  .timeline-fill{position:absolute;left:0;top:0;height:100%;border-radius:999px;transition:width .6s ease}
+  details summary{cursor:pointer;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details[open] .chevron{transform:rotate(90deg)}
+  .arch-box{border:2px solid;border-radius:10px;padding:12px 16px;text-align:center;min-width:130px}
+  .phi-badge{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase}
+  .baa-badge{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase}
+  .confirm-badge{background:#fefce8;color:#a16207;border:1px solid #fde68a;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+<!-- HEADER -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+  <div class="max-w-[1400px] mx-auto flex items-center justify-between px-6 h-14">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold">P</div>
+      <div>
+        <div class="font-bold text-sm">Medical CRM — Project Plan</div>
+        <div class="text-[11px] text-slate-500">13 spec files &middot; 10-week build &middot; WellSky replacement</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 text-xs">
+      <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 pulse"></span><span class="font-semibold text-emerald-700">Phase 0 — Discovery</span></span>
+      <span class="text-slate-400">|</span>
+      <span class="text-slate-500">10 [CONFIRM] items remaining</span>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-[1400px] mx-auto flex">
+  <!-- SIDEBAR NAV -->
+  <aside class="w-56 shrink-0 border-r border-slate-200 bg-white min-h-[calc(100vh-3.5rem)] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto">
+    <nav class="p-3 space-y-0.5">
+      <div class="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Overview</div>
+      <button onclick="show('overview')" class="nav-btn active w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">
+        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Command center
+      </button>
+      <div class="px-3 pt-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Plan files</div>
+      <button onclick="show('scope')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">01 Scope</button>
+      <button onclick="show('teardown')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">02 WellSky teardown</button>
+      <button onclick="show('datamodel')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">03 Data model</button>
+      <button onclick="show('arch')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">04 Architecture</button>
+      <button onclick="show('features')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">05 Feature spec</button>
+      <button onclick="show('flow')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">06 Referral flow</button>
+      <button onclick="show('integrations')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">07 Integrations</button>
+      <button onclick="show('security')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">08 Security &amp; HIPAA</button>
+      <button onclick="show('migration')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">09 Migration</button>
+      <button onclick="show('roadmap')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">10 Roadmap</button>
+      <button onclick="show('pricing')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">11 Pricing</button>
+      <button onclick="show('agents')" class="nav-btn w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border border-transparent hover:bg-slate-100">12 Agent teams</button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 overflow-auto">
+
+    <!-- ===== COMMAND CENTER ===== -->
+    <div id="tab-overview" class="tab active p-6">
+      <h1 class="text-2xl font-bold mb-1">Command center</h1>
+      <p class="text-sm text-slate-500 mb-6">Everything in one view. Click any section in the sidebar for deep dive.</p>
+
+      <!-- KPI strip -->
+      <div class="grid grid-cols-5 gap-3 mb-6">
+        <div class="card p-4"><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Total features</div><div class="text-2xl font-bold">10 Must</div><div class="text-[11px] text-slate-500">4 Should &middot; 4 Could</div></div>
+        <div class="card p-4"><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Timeline</div><div class="text-2xl font-bold">10 wks</div><div class="text-[11px] text-slate-500">5 phases &middot; started 4/15</div></div>
+        <div class="card p-4"><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Entities</div><div class="text-2xl font-bold">9 tables</div><div class="text-[11px] text-slate-500">RLS on all &middot; crm schema</div></div>
+        <div class="card p-4"><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Integrations</div><div class="text-2xl font-bold">8 APIs</div><div class="text-[11px] text-slate-500">6 BAA-signed</div></div>
+        <div class="card p-4 border-amber-200 bg-amber-50"><div class="text-[10px] font-semibold uppercase text-amber-600 mb-1">[CONFIRM] needed</div><div class="text-2xl font-bold text-amber-800">10</div><div class="text-[11px] text-amber-700">blocking build start</div></div>
+      </div>
+
+      <!-- Timeline visual -->
+      <div class="card p-5 mb-6">
+        <h2 class="text-sm font-bold mb-4">10-week roadmap</h2>
+        <div class="grid grid-cols-5 gap-2">
+          <div class="text-center">
+            <div class="text-[10px] font-bold uppercase text-emerald-700 mb-2">Phase 0</div>
+            <div class="timeline-bar"><div class="timeline-fill bg-emerald-500" style="width:80%"></div></div>
+            <div class="text-[10px] text-slate-500 mt-1.5">Discovery</div>
+            <div class="text-[10px] text-slate-400">Days 1-5</div>
+            <div class="mt-2 space-y-1 text-[10px] text-left">
+              <div class="flex items-center gap-1"><svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Competitive teardown</div>
+              <div class="flex items-center gap-1"><svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Data model</div>
+              <div class="flex items-center gap-1"><svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Feature spec</div>
+              <div class="flex items-center gap-1"><svg class="w-3 h-3 text-emerald-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Mockup v2</div>
+              <div class="flex items-center gap-1"><svg class="w-3 h-3 text-amber-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg><span class="text-amber-700 font-semibold">[CONFIRM] answers</span></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] font-bold uppercase text-slate-400 mb-2">Phase 1</div>
+            <div class="timeline-bar"><div class="timeline-fill bg-slate-300" style="width:0%"></div></div>
+            <div class="text-[10px] text-slate-500 mt-1.5">Foundation</div>
+            <div class="text-[10px] text-slate-400">Weeks 1-2</div>
+            <div class="mt-2 space-y-1 text-[10px] text-left text-slate-500">
+              <div>Next.js scaffold</div>
+              <div>Postgres crm schema</div>
+              <div>RLS policies</div>
+              <div>WorkOS auth</div>
+              <div>S3 + KMS</div>
+              <div>Audit log middleware</div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] font-bold uppercase text-slate-400 mb-2">Phase 2</div>
+            <div class="timeline-bar"><div class="timeline-fill bg-slate-300" style="width:0%"></div></div>
+            <div class="text-[10px] text-slate-500 mt-1.5">Referral core</div>
+            <div class="text-[10px] text-slate-400">Weeks 2-4</div>
+            <div class="mt-2 space-y-1 text-[10px] text-left text-slate-500">
+              <div>Pipeline kanban</div>
+              <div>Fax AI intake</div>
+              <div>Stedi eligibility</div>
+              <div>Org scorecards</div>
+              <div>Contact directory</div>
+              <div>Search</div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] font-bold uppercase text-slate-400 mb-2">Phase 3</div>
+            <div class="timeline-bar"><div class="timeline-fill bg-slate-300" style="width:0%"></div></div>
+            <div class="text-[10px] text-slate-500 mt-1.5">BD + reports</div>
+            <div class="text-[10px] text-slate-400">Weeks 4-6</div>
+            <div class="mt-2 space-y-1 text-[10px] text-left text-slate-500">
+              <div>Dashboard</div>
+              <div>BD mobile PWA</div>
+              <div>Reports + export</div>
+              <div>Notifications</div>
+              <div>Role access</div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-[10px] font-bold uppercase text-slate-400 mb-2">Phase 4-5</div>
+            <div class="timeline-bar"><div class="timeline-fill bg-slate-300" style="width:0%"></div></div>
+            <div class="text-[10px] text-slate-500 mt-1.5">Migrate + harden</div>
+            <div class="text-[10px] text-slate-400">Weeks 6-10</div>
+            <div class="mt-2 space-y-1 text-[10px] text-left text-slate-500">
+              <div>WellSky import</div>
+              <div>Dual-run</div>
+              <div>Security review</div>
+              <div>DR drill</div>
+              <div>Cutover</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two columns: Architecture + WellSky comparison -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <!-- Architecture diagram -->
+        <div class="card p-5">
+          <h2 class="text-sm font-bold mb-4">Architecture at a glance</h2>
+          <div class="space-y-3">
+            <div class="flex items-center gap-2 flex-wrap">
+              <div class="arch-box border-indigo-300 bg-indigo-50 text-[11px]"><div class="font-bold text-indigo-800">Fax</div></div>
+              <div class="arch-box border-indigo-300 bg-indigo-50 text-[11px]"><div class="font-bold text-indigo-800">Email</div></div>
+              <div class="arch-box border-indigo-300 bg-indigo-50 text-[11px]"><div class="font-bold text-indigo-800">e-Referral</div></div>
+              <div class="arch-box border-indigo-300 bg-indigo-50 text-[11px]"><div class="font-bold text-indigo-800">Phone</div></div>
+            </div>
+            <div class="text-center text-slate-400 text-lg">|</div>
+            <div class="border-2 border-dashed border-red-200 rounded-xl p-3">
+              <div class="text-[9px] font-bold uppercase text-red-500 mb-2">AWS VPC &mdash; HIPAA trust boundary</div>
+              <div class="flex items-center gap-2 flex-wrap justify-center">
+                <div class="arch-box border-orange-300 bg-orange-50 text-[10px]"><div class="font-bold text-orange-800">SES</div><span class="baa-badge">BAA</span></div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="arch-box border-orange-300 bg-orange-50 text-[10px]"><div class="font-bold text-orange-800">S3 + KMS</div><span class="phi-badge">PHI</span></div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="arch-box border-emerald-300 bg-emerald-50 text-[10px]"><div class="font-bold text-emerald-800">Inngest</div><span class="baa-badge">BAA</span></div>
+                <span class="flow-arrow">&rarr;</span>
+                <div class="arch-box border-orange-300 bg-orange-50 text-[10px]"><div class="font-bold text-orange-800">Bedrock</div><div class="text-orange-600">Sonnet 4.6</div><span class="baa-badge">BAA</span></div>
+              </div>
+              <div class="flex items-center gap-2 flex-wrap justify-center mt-3">
+                <div class="arch-box border-orange-300 bg-orange-50 text-[10px]"><div class="font-bold text-orange-800">RDS Postgres</div><div class="text-orange-600">crm + claims</div><span class="phi-badge">PHI</span></div>
+                <div class="arch-box border-orange-300 bg-orange-50 text-[10px]"><div class="font-bold text-orange-800">ECS Fargate</div><div class="text-orange-600">CRM API (Hono)</div></div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap justify-center">
+              <div class="arch-box border-cyan-300 bg-cyan-50 text-[10px]"><div class="font-bold text-cyan-800">Stedi</div><div class="text-cyan-600">270/271</div><span class="baa-badge">BAA</span></div>
+              <div class="arch-box border-purple-300 bg-purple-50 text-[10px]"><div class="font-bold text-purple-800">WorkOS</div><div class="text-purple-600">SSO+MFA</div><span class="baa-badge">BAA</span></div>
+              <div class="arch-box border-slate-300 bg-slate-50 text-[10px]"><div class="font-bold text-slate-800">Vercel Ent</div><div class="text-slate-600">Next.js 15</div><span class="baa-badge">BAA</span></div>
+              <div class="arch-box border-purple-300 bg-purple-50 text-[10px]"><div class="font-bold text-purple-800">Datadog</div><div class="text-purple-600">PHI scrub</div><span class="baa-badge">BAA</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WellSky comparison -->
+        <div class="card p-5">
+          <h2 class="text-sm font-bold mb-4">WellSky comparison</h2>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">Monthly cost</span>
+              <span class="text-red-600 font-semibold w-24 text-right">$8,000</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">$2,400</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">-70%</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">Seats</span>
+              <span class="text-slate-600 w-24 text-right">2 accounts</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">15 users</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">7.5x</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">Referral intake</span>
+              <span class="text-slate-600 w-24 text-right">Manual</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">AI (10 sec)</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">auto</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">Eligibility check</span>
+              <span class="text-slate-600 w-24 text-right">Separate</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">Auto (Stedi)</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">auto</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">Denial prevention</span>
+              <span class="text-slate-600 w-24 text-right">Basic edits</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">AI scrubber</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">+31%</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">BD mobile</span>
+              <span class="text-slate-600 w-24 text-right">Dated</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">Modern PWA</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">new</span>
+            </div>
+            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">API access</span>
+              <span class="text-slate-600 w-24 text-right">Gated $$</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">Open REST</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">open</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded-lg text-xs">
+              <span class="font-medium text-slate-700 w-36">Annual increases</span>
+              <span class="text-red-600 w-24 text-right">10-20%</span>
+              <span class="text-emerald-700 font-bold w-24 text-right">Capped 5%</span>
+              <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-2 py-0.5">locked</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-100 text-center">
+              <div class="text-lg font-bold text-emerald-700">$67,200/year saved</div>
+              <div class="text-[11px] text-slate-500">with a better product</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- [CONFIRM] items -->
+      <div class="card p-5 mb-6 border-amber-200">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <h2 class="text-sm font-bold text-amber-900">Blocking questions — need answers before build</h2>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">01</span><span class="text-xs text-amber-900">Same pilot client as claims scrubber? Same EIN/agency?</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">02</span><span class="text-xs text-amber-900">"2 accounts at $8k" — seats, locations, or modules?</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">03</span><span class="text-xs text-amber-900">Top 5 things client likes about WellSky (feature floor)</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">04</span><span class="text-xs text-amber-900">Top 5 things client hates about WellSky (our wedge)</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">05</span><span class="text-xs text-amber-900">Referral channel split — fax/email/phone/portal %?</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">06</span><span class="text-xs text-amber-900">One-client product or vertical SaaS for resale?</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">07</span><span class="text-xs text-amber-900">Target MRR? ($2,400 Pro is draft — adjust?)</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">08</span><span class="text-xs text-amber-900">When does client want working pilot?</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">09</span><span class="text-xs text-amber-900">Does GHL stay in the picture for this client?</span></div>
+          <div class="flex items-start gap-2 p-2 bg-amber-50 rounded-lg"><span class="confirm-badge shrink-0">10</span><span class="text-xs text-amber-900">What eFax provider does the client currently use?</span></div>
+        </div>
+      </div>
+
+      <!-- Pricing tiers -->
+      <div class="card p-5">
+        <h2 class="text-sm font-bold mb-4">Proposed pricing tiers</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="border border-slate-200 rounded-xl p-5">
+            <div class="text-[10px] font-bold uppercase text-slate-500 mb-1">Starter</div>
+            <div class="text-3xl font-bold text-slate-900">$1,200<span class="text-base font-medium text-slate-400">/mo</span></div>
+            <div class="text-xs text-slate-500 mt-1 mb-4">Up to 5 users</div>
+            <div class="space-y-1.5 text-xs text-slate-600">
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>CRM (intake, pipeline, orgs)</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>BD mobile app</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Reports + dashboard</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="text-slate-400">No scrubber</span></div>
+            </div>
+          </div>
+          <div class="border-2 border-emerald-500 rounded-xl p-5 relative">
+            <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold bg-emerald-600 text-white rounded-full px-3 py-0.5">RECOMMENDED</div>
+            <div class="text-[10px] font-bold uppercase text-emerald-600 mb-1">Pro</div>
+            <div class="text-3xl font-bold text-slate-900">$2,400<span class="text-base font-medium text-slate-400">/mo</span></div>
+            <div class="text-xs text-slate-500 mt-1 mb-4">Up to 15 users</div>
+            <div class="space-y-1.5 text-xs text-slate-600">
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Everything in Starter</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>AI claims scrubber</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Auto eligibility (Stedi)</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Denial risk scoring</div>
+            </div>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-5">
+            <div class="text-[10px] font-bold uppercase text-slate-500 mb-1">Enterprise</div>
+            <div class="text-3xl font-bold text-slate-900">$4,000<span class="text-base font-medium text-slate-400">/mo</span></div>
+            <div class="text-xs text-slate-500 mt-1 mb-4">Unlimited users</div>
+            <div class="space-y-1.5 text-xs text-slate-600">
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Everything in Pro</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Denial recovery + appeals</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>837I submission</div>
+              <div class="flex items-center gap-1.5"><svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Dedicated support</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCOPE TAB ===== -->
+    <div id="tab-scope" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">01 — Scope & decisions</h1>
+      <p class="text-sm text-slate-500 mb-6">What's in, what's out, how it connects to the claims platform.</p>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="card p-5">
+          <h3 class="text-sm font-bold text-emerald-700 mb-3">In scope (v1)</h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">1</span>AI fax/email intake (Bedrock)</div>
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">2</span>Pipeline kanban (5 columns)</div>
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">3</span>Auto eligibility (Stedi 270/271)</div>
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">4</span>Organization management + scorecards</div>
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">5</span>Contact directory + NPPES</div>
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">6</span>BD rep tracking + mobile PWA</div>
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">7</span>Dashboard + reports</div>
+            <div class="flex items-center gap-2 p-2 bg-emerald-50 rounded-lg"><span class="w-5 h-5 rounded bg-emerald-500 text-white text-[10px] flex items-center justify-center font-bold">8</span>Multi-tenant RLS + audit log</div>
+          </div>
+        </div>
+        <div class="card p-5">
+          <h3 class="text-sm font-bold text-slate-500 mb-3">Out of scope (v1)</h3>
+          <div class="space-y-2 text-xs text-slate-500">
+            <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg"><svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Clinical docs (OASIS-E, HIS, visit notes)</div>
+            <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg"><svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Billing / RCM / 837I submission</div>
+            <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg"><svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>eMAR / medication management</div>
+            <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg"><svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Scheduling / clinician routing</div>
+            <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg"><svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>HL7 FHIR integration</div>
+            <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg"><svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Patient portal / telehealth</div>
+          </div>
+        </div>
+      </div>
+      <div class="card p-5">
+        <h3 class="text-sm font-bold mb-3">How CRM connects to Claims Platform</h3>
+        <div class="flex items-center justify-center gap-4 py-6 flex-wrap">
+          <div class="arch-box border-emerald-400 bg-emerald-50"><div class="font-bold text-emerald-800 text-sm">CRM</div><div class="text-[10px] text-emerald-600">Referral intake</div><div class="text-[10px] text-emerald-600">Pipeline mgmt</div><div class="text-[10px] text-emerald-600">BD tracking</div></div>
+          <div class="flex flex-col items-center gap-1"><span class="flow-arrow text-2xl">&rarr;</span><span class="text-[9px] text-slate-400">admitted referral<br>creates episode</span></div>
+          <div class="arch-box border-red-400 bg-red-50"><div class="font-bold text-red-800 text-sm">Claims Platform</div><div class="text-[10px] text-red-600">Pre-submission scrubber</div><div class="text-[10px] text-red-600">837I via Stedi</div><div class="text-[10px] text-red-600">Denial recovery</div></div>
+          <div class="flex flex-col items-center gap-1"><span class="flow-arrow text-2xl">&rarr;</span><span class="text-[9px] text-slate-400">denial risk<br>score back</span></div>
+          <div class="arch-box border-emerald-400 bg-emerald-50"><div class="font-bold text-emerald-800 text-sm">CRM</div><div class="text-[10px] text-emerald-600">Shows risk on</div><div class="text-[10px] text-emerald-600">referral card</div></div>
+        </div>
+        <div class="text-xs text-center text-slate-500">Shared: AWS RDS (same cluster, separate schemas) &middot; WorkOS auth &middot; S3 &middot; Bedrock &middot; Inngest</div>
+      </div>
+    </div>
+
+    <!-- ===== TEARDOWN TAB ===== -->
+    <div id="tab-teardown" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">02 — WellSky competitive teardown</h1>
+      <p class="text-sm text-slate-500 mb-6">What to take, what to beat, what to skip.</p>
+      <div class="card p-5 mb-4">
+        <h3 class="text-sm font-bold text-red-700 mb-3">Where WellSky falls short (our wedge)</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">Referral intake speed</div><div class="text-[11px] text-red-800">Manual data entry from faxes vs our AI 10-second parse</div></div>
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">PlayMaker &harr; EHR gap</div><div class="text-[11px] text-red-800">Same company, poorly integrated. BD data doesn't flow to intake</div></div>
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">Reporting flexibility</div><div class="text-[11px] text-red-800">Canned reports only. Custom requires consultants</div></div>
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">API access</div><div class="text-[11px] text-red-800">Gated and expensive. Partnership agreements required</div></div>
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">Mobile BD app</div><div class="text-[11px] text-red-800">PlayMaker mobile is dated; WellSky mobile is clinician-focused</div></div>
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">Pricing</div><div class="text-[11px] text-red-800">$8k/mo, 10-20% annual increases, multi-year lock</div></div>
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">SLA visibility</div><div class="text-[11px] text-red-800">Breach alerts buried 3 clicks deep</div></div>
+          <div class="p-3 bg-red-50 rounded-lg border border-red-100"><div class="text-xs font-bold text-red-900 mb-1">Support quality</div><div class="text-[11px] text-red-800">Degraded post-consolidation. Long tier-1 queues</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DATA MODEL TAB ===== -->
+    <div id="tab-datamodel" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">03 — Data model</h1>
+      <p class="text-sm text-slate-500 mb-6">9 tables in crm.* schema &middot; RLS on tenant_id &middot; KMS encryption on PHI columns</p>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="card p-4"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">T</div><div><div class="font-bold text-sm">tenants</div><div class="text-[10px] text-slate-500">Multi-tenant root</div></div></div><div class="text-[10px] text-slate-600 space-y-0.5"><div>id, name, npi, ein, medicare_ptan</div><div>mac_jurisdiction, service_area</div><div>stripe_customer_id</div></div></div>
+        <div class="card p-4"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold">U</div><div><div class="font-bold text-sm">users</div><div class="text-[10px] text-slate-500">WorkOS shadow</div></div></div><div class="text-[10px] text-slate-600 space-y-0.5"><div>workos_user_id, email, display_name</div><div>role: admin|intake|bd_rep|viewer</div></div></div>
+        <div class="card p-4 border-emerald-200 glow"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs font-bold">R</div><div><div class="font-bold text-sm">referrals</div><div class="text-[10px] text-emerald-600">Core entity</div></div></div><div class="text-[10px] text-slate-600 space-y-0.5"><div>status, intake_channel, patient_*</div><div>primary_dx, payer_*, orders</div><div>eligibility_*, denial_risk_score</div><div>soc_date, ai_confidence</div><div class="mt-1"><span class="phi-badge">PHI encrypted</span></div></div></div>
+        <div class="card p-4"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center text-xs font-bold">O</div><div><div class="font-bold text-sm">organizations</div><div class="text-[10px] text-slate-500">Referral sources</div></div></div><div class="text-[10px] text-slate-600">name, type, npi, address, owner</div></div>
+        <div class="card p-4"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-cyan-100 text-cyan-700 flex items-center justify-center text-xs font-bold">C</div><div><div class="font-bold text-sm">contacts</div><div class="text-[10px] text-slate-500">People at orgs</div></div></div><div class="text-[10px] text-slate-600">name, title, npi, phone, role</div></div>
+        <div class="card p-4"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold">N</div><div><div class="font-bold text-sm">referral_notes</div><div class="text-[10px] text-slate-500">Timeline entries</div></div></div><div class="text-[10px] text-slate-600">note_type: manual|auto|system</div></div>
+        <div class="card p-4"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center text-xs font-bold">D</div><div><div class="font-bold text-sm">referral_documents</div><div class="text-[10px] text-slate-500">S3 references</div></div></div><div class="text-[10px] text-slate-600">s3_key, content_type, size</div></div>
+        <div class="card p-4"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">V</div><div><div class="font-bold text-sm">bd_visits</div><div class="text-[10px] text-slate-500">Field visit log</div></div></div><div class="text-[10px] text-slate-600">org_id, contacts_met, lat/lng, notes</div></div>
+        <div class="card p-4 border-red-200"><div class="flex items-center gap-2 mb-2"><div class="w-8 h-8 rounded-lg bg-red-500 text-white flex items-center justify-center text-xs font-bold">A</div><div><div class="font-bold text-sm">audit_log</div><div class="text-[10px] text-red-600">Append-only</div></div></div><div class="text-[10px] text-slate-600">action, resource, ip, user_agent<div class="mt-1 text-red-600 font-semibold">6-year retention</div></div></div>
+      </div>
+    </div>
+
+    <!-- ===== ARCHITECTURE TAB ===== -->
+    <div id="tab-arch" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">04 — Architecture</h1>
+      <p class="text-sm text-slate-500 mb-6">Shared stack with claims platform. See Excalidraw diagram for visual.</p>
+      <div class="card p-5 mb-4">
+        <h3 class="text-sm font-bold mb-3">Locked-in stack</h3>
+        <div class="grid grid-cols-4 gap-2">
+          <div class="p-3 bg-orange-50 rounded-lg text-center"><div class="text-[10px] font-bold text-orange-800">Frontend</div><div class="text-xs font-semibold">Next.js 15</div><div class="text-[10px] text-orange-600">Vercel Enterprise</div><span class="baa-badge">BAA</span></div>
+          <div class="p-3 bg-orange-50 rounded-lg text-center"><div class="text-[10px] font-bold text-orange-800">Backend</div><div class="text-xs font-semibold">Hono on ECS</div><div class="text-[10px] text-orange-600">AWS Fargate</div><span class="baa-badge">BAA</span></div>
+          <div class="p-3 bg-orange-50 rounded-lg text-center"><div class="text-[10px] font-bold text-orange-800">Database</div><div class="text-xs font-semibold">RDS Postgres</div><div class="text-[10px] text-orange-600">+ pgvector</div><span class="baa-badge">BAA</span></div>
+          <div class="p-3 bg-orange-50 rounded-lg text-center"><div class="text-[10px] font-bold text-orange-800">AI</div><div class="text-xs font-semibold">Bedrock</div><div class="text-[10px] text-orange-600">Claude Sonnet 4.6</div><span class="baa-badge">BAA</span></div>
+          <div class="p-3 bg-purple-50 rounded-lg text-center"><div class="text-[10px] font-bold text-purple-800">Auth</div><div class="text-xs font-semibold">WorkOS</div><div class="text-[10px] text-purple-600">SSO + MFA</div><span class="baa-badge">BAA</span></div>
+          <div class="p-3 bg-emerald-50 rounded-lg text-center"><div class="text-[10px] font-bold text-emerald-800">Workflows</div><div class="text-xs font-semibold">Inngest Ent</div><div class="text-[10px] text-emerald-600">Durable functions</div><span class="baa-badge">BAA</span></div>
+          <div class="p-3 bg-cyan-50 rounded-lg text-center"><div class="text-[10px] font-bold text-cyan-800">Eligibility</div><div class="text-xs font-semibold">Stedi</div><div class="text-[10px] text-cyan-600">270/271 + 837I</div><span class="baa-badge">BAA</span></div>
+          <div class="p-3 bg-purple-50 rounded-lg text-center"><div class="text-[10px] font-bold text-purple-800">Observability</div><div class="text-xs font-semibold">Datadog</div><div class="text-[10px] text-purple-600">PHI scrubbing</div><span class="baa-badge">BAA</span></div>
+        </div>
+      </div>
+      <div class="card p-5 border-red-200">
+        <h3 class="text-sm font-bold text-red-700 mb-3">Hard constraints (do not change)</h3>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="flex items-center gap-2 p-2 bg-red-50 rounded-lg"><svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="text-red-900"><b>No Clerk</b> — no BAA on any tier</span></div>
+          <div class="flex items-center gap-2 p-2 bg-red-50 rounded-lg"><svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="text-red-900"><b>No n8n Cloud for PHI</b> — self-hosted only</span></div>
+          <div class="flex items-center gap-2 p-2 bg-red-50 rounded-lg"><svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="text-red-900"><b>No Supabase &lt; Team</b> — no BAA</span></div>
+          <div class="flex items-center gap-2 p-2 bg-red-50 rounded-lg"><svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span class="text-red-900"><b>No Change Healthcare</b> — post-2024 breach</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remaining tabs: lighter content, point to markdown files -->
+    <div id="tab-features" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">05 — Feature spec (MoSCoW)</h1>
+      <p class="text-sm text-slate-500 mb-6">Priority-ordered feature list with acceptance criteria. Full details in CRM-05-FEATURE-SPEC-V1.md</p>
+      <div class="space-y-3">
+        <div class="text-xs font-bold uppercase text-red-600 mt-4 mb-2">Must have (10)</div>
+        <div class="card p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">M1</span><div><div class="text-sm font-semibold">AI-powered fax/email intake</div><div class="text-[11px] text-slate-500">Fax &rarr; Bedrock &rarr; structured referral in &lt;15 sec, &gt;85% accuracy</div></div></div>
+        <div class="card p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">M2</span><div><div class="text-sm font-semibold">Referral pipeline (kanban)</div><div class="text-[11px] text-slate-500">5 columns, drag-drop, SLA indicators, filter by user/payer/source</div></div></div>
+        <div class="card p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">M3</span><div><div class="text-sm font-semibold">Automated eligibility check</div><div class="text-[11px] text-slate-500">Stedi 270/271 auto on intake, result in &lt;30 sec for Medicare</div></div></div>
+        <div class="card p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">M4</span><div><div class="text-sm font-semibold">Organization management</div><div class="text-[11px] text-slate-500">Scorecards: 30d referrals, conversion %, staleness flags, NPPES lookup</div></div></div>
+        <div class="card p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-red-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">M5-10</span><div><div class="text-sm font-semibold">Contact dir + Dashboard + Multi-tenant + Audit log + Detail view + WorkOS auth</div><div class="text-[11px] text-slate-500">See CRM-05-FEATURE-SPEC-V1.md for full acceptance criteria</div></div></div>
+        <div class="text-xs font-bold uppercase text-amber-600 mt-4 mb-2">Should have (4)</div>
+        <div class="card p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-amber-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">S</span><div><div class="text-sm font-semibold">BD mobile PWA &middot; Reports + export &middot; Email/SMS notifications &middot; Denial risk integration</div></div></div>
+        <div class="text-xs font-bold uppercase text-blue-600 mt-4 mb-2">Could have (4)</div>
+        <div class="card p-3 flex items-center gap-3"><span class="w-7 h-7 rounded-lg bg-blue-500 text-white text-[10px] flex items-center justify-center font-bold shrink-0">C</span><div><div class="text-sm font-semibold">Batch fax intake &middot; e-Referral portal &middot; Org heat map &middot; Custom fields</div></div></div>
+      </div>
+    </div>
+
+    <div id="tab-flow" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">06 — Referral flow</h1>
+      <p class="text-sm text-slate-500 mb-6">End-to-end: fax arrives &rarr; AI parses &rarr; eligibility &rarr; pipeline &rarr; admission</p>
+      <div class="card p-6">
+        <div class="flex items-center gap-3 flex-wrap justify-center">
+          <div class="arch-box border-indigo-300 bg-indigo-50 text-center"><div class="font-bold text-xs text-indigo-800">Fax/Email</div><div class="text-[10px] text-indigo-600">arrives</div></div>
+          <span class="flow-arrow text-xl">&rarr;</span>
+          <div class="arch-box border-orange-300 bg-orange-50 text-center"><div class="font-bold text-xs text-orange-800">SES &rarr; S3</div><div class="text-[10px] text-orange-600">KMS encrypted</div></div>
+          <span class="flow-arrow text-xl">&rarr;</span>
+          <div class="arch-box border-emerald-300 bg-emerald-50 text-center"><div class="font-bold text-xs text-emerald-800">Inngest</div><div class="text-[10px] text-emerald-600">parse-fax</div></div>
+          <span class="flow-arrow text-xl">&rarr;</span>
+          <div class="arch-box border-orange-300 bg-orange-50 text-center"><div class="font-bold text-xs text-orange-800">Bedrock</div><div class="text-[10px] text-orange-600">extract fields</div></div>
+          <span class="flow-arrow text-xl">&rarr;</span>
+          <div class="arch-box border-cyan-300 bg-cyan-50 text-center"><div class="font-bold text-xs text-cyan-800">Stedi</div><div class="text-[10px] text-cyan-600">270/271</div></div>
+          <span class="flow-arrow text-xl">&rarr;</span>
+          <div class="arch-box border-emerald-500 bg-emerald-100 text-center"><div class="font-bold text-xs text-emerald-900">Pipeline</div><div class="text-[10px] text-emerald-700">status: NEW</div></div>
+        </div>
+        <div class="flex items-center justify-center gap-6 mt-6 text-xs">
+          <div class="text-center"><div class="font-bold text-slate-700">Fax &rarr; parsed</div><div class="text-emerald-600 font-semibold">&lt; 30 sec</div></div>
+          <div class="text-center"><div class="font-bold text-slate-700">Parsed &rarr; eligibility</div><div class="text-emerald-600 font-semibold">&lt; 60 sec</div></div>
+          <div class="text-center"><div class="font-bold text-slate-700">New &rarr; reviewed</div><div class="text-amber-600 font-semibold">&lt; 4 hours</div></div>
+          <div class="text-center"><div class="font-bold text-slate-700">Reviewed &rarr; SOC</div><div class="text-amber-600 font-semibold">&lt; 24 hours</div></div>
+          <div class="text-center"><div class="font-bold text-slate-700">Referral &rarr; SOC visit</div><div class="text-red-600 font-semibold">&lt; 48 hours</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-integrations" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">07 — Integrations</h1>
+      <p class="text-sm text-slate-500 mb-6">8 integration points, 6 BAA-signed. Full API inventory in Insurance Claims/REF/API-INVENTORY.md</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="card p-4 border-emerald-200"><div class="flex items-center gap-2 mb-1"><span class="baa-badge">BAA</span><span class="text-xs font-bold">T1: eFax &rarr; SES</span></div><div class="text-[10px] text-slate-600">Receive faxes as email. KMS-encrypted S3 storage.</div></div>
+        <div class="card p-4 border-emerald-200"><div class="flex items-center gap-2 mb-1"><span class="baa-badge">BAA</span><span class="text-xs font-bold">T1: Stedi 270/271</span></div><div class="text-[10px] text-slate-600">Auto eligibility for Medicare/Medi-Cal on intake.</div></div>
+        <div class="card p-4 border-emerald-200"><div class="flex items-center gap-2 mb-1"><span class="baa-badge">BAA</span><span class="text-xs font-bold">T1: Bedrock Claude</span></div><div class="text-[10px] text-slate-600">Extract structured data from fax PDFs. ~$0.01-0.05/referral.</div></div>
+        <div class="card p-4 border-emerald-200"><div class="flex items-center gap-2 mb-1"><span class="baa-badge">BAA</span><span class="text-xs font-bold">T1: Claims scrubber</span></div><div class="text-[10px] text-slate-600">Internal API. Denial risk score per referral.</div></div>
+        <div class="card p-4"><div class="text-xs font-bold mb-1">T1: NPPES NPI Registry</div><div class="text-[10px] text-slate-600">Free public API. Auto-lookup provider NPI on contact creation.</div></div>
+        <div class="card p-4 border-emerald-200"><div class="flex items-center gap-2 mb-1"><span class="baa-badge">BAA</span><span class="text-xs font-bold">T1: WorkOS</span></div><div class="text-[10px] text-slate-600">Auth, SSO, MFA, roles, directory sync, audit.</div></div>
+        <div class="card p-4 border-emerald-200"><div class="flex items-center gap-2 mb-1"><span class="baa-badge">BAA</span><span class="text-xs font-bold">T2: SES outbound</span></div><div class="text-[10px] text-slate-600">Email notifications. Link only, no PHI in body.</div></div>
+        <div class="card p-4 border-amber-200"><div class="flex items-center gap-2 mb-1"><span class="confirm-badge">[CONFIRM]</span><span class="text-xs font-bold">T2: Twilio SMS</span></div><div class="text-[10px] text-slate-600">Push alerts to BD reps. BAA available. No PHI in SMS.</div></div>
+      </div>
+    </div>
+
+    <div id="tab-security" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">08 — Security & HIPAA</h1>
+      <p class="text-sm text-slate-500 mb-6">CRM-specific controls. Full compliance framework in Insurance Claims/REF/REGULATIONS.md</p>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="card p-5">
+          <h3 class="text-sm font-bold mb-3">Role-based access</h3>
+          <table class="w-full text-[11px]"><thead class="text-slate-500"><tr><th class="text-left py-1">Role</th><th class="text-left py-1">Can see</th><th class="text-left py-1">Cannot see</th></tr></thead><tbody class="text-slate-700">
+            <tr class="border-t border-slate-100"><td class="py-1.5 font-semibold">Admin</td><td>Everything in tenant</td><td>Other tenants</td></tr>
+            <tr class="border-t border-slate-100"><td class="py-1.5 font-semibold">Intake</td><td>Referrals, pipeline, docs</td><td>User mgmt, billing</td></tr>
+            <tr class="border-t border-slate-100"><td class="py-1.5 font-semibold">BD rep</td><td>Orgs, contacts, visits</td><td class="text-red-600 font-semibold">Full patient PHI</td></tr>
+            <tr class="border-t border-slate-100"><td class="py-1.5 font-semibold">Viewer</td><td>Dashboard, aggregates</td><td>Individual referrals</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card p-5">
+          <h3 class="text-sm font-bold mb-3">Encryption & compliance</h3>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between p-1.5"><span>At rest (RDS)</span><span class="font-semibold">AES-256 via KMS</span></div>
+            <div class="flex justify-between p-1.5 bg-slate-50 rounded"><span>At rest (S3)</span><span class="font-semibold">SSE-KMS per tenant</span></div>
+            <div class="flex justify-between p-1.5"><span>In transit</span><span class="font-semibold">TLS 1.3 everywhere</span></div>
+            <div class="flex justify-between p-1.5 bg-slate-50 rounded"><span>Session timeout</span><span class="font-semibold">15 min inactivity</span></div>
+            <div class="flex justify-between p-1.5"><span>Audit retention</span><span class="font-semibold text-red-700">6 years (HIPAA)</span></div>
+            <div class="flex justify-between p-1.5 bg-slate-50 rounded"><span>Breach notification</span><span class="font-semibold">60 days (HITECH)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-migration" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">09 — Migration from WellSky</h1>
+      <p class="text-sm text-slate-500 mb-6">Phased dual-run. Client never loses data.</p>
+      <div class="card p-5">
+        <div class="grid grid-cols-4 gap-3 text-center text-xs">
+          <div class="p-3 bg-blue-50 rounded-xl border border-blue-200"><div class="font-bold text-blue-800 mb-1">Week 1-2</div><div class="text-blue-700">Import historical data</div><div class="text-[10px] text-blue-500 mt-1">Orgs, contacts, 6-12mo referrals via CSV</div></div>
+          <div class="p-3 bg-amber-50 rounded-xl border border-amber-200"><div class="font-bold text-amber-800 mb-1">Week 3-4</div><div class="text-amber-700">Dual-run starts</div><div class="text-[10px] text-amber-500 mt-1">New referrals in CRM; WellSky for clinical</div></div>
+          <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200"><div class="font-bold text-emerald-800 mb-1">Week 5-6</div><div class="text-emerald-700">CRM primary</div><div class="text-[10px] text-emerald-500 mt-1">WellSky for clinical + billing only</div></div>
+          <div class="p-3 bg-emerald-100 rounded-xl border border-emerald-300"><div class="font-bold text-emerald-900 mb-1">Week 7+</div><div class="text-emerald-800">Full cutover</div><div class="text-[10px] text-emerald-600 mt-1">BD/referral on CRM; WellSky retained for clinical</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-roadmap" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-6">10 — Roadmap</h1>
+      <p class="text-sm text-slate-500 mb-4">Click "Command center" for the full timeline visualization.</p>
+      <div class="card p-5">
+        <div class="text-xs text-slate-500">Detailed sprint breakdown, parallel workstream mapping, and post-v1 expansion plan available in <b>CRM-10-ROADMAP.md</b>. The command center tab visualizes the 5-phase / 10-week timeline.</div>
+      </div>
+    </div>
+
+    <div id="tab-pricing" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-6">11 — Pricing</h1>
+      <p class="text-sm text-slate-500 mb-4">Click "Command center" for the tier cards and WellSky comparison table.</p>
+      <div class="card p-5">
+        <h3 class="text-sm font-bold mb-3">Unit economics (Pro tier at $2,400/mo)</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-xs font-bold text-slate-500 mb-2">Monthly COGS per tenant</div>
+            <div class="space-y-1.5 text-xs">
+              <div class="flex justify-between"><span>AWS infra</span><span>$150-300</span></div>
+              <div class="flex justify-between"><span>Bedrock</span><span>$50-150</span></div>
+              <div class="flex justify-between"><span>Stedi</span><span>$30-100</span></div>
+              <div class="flex justify-between"><span>WorkOS + Vercel + Datadog + Inngest</span><span>$110-250</span></div>
+              <div class="flex justify-between pt-2 border-t border-slate-200 font-bold"><span>Total COGS</span><span>$340-800</span></div>
+            </div>
+          </div>
+          <div class="flex flex-col items-center justify-center bg-emerald-50 rounded-xl p-4">
+            <div class="text-[10px] font-bold uppercase text-emerald-600">Gross margin</div>
+            <div class="text-4xl font-bold text-emerald-700">67-86%</div>
+            <div class="text-xs text-emerald-600 mt-1">Healthy for vertical SaaS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-agents" class="tab p-6">
+      <h1 class="text-2xl font-bold mb-1">12 — Agent team plan</h1>
+      <p class="text-sm text-slate-500 mb-6">3-role Agent Team methodology from /agent-team-build-loop, adapted for HIPAA.</p>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="card p-5 border-t-4 border-t-blue-500">
+          <div class="text-xs font-bold uppercase text-blue-600 mb-1">Role 1</div>
+          <div class="text-sm font-bold mb-2">Architect</div>
+          <div class="text-[11px] text-slate-600 space-y-1"><div>Schema + migrations</div><div>API contracts</div><div>RLS policies</div><div>Inngest workflow defs</div></div>
+          <div class="mt-3 text-[10px] text-slate-500">Skills: senior-architect, database-design, postgres, saas-multi-tenant</div>
+        </div>
+        <div class="card p-5 border-t-4 border-t-emerald-500">
+          <div class="text-xs font-bold uppercase text-emerald-600 mb-1">Role 2</div>
+          <div class="text-sm font-bold mb-2">Builder</div>
+          <div class="text-[11px] text-slate-600 space-y-1"><div>Next.js pages + components</div><div>API routes (Hono)</div><div>Bedrock prompts</div><div>Stedi integration</div></div>
+          <div class="mt-3 text-[10px] text-slate-500">Skills: react-nextjs, shadcn, tailwind, hono, drizzle-orm</div>
+        </div>
+        <div class="card p-5 border-t-4 border-t-red-500">
+          <div class="text-xs font-bold uppercase text-red-600 mb-1">Role 3</div>
+          <div class="text-sm font-bold mb-2">Compliance reviewer</div>
+          <div class="text-[11px] text-slate-600 space-y-1"><div>HIPAA lens on every PR</div><div>PHI exposure checks</div><div>Audit log coverage</div><div>Prompt injection scanning</div></div>
+          <div class="mt-3 text-[10px] text-slate-500">Skills: security-auditor, privacy-by-design, threat-modeling</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function show(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

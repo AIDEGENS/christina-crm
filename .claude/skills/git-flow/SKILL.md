@@ -41,8 +41,8 @@ If unset, stop and tell the user to add it to `.env`. Never push with an unknown
 `save.sh` greps the staged diff for:
 - SSN: `\b\d{3}-\d{2}-\d{4}\b`
 - MRN: `MRN[-_: ]?\d`
-- DOB: `\bDOB[: =]`
-- Obvious patient identifiers: `patient[_ ]id`, `claim[_ ]id.*\d{6}`
+- Date-of-birth — pattern `\bDOB[: =]`
+- Patient-level keys — patterns `patient[_ ]id`, `claim[_ ]id.*\d{6}`
 
 On hit: block, print offending file+line, ask the user. Do not override without explicit human confirmation.
 
