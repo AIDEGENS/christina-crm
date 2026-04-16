@@ -1,0 +1,17 @@
+{
+  "name": "@crm/config",
+  "version": "0.0.1",
+  "private": true,
+  "files": [
+    "tsconfig.base.json"
+  ],
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json"
+  },
+  "scripts": {
+    "typecheck": "echo \"[@crm/config] nothing to typecheck\"",
+    "lint": "echo \"[@crm/config] lint placeholder\"",
+    "test": "echo \"[@crm/config] no tests yet\"",
+    "clean": "rm -rf .turbo"
+  }
+}

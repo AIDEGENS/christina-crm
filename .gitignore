@@ -21,6 +21,24 @@ node_modules/
 dist/
 build/
 .next/
+.turbo/
+*.tsbuildinfo
+coverage/
+
+# Vercel
+.vercel/
+
+# Terraform (phase 0.2)
+infra/terraform.tfstate*
+infra/.terraform/
+infra/terraform.tfvars
+*.pem
+*.key
+
+# Session-local state (OMC / planning workspaces)
+.omc/
+**/.omc/
+.planning/
 
 # IDE
 .vscode/
