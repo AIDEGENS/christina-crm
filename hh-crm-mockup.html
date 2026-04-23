@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meridian Home Health CRM — Mockup v2</title>
+<title>Christina CRM — Pilot Demo (Meridian Home Health)</title>
+<meta name="description" content="Christina CRM — home-health + hospice referral management. Pilot demo for prospective agencies.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-feature-settings: "cv11","ss01"; }
   .view { display: none; }
-  .view.active { display: block; }
+  .view.active { display: block; animation: fade 160ms ease-out; }
+  @keyframes fade { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
   .nav-item.active { background: rgb(16 185 129 / 0.10); color: rgb(4 120 87); }
   .nav-item.active svg { color: rgb(16 185 129); }
   .subnav-item.active { background: white; color: rgb(15 23 42); box-shadow: 0 1px 2px rgb(0 0 0 / 0.06); }
@@ -23,28 +25,62 @@
   .dropdown { display: none; }
   .dropdown.open { display: block; }
   .phone-frame {
-    width: 360px; background: #0f172a; border-radius: 44px; padding: 12px;
+    width: 340px; background: #0f172a; border-radius: 44px; padding: 12px;
     box-shadow: 0 25px 60px -15px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.05) inset;
   }
   .phone-screen { background: white; border-radius: 34px; overflow: hidden; height: 720px; position: relative; }
   .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 110px; height: 24px; background: #0f172a; border-radius: 0 0 16px 16px; z-index: 10; }
+  .phone-shot { display: none; }
+  .phone-shot.active { display: block; }
   .timeline-line { position: absolute; left: 11px; top: 24px; bottom: 0; width: 2px; background: rgb(226 232 240); }
   .timeline-dot { position: relative; z-index: 1; }
+  .demo-chip { background: linear-gradient(90deg, rgba(16,185,129,.08), rgba(20,184,166,.08)); }
+  tr[data-demo="true"] td { position: relative; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  .heat-0 { background: rgb(241 245 249); }
+  .heat-1 { background: rgb(209 250 229); }
+  .heat-2 { background: rgb(110 231 183); }
+  .heat-3 { background: rgb(52 211 153); }
+  .heat-4 { background: rgb(16 185 129); }
+  .scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgb(203 213 225); border-radius: 3px; }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
+<!-- DEMO MODE BANNER -->
+<div id="demo-banner" class="bg-slate-900 text-white text-[11px] font-medium px-6 py-1.5 flex items-center justify-between gap-4 sticky top-0 z-40" role="region" aria-label="Demo mode notice">
+  <div class="flex items-center gap-2 min-w-0">
+    <span class="inline-flex items-center gap-1.5 bg-emerald-500/15 text-emerald-300 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>LIVE DEMO
+    </span>
+    <span class="truncate">Synthetic data, illustrative only &mdash; no real PHI. Meridian Home Health is a demo tenant of <b class="text-white">Christina CRM</b>.</span>
+  </div>
+  <div class="flex items-center gap-3 shrink-0">
+    <a href="mailto:clayikeem11@gmail.com?subject=Christina%20CRM%20pilot%20access" class="text-emerald-300 hover:text-emerald-200 font-semibold">Request pilot access &rarr;</a>
+    <button onclick="document.getElementById('demo-banner').remove()" aria-label="Dismiss demo banner" class="text-slate-400 hover:text-white">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
 <!-- TOP BAR -->
-<header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+<header class="bg-white border-b border-slate-200 sticky top-[26px] z-30">
   <div class="flex items-center justify-between px-6 h-14">
     <div class="flex items-center gap-3 relative">
-      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">M</div>
-      <button onclick="toggleDropdown('tenant-dropdown')" class="flex items-center gap-2 hover:bg-slate-50 rounded-lg px-2 py-1 -my-1">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm" aria-hidden="true">M</div>
+      <button onclick="toggleDropdown('tenant-dropdown')" class="flex items-center gap-2 hover:bg-slate-50 rounded-lg px-2 py-1 -my-1" aria-haspopup="listbox" aria-expanded="false" aria-label="Switch tenant">
         <div class="text-left">
           <div class="font-semibold text-sm leading-tight">Meridian Home Health</div>
-          <div class="text-[11px] text-slate-500 leading-tight">Sacramento Region · HIPAA secure</div>
+          <div class="text-[11px] text-slate-500 leading-tight flex items-center gap-1">
+            <span>Sacramento Region</span>
+            <span class="text-slate-300">·</span>
+            <span>HIPAA secure</span>
+            <span class="text-slate-300">·</span>
+            <span class="text-emerald-600 font-semibold">on Christina CRM</span>
+          </div>
         </div>
-        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div id="tenant-dropdown" class="dropdown absolute top-full left-0 mt-2 w-72 bg-white rounded-xl border border-slate-200 shadow-xl z-40 overflow-hidden">
         <div class="p-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 px-3 pt-3">Switch agency</div>
@@ -54,7 +90,7 @@
             <div class="font-semibold text-sm text-slate-900">Meridian Home Health</div>
             <div class="text-[11px] text-slate-500">127 active · Sacramento</div>
           </div>
-          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
         </button>
         <button class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 text-left">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm">R</div>
@@ -72,7 +108,7 @@
         </button>
         <div class="border-t border-slate-100 mt-1">
           <button class="w-full flex items-center gap-2 px-3 py-2.5 hover:bg-slate-50 text-left text-xs font-medium text-emerald-700">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             Add new agency
           </button>
         </div>
@@ -80,77 +116,81 @@
     </div>
     <div class="flex-1 max-w-xl mx-8">
       <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input class="w-full pl-9 pr-4 py-2 text-sm bg-slate-100 border border-transparent rounded-lg focus:bg-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="Search referrals, patients, organizations...">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input aria-label="Global search" class="w-full pl-9 pr-4 py-2 text-sm bg-slate-100 border border-transparent rounded-lg focus:bg-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="Search referrals, patients, organizations&hellip;">
         <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 bg-white border border-slate-200 rounded px-1.5 py-0.5">Ctrl K</kbd>
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <button class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      <button class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-1.5" aria-label="Create new referral">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         New referral
       </button>
-      <button class="relative p-2 hover:bg-slate-100 rounded-lg">
-        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <button class="relative p-2 hover:bg-slate-100 rounded-lg" aria-label="Notifications (3 unread)">
+        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
         <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full pulse-dot"></span>
       </button>
-      <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-semibold text-slate-700 ring-2 ring-white">CI</div>
+      <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-semibold text-slate-700 ring-2 ring-white" aria-label="User Clay Ikeem">CI</div>
     </div>
   </div>
 </header>
 
 <div class="flex">
   <!-- SIDEBAR -->
-  <aside class="w-60 bg-white border-r border-slate-200 min-h-[calc(100vh-3.5rem)] flex flex-col sticky top-14 h-[calc(100vh-3.5rem)]">
-    <nav class="p-3 space-y-0.5 overflow-y-auto">
+  <aside class="w-60 bg-white border-r border-slate-200 min-h-[calc(100vh-5.75rem)] flex flex-col sticky top-[5.75rem] h-[calc(100vh-5.75rem)]">
+    <nav class="p-3 space-y-0.5 overflow-y-auto" aria-label="Primary">
       <button onclick="showView('dashboard', this)" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         Dashboard
       </button>
       <button onclick="showView('inbox', this)" class="nav-item w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
         <span class="flex items-center gap-3">
-          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
           Intake inbox
         </span>
-        <span class="text-[10px] bg-red-500 text-white rounded-full px-1.5 py-0.5 font-semibold">7</span>
+        <span class="text-[10px] bg-red-500 text-white rounded-full px-1.5 py-0.5 font-semibold" aria-label="7 unread">7</span>
       </button>
       <button onclick="showView('pipeline', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="18" rx="1"/><rect x="11" y="3" width="6" height="12" rx="1"/><rect x="19" y="3" width="2" height="8" rx="1"/></svg>
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="6" height="18" rx="1"/><rect x="11" y="3" width="6" height="12" rx="1"/><rect x="19" y="3" width="2" height="8" rx="1"/></svg>
         Referral pipeline
       </button>
       <button onclick="showView('referral-detail', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         Referral detail
       </button>
       <button onclick="showView('orgs', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>
         Organizations
       </button>
       <button onclick="showView('reports', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 17 4-4 4 4 6-6"/></svg>
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 17 4-4 4 4 6-6"/></svg>
         Reports
       </button>
 
       <div class="pt-4 pb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Field</div>
       <button onclick="showView('bd-mobile', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
         BD rep mobile
       </button>
 
       <div class="pt-4 pb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Admin</div>
       <button onclick="showView('settings', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
-        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Settings
       </button>
     </nav>
 
     <div class="mt-auto p-3 border-t border-slate-200">
-      <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-3">
+      <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-3 mb-2">
         <div class="flex items-center gap-2 mb-1">
           <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full pulse-dot"></div>
-          <div class="text-xs font-semibold text-emerald-900">HIPAA · WorkOS auth</div>
+          <div class="text-xs font-semibold text-emerald-900">HIPAA · WorkOS SSO</div>
         </div>
         <div class="text-[11px] text-emerald-800 leading-snug">AWS RDS · KMS encrypted · Bedrock AI · BAA chain verified</div>
+      </div>
+      <div class="flex items-center justify-between px-1">
+        <div class="text-[10px] text-slate-400">powered by</div>
+        <div class="text-[10px] font-bold text-slate-600 tracking-tight">Christina CRM<span class="text-emerald-500">.</span></div>
       </div>
     </div>
   </aside>
@@ -162,34 +202,35 @@
     <div id="view-dashboard" class="view active p-6 max-w-7xl">
       <div class="flex items-end justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p class="text-sm text-slate-500 mt-0.5">Wednesday, April 15 · Good morning, Clay</p>
+          <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
+          <p class="text-sm text-slate-500 mt-0.5">Wednesday, April 23 &middot; Good morning, Clay</p>
         </div>
         <div class="flex gap-2">
-          <select class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5"><option>Last 7 days</option><option>Last 30 days</option></select>
+          <select aria-label="Date range" class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5"><option>Last 7 days</option><option>Last 30 days</option><option>QTD</option></select>
           <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">Export</button>
+          <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">Schedule</button>
         </div>
       </div>
 
       <div class="grid grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
           <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">New referrals</div><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">+18%</span></div>
-          <div class="text-2xl font-bold text-slate-900">34</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">34</div>
           <div class="text-[11px] text-slate-500 mt-1">vs 29 last week</div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
           <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">Conversion to SOC</div><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">+4.2pt</span></div>
-          <div class="text-2xl font-bold text-slate-900">72%</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">72%</div>
           <div class="text-[11px] text-slate-500 mt-1">industry avg: 58%</div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
           <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">1st-pass approval</div><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">+31%</span></div>
-          <div class="text-2xl font-bold text-slate-900">89%</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">89%</div>
           <div class="text-[11px] text-slate-500 mt-1">scrubber wedge live</div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
           <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">Active episodes</div><span class="text-[10px] font-semibold text-slate-600 bg-slate-100 rounded px-1.5 py-0.5">stable</span></div>
-          <div class="text-2xl font-bold text-slate-900">127</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">127</div>
           <div class="text-[11px] text-slate-500 mt-1">89 Medicare · 38 Medi-Cal</div>
         </div>
       </div>
@@ -203,7 +244,7 @@
               <span class="flex items-center gap-1.5"><span class="w-2 h-2 bg-slate-300 rounded-full"></span>Admitted</span>
             </div>
           </div>
-          <svg viewBox="0 0 600 200" class="w-full h-48">
+          <svg viewBox="0 0 600 200" class="w-full h-48" role="img" aria-label="Referral velocity chart, synthetic data">
             <defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(16 185 129)" stop-opacity="0.25"/><stop offset="100%" stop-color="rgb(16 185 129)" stop-opacity="0"/></linearGradient></defs>
             <g stroke="rgb(226 232 240)" stroke-width="1"><line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="90" x2="600" y2="90"/><line x1="0" y1="140" x2="600" y2="140"/><line x1="0" y1="190" x2="600" y2="190"/></g>
             <path d="M 20 150 L 60 130 L 100 140 L 140 100 L 180 110 L 220 75 L 260 85 L 300 60 L 340 70 L 380 50 L 420 65 L 460 40 L 500 55 L 540 30 L 580 45 L 580 190 L 20 190 Z" fill="url(#grad)"/>
@@ -214,11 +255,75 @@
         <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow">
           <h3 class="text-sm font-semibold text-slate-900 mb-4">Top referral sources</h3>
           <div class="space-y-3">
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Mercy General</span><span class="text-slate-500">12</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 95%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Sutter Roseville</span><span class="text-slate-500">9</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 72%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Pine Ridge SNF</span><span class="text-slate-500">6</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 48%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Dr. Chen Cardiology</span><span class="text-slate-500">4</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 32%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Mercy General Hospital</span><span class="text-slate-500 tabular-nums">12</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 95%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Sutter Roseville</span><span class="text-slate-500 tabular-nums">9</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 72%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">UC Davis Medical Center</span><span class="text-slate-500 tabular-nums">7</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 56%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Pine Ridge SNF</span><span class="text-slate-500 tabular-nums">6</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 48%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Kaiser South Sacramento</span><span class="text-slate-500 tabular-nums">5</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 40%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Dr. Chen Cardiology</span><span class="text-slate-500 tabular-nums">4</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 32%"></div></div></div>
           </div>
+        </div>
+      </div>
+
+      <!-- Heatmap + activity -->
+      <div class="grid grid-cols-3 gap-4">
+        <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
+          <div class="flex items-center justify-between mb-4">
+            <div><h3 class="text-sm font-semibold text-slate-900">Intake heatmap</h3><p class="text-xs text-slate-500 mt-0.5">When referrals arrive by weekday and hour &middot; darker = more</p></div>
+            <div class="flex items-center gap-1 text-[10px] text-slate-500">less <span class="w-3 h-3 rounded heat-0"></span><span class="w-3 h-3 rounded heat-1"></span><span class="w-3 h-3 rounded heat-2"></span><span class="w-3 h-3 rounded heat-3"></span><span class="w-3 h-3 rounded heat-4"></span> more</div>
+          </div>
+          <div class="grid grid-cols-[auto_repeat(12,_1fr)] gap-1 text-[10px] text-slate-400 tabular-nums">
+            <div></div>
+            <div class="text-center">8a</div><div class="text-center">9a</div><div class="text-center">10a</div><div class="text-center">11a</div><div class="text-center">12p</div><div class="text-center">1p</div><div class="text-center">2p</div><div class="text-center">3p</div><div class="text-center">4p</div><div class="text-center">5p</div><div class="text-center">6p</div><div class="text-center">7p</div>
+            <div class="pr-1">Mon</div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-0"></div>
+            <div class="pr-1">Tue</div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div>
+            <div class="pr-1">Wed</div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-0"></div>
+            <div class="pr-1">Thu</div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-0"></div>
+            <div class="pr-1">Fri</div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-4"></div><div class="h-6 rounded heat-3"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-1"></div>
+            <div class="pr-1">Sat</div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+            <span class="text-slate-500">Peak: <b class="text-slate-900">Fri 10&ndash;11 AM</b> discharge surge</span>
+            <button class="text-emerald-700 font-semibold">Staff up intake &rarr;</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-slate-900">Activity</h3>
+            <span class="text-[10px] text-slate-500">real-time</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div class="flex gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
+              <div class="flex-1"><div><b class="text-slate-900">Sarah Lopez RN</b> admitted <span class="text-slate-600">Jane Doe (PT-001)</span></div><div class="text-[10px] text-slate-400 mt-0.5">2 min ago</div></div>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 shrink-0"></div>
+              <div class="flex-1"><div><b class="text-slate-900">Stedi 270/271</b> verified <span class="text-slate-600">PT-018</span></div><div class="text-[10px] text-slate-400 mt-0.5">8 min ago</div></div>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0"></div>
+              <div class="flex-1"><div><b class="text-slate-900">Scrubber</b> flagged <span class="text-slate-600">missing F2F on PT-022</span></div><div class="text-[10px] text-slate-400 mt-0.5">14 min ago</div></div>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
+              <div class="flex-1"><div><b class="text-slate-900">Fax</b> from Sutter Roseville parsed</div><div class="text-[10px] text-slate-400 mt-0.5">18 min ago</div></div>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1.5 shrink-0"></div>
+              <div class="flex-1"><div><b class="text-slate-900">Clay Ikeem</b> logged BD visit at Mercy</div><div class="text-[10px] text-slate-400 mt-0.5">1 hr ago</div></div>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0"></div>
+              <div class="flex-1"><div><b class="text-slate-900">Denial alert</b> &mdash; Noridian rejected 2 claims on G0299</div><div class="text-[10px] text-slate-400 mt-0.5">2 hr ago</div></div>
+            </div>
+            <div class="flex gap-2">
+              <div class="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0"></div>
+              <div class="flex-1"><div><b class="text-slate-900">Audit log</b> exported by Admin</div><div class="text-[10px] text-slate-400 mt-0.5">4 hr ago</div></div>
+            </div>
+          </div>
+          <button class="mt-4 w-full text-xs font-semibold text-emerald-700 border-t border-slate-100 pt-3">View full audit trail &rarr;</button>
         </div>
       </div>
     </div>
@@ -226,41 +331,87 @@
     <!-- ============ INTAKE INBOX ============ -->
     <div id="view-inbox" class="view p-6 max-w-7xl">
       <div class="flex items-end justify-between mb-6">
-        <div><h1 class="text-2xl font-bold text-slate-900">Intake inbox</h1><p class="text-sm text-slate-500 mt-0.5">Faxes, emails, and e-referrals waiting to be triaged · parsed on AWS Bedrock</p></div>
+        <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Intake inbox</h1><p class="text-sm text-slate-500 mt-0.5">Faxes, emails, and e-referrals waiting to be triaged &middot; parsed on AWS Bedrock</p></div>
         <div class="flex gap-2">
+          <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[11px] font-medium">
+            <button class="subnav-item active px-2.5 py-1 rounded-md">All (7)</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Needs review (2)</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">High conf (4)</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Dupes (1)</button>
+          </div>
           <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5">Sort: Newest</button>
           <button class="text-xs font-semibold bg-emerald-600 text-white rounded-lg px-3 py-1.5">Auto-triage all</button>
         </div>
       </div>
       <div class="bg-white rounded-xl border border-slate-200 card-shadow overflow-hidden">
         <div class="divide-y divide-slate-100">
-          <div class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
-            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Sutter Roseville — Case Mgmt</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">HIGH CONF</span></div>
-              <div class="text-xs text-slate-600 mb-2"><b>R.K., 82 M</b> · Post-op right hip replacement · Medicare Part A · SN+PT+OT</div>
-              <div class="text-[11px] text-slate-500">Fax · 18 min ago · Bedrock extracted 12 fields</div>
+              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Sutter Roseville &mdash; Case Mgmt</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">HIGH CONF 94%</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>Jane Doe (PT-001), 82 F</b> &middot; DOB 01/15/1945 &middot; MRN DEMO-4821 &middot; Post-op right hip replacement &middot; Medicare Part A &middot; SN + PT + OT &middot; Dr. Sarah Chen NPI <span class="tabular-nums">1234567890</span></div>
+              <div class="text-[11px] text-slate-500">Fax &middot; 18 min ago &middot; Bedrock extracted 12 fields &middot; 3 pages</div>
             </div>
-            <button onclick="showView('referral-detail', document.querySelectorAll('.nav-item')[3])" class="text-xs font-semibold text-emerald-700 shrink-0">Open →</button>
+            <button onclick="showView('referral-detail', document.querySelectorAll('.nav-item')[3])" class="text-xs font-semibold text-emerald-700 shrink-0">Open &rarr;</button>
           </div>
-          <div class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
-            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+          <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Mercy General — Dr. Chen</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span></div>
-              <div class="text-xs text-slate-600 mb-2"><b>J.M., 78 F</b> · CHF exacerbation · Medicare + Humana MA · 270/271 verified via Stedi</div>
-              <div class="text-[11px] text-slate-500">Email · 32 min ago</div>
+              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Mercy General &mdash; Dr. Chen</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">HIGH CONF 91%</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>John Sample (PT-002), 78 F</b> &middot; DOB 04/02/1947 &middot; MRN DEMO-4822 &middot; CHF exacerbation &middot; Medicare + Humana MA &middot; 270/271 verified via Stedi &middot; Home O2</div>
+              <div class="text-[11px] text-slate-500">Email &middot; 32 min ago &middot; NPI 1029384756</div>
             </div>
-            <button class="text-xs font-semibold text-emerald-700 shrink-0">Accept →</button>
+            <button class="text-xs font-semibold text-emerald-700 shrink-0">Accept &rarr;</button>
           </div>
-          <div class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
-            <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Pine Ridge SNF</span><span class="text-[10px] font-semibold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">NEEDS REVIEW</span></div>
-              <div class="text-xs text-slate-600 mb-2"><b>H.T., 71 M</b> · Dementia · Medi-Cal pending · <span class="text-amber-700 font-semibold">physician signature unverified</span></div>
-              <div class="text-[11px] text-slate-500">Fax · 1h ago</div>
+              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Pine Ridge SNF</span><span class="text-[10px] font-semibold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">NEEDS REVIEW</span><span class="text-[10px] font-semibold bg-slate-100 text-slate-600 rounded px-1.5 py-0.5">CONF 62%</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>Patient Demo-3 (PT-003), 71 M</b> &middot; DOB 06/21/1954 &middot; MRN DEMO-4823 &middot; Vascular dementia &middot; Medi-Cal pending &middot; <span class="text-amber-700 font-semibold">physician signature unverified</span></div>
+              <div class="text-[11px] text-slate-500">Fax &middot; 1 hr ago &middot; 2 pages</div>
             </div>
-            <button class="text-xs font-semibold text-amber-700 shrink-0">Review →</button>
+            <button class="text-xs font-semibold text-amber-700 shrink-0">Review &rarr;</button>
           </div>
+          <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">UC Davis Medical Center</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">HIGH CONF 97%</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>Jane Sample (PT-004), 69 F</b> &middot; DOB 11/08/1956 &middot; MRN DEMO-4824 &middot; Diabetes Type II + stage 2 wound R heel &middot; UHC MA &middot; SN + wound care 3x/wk</div>
+              <div class="text-[11px] text-slate-500">Epic e-referral &middot; 2 hr ago &middot; NPI 1765432109</div>
+            </div>
+            <button class="text-xs font-semibold text-emerald-700 shrink-0">Accept &rarr;</button>
+          </div>
+          <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Kaiser South Sacramento</span><span class="text-[10px] font-semibold bg-red-100 text-red-700 rounded px-1.5 py-0.5">POSSIBLE DUPE</span><span class="text-[10px] font-semibold bg-slate-100 text-slate-600 rounded px-1.5 py-0.5">95% match PT-001</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>J. Doe, 82 F</b> &middot; DOB 01/15/1945 &middot; MRN KAISER-99812 &middot; Matches existing Sutter referral &mdash; merge or reject</div>
+              <div class="text-[11px] text-slate-500">Fax &middot; 3 hr ago &middot; Bedrock flagged deduplication</div>
+            </div>
+            <button class="text-xs font-semibold text-red-700 shrink-0">Resolve &rarr;</button>
+          </div>
+          <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Dr. Patel Internal Medicine</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">HIGH CONF 89%</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>Patient PT-006, 74 M</b> &middot; DOB 03/12/1951 &middot; MRN DEMO-4826 &middot; COPD &middot; Medicare &middot; SN + RT &middot; Nebulizer training needed</div>
+              <div class="text-[11px] text-slate-500">Email &middot; 5 hr ago &middot; NPI 1847362514</div>
+            </div>
+            <button class="text-xs font-semibold text-emerald-700 shrink-0">Accept &rarr;</button>
+          </div>
+          <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Mercy San Juan Medical Center</span><span class="text-[10px] font-semibold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">NEEDS REVIEW</span><span class="text-[10px] font-semibold bg-slate-100 text-slate-600 rounded px-1.5 py-0.5">CONF 71%</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>Patient PT-007, 85 F</b> &middot; DOB 08/30/1940 &middot; MRN DEMO-4827 &middot; CVA left hemi &middot; Medicare + Anthem MA &middot; SN + PT + ST &middot; <span class="text-amber-700 font-semibold">F2F date ambiguous &mdash; 4/12 or 4/22?</span></div>
+              <div class="text-[11px] text-slate-500">Fax &middot; 7 hr ago &middot; 5 pages &middot; OCR partial</div>
+            </div>
+            <button class="text-xs font-semibold text-amber-700 shrink-0">Review &rarr;</button>
+          </div>
+        </div>
+        <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+          <span>Showing 7 of 7 &middot; Auto-refresh on</span>
+          <span>Bedrock Sonnet 4.6 &middot; avg latency 1.4s</span>
         </div>
       </div>
     </div>
@@ -268,115 +419,171 @@
     <!-- ============ PIPELINE ============ -->
     <div id="view-pipeline" class="view p-6">
       <div class="flex items-end justify-between mb-6">
-        <div><h1 class="text-2xl font-bold text-slate-900">Referral pipeline</h1><p class="text-sm text-slate-500 mt-0.5">Drag to move. Click a card for full detail.</p></div>
+        <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Referral pipeline</h1><p class="text-sm text-slate-500 mt-0.5">Drag to move &middot; Click a card for full detail &middot; WIP limit highlights red over 10</p></div>
+        <div class="flex gap-2">
+          <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[11px] font-medium">
+            <button class="subnav-item active px-2.5 py-1 rounded-md">All lines</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Home Health</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Hospice</button>
+          </div>
+          <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5">Owner: All</button>
+        </div>
       </div>
-      <div class="flex gap-4 overflow-x-auto pb-4">
+      <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-thin">
+        <!-- NEW -->
         <div class="w-72 shrink-0">
-          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-400"></span><span class="text-xs font-semibold text-slate-700 uppercase">New</span><span class="text-xs text-slate-500">3</span></div></div>
+          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-400"></span><span class="text-xs font-semibold text-slate-700 uppercase">New</span><span class="text-xs text-slate-500 tabular-nums">4</span></div><span class="text-[10px] text-slate-400">avg 2h</span></div>
           <div class="space-y-2">
-            <div onclick="showView('referral-detail', document.querySelectorAll('.nav-item')[3])" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">R.K., 82 M</div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
-              <div class="text-xs text-slate-600 mb-2">Post-op right hip · SN+PT+OT</div>
+            <div data-demo="true" onclick="showView('referral-detail', document.querySelectorAll('.nav-item')[3])" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Jane Doe (PT-001)</div><div class="text-[10px] text-slate-400">82 F · DOB 01/15/45</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+              <div class="text-xs text-slate-600 mb-2">Post-op right hip · SN + PT + OT</div>
               <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Sutter Roseville</span><span>18m</span></div>
             </div>
-            <div class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">L.S., 69 F</div><span class="text-[10px] font-semibold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5">UHC MA</span></div>
-              <div class="text-xs text-slate-600 mb-2">Diabetes + wound care</div>
-              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Dr. Patel</span><span>6h</span></div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Jane Sample (PT-004)</div><div class="text-[10px] text-slate-400">69 F · DOB 11/08/56</div></div><span class="text-[10px] font-semibold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5">UHC MA</span></div>
+              <div class="text-xs text-slate-600 mb-2">Diabetes + wound care R heel</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>UC Davis</span><span>2h</span></div>
             </div>
-            <div class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">M.R., 68 F</div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-006</div><div class="text-[10px] text-slate-400">74 M · DOB 03/12/51</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
               <div class="text-xs text-slate-600 mb-2">COPD · SN + RT</div>
-              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Kaiser South</span><span>5h</span></div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Dr. Patel IM</span><span>5h</span></div>
+            </div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-008</div><div class="text-[10px] text-slate-400">68 F · DOB 09/04/57</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+              <div class="text-xs text-slate-600 mb-2">CHF · SN + O2</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Kaiser South</span><span>6h</span></div>
             </div>
           </div>
         </div>
+        <!-- ELIGIBILITY -->
         <div class="w-72 shrink-0">
-          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span><span class="text-xs font-semibold text-slate-700 uppercase">Eligibility</span><span class="text-xs text-slate-500">2</span></div></div>
+          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span><span class="text-xs font-semibold text-slate-700 uppercase">Eligibility</span><span class="text-xs text-slate-500 tabular-nums">3</span></div><span class="text-[10px] text-slate-400">Stedi · auto</span></div>
           <div class="space-y-2">
-            <div class="bg-white rounded-lg border border-amber-200 p-3 card-shadow hover-lift cursor-pointer ring-1 ring-amber-100">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">H.T., 71 M</div><span class="text-[10px] font-semibold bg-red-100 text-red-700 rounded px-1.5 py-0.5">FAILED</span></div>
+            <div data-demo="true" class="bg-white rounded-lg border border-amber-200 p-3 card-shadow hover-lift cursor-pointer ring-1 ring-amber-100">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-003</div><div class="text-[10px] text-slate-400">71 M · DOB 06/21/54</div></div><span class="text-[10px] font-semibold bg-red-100 text-red-700 rounded px-1.5 py-0.5">FAILED</span></div>
               <div class="text-xs text-slate-600 mb-2">Stedi 270/271 returned not-enrolled</div>
-              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Pine Ridge</span><span class="text-red-600 font-medium">action</span></div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Pine Ridge SNF</span><span class="text-red-600 font-medium">action</span></div>
             </div>
-            <div class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">A.B., 81 F</div><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">Verified</span></div>
-              <div class="text-xs text-slate-600 mb-2">Wound care</div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-010</div><div class="text-[10px] text-slate-400">81 F · DOB 12/02/44</div></div><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">Verified</span></div>
+              <div class="text-xs text-slate-600 mb-2">Wound care &middot; post-sacral decub</div>
               <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Kaiser South</span><span>4h</span></div>
             </div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-007</div><div class="text-[10px] text-slate-400">85 F · DOB 08/30/40</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Pending</span></div>
+              <div class="text-xs text-slate-600 mb-2">CVA left hemi &middot; Anthem MA</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Mercy San Juan</span><span>7h</span></div>
+            </div>
           </div>
         </div>
+        <!-- SOC SCHEDULED -->
         <div class="w-72 shrink-0">
-          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs font-semibold text-slate-700 uppercase">SOC scheduled</span><span class="text-xs text-slate-500">2</span></div></div>
+          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-xs font-semibold text-slate-700 uppercase">SOC scheduled</span><span class="text-xs text-slate-500 tabular-nums">3</span></div><span class="text-[10px] text-slate-400">next 72h</span></div>
           <div class="space-y-2">
-            <div class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">J.M., 78 F</div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
-              <div class="text-xs text-slate-600 mb-2">CHF · home O2 · SN+PT</div>
-              <div class="flex items-center justify-between text-[11px]"><span class="text-emerald-700 font-semibold">SOC 4/16 10am</span><span class="text-slate-500">Lopez</span></div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">John Sample (PT-002)</div><div class="text-[10px] text-slate-400">78 F · DOB 04/02/47</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+              <div class="text-xs text-slate-600 mb-2">CHF &middot; home O2 &middot; SN + PT</div>
+              <div class="flex items-center justify-between text-[11px]"><span class="text-emerald-700 font-semibold">SOC 4/24 10a</span><span class="text-slate-500">Lopez RN</span></div>
             </div>
-            <div class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">F.G., 77 M</div><span class="text-[10px] font-semibold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5">Medi-Cal</span></div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-012</div><div class="text-[10px] text-slate-400">77 M · DOB 05/17/48</div></div><span class="text-[10px] font-semibold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5">Medi-Cal</span></div>
               <div class="text-xs text-slate-600 mb-2">Diabetes + renal</div>
-              <div class="flex items-center justify-between text-[11px]"><span class="text-emerald-700 font-semibold">SOC 4/17 2pm</span><span class="text-slate-500">Kim</span></div>
+              <div class="flex items-center justify-between text-[11px]"><span class="text-emerald-700 font-semibold">SOC 4/25 2p</span><span class="text-slate-500">Kim RN</span></div>
+            </div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-014</div><div class="text-[10px] text-slate-400">72 F · DOB 02/19/53</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+              <div class="text-xs text-slate-600 mb-2">Post-CABG &middot; cardiac rehab</div>
+              <div class="flex items-center justify-between text-[11px]"><span class="text-emerald-700 font-semibold">SOC 4/25 9a</span><span class="text-slate-500">Lopez RN</span></div>
             </div>
           </div>
         </div>
+        <!-- ADMITTED -->
         <div class="w-72 shrink-0">
-          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-xs font-semibold text-slate-700 uppercase">Admitted</span><span class="text-xs text-slate-500">2</span></div></div>
+          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span><span class="text-xs font-semibold text-slate-700 uppercase">Admitted</span><span class="text-xs text-slate-500 tabular-nums">4</span></div><span class="text-[10px] text-slate-400">active 127</span></div>
           <div class="space-y-2">
-            <div class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">P.K., 84 F</div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
-              <div class="text-xs text-slate-600 mb-2">CHF · 60-day active</div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-015</div><div class="text-[10px] text-slate-400">84 F · DOB 11/22/40</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+              <div class="text-xs text-slate-600 mb-2">CHF &middot; 60-day active</div>
               <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Day 12/60</span><span>Mercy</span></div>
             </div>
-            <div class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
-              <div class="flex justify-between items-start mb-2"><div class="font-semibold text-sm">E.R., 72 M</div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-016</div><div class="text-[10px] text-slate-400">72 M · DOB 07/08/52</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
               <div class="text-xs text-slate-600 mb-2">Wound care post-op</div>
               <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Day 4/60</span><span>Sutter</span></div>
+            </div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-017</div><div class="text-[10px] text-slate-400">79 F · DOB 09/29/45</div></div><span class="text-[10px] font-semibold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5">Medi-Cal</span></div>
+              <div class="text-xs text-slate-600 mb-2">Diabetes education</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Day 22/60</span><span>UC Davis</span></div>
+            </div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-018</div><div class="text-[10px] text-slate-400">88 M · DOB 01/03/37</div></div><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare</span></div>
+              <div class="text-xs text-slate-600 mb-2">Fall precaution &middot; PT</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Day 38/60</span><span>Kaiser</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- RECERT -->
+        <div class="w-72 shrink-0">
+          <div class="flex items-center justify-between mb-3 px-1"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-violet-500"></span><span class="text-xs font-semibold text-slate-700 uppercase">Recert / Discharge</span><span class="text-xs text-slate-500 tabular-nums">2</span></div><span class="text-[10px] text-slate-400">within 10d</span></div>
+          <div class="space-y-2">
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-020</div><div class="text-[10px] text-slate-400">81 F · DOB 03/15/43</div></div><span class="text-[10px] font-semibold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">Recert due</span></div>
+              <div class="text-xs text-slate-600 mb-2">Day 55/60 &middot; OASIS due 4/27</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Kim RN</span><span class="text-amber-600">5d</span></div>
+            </div>
+            <div data-demo="true" class="bg-white rounded-lg border border-slate-200 p-3 card-shadow hover-lift cursor-pointer">
+              <div class="flex justify-between items-start mb-2"><div><div class="font-semibold text-sm">Patient PT-021</div><div class="text-[10px] text-slate-400">76 M · DOB 10/11/48</div></div><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">Discharge</span></div>
+              <div class="text-xs text-slate-600 mb-2">Goals met &middot; wound healed</div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500"><span>Lopez RN</span><span>4/26</span></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ============ REFERRAL DETAIL (NEW) ============ -->
+    <!-- ============ REFERRAL DETAIL ============ -->
     <div id="view-referral-detail" class="view p-6 max-w-7xl">
       <div class="flex items-center gap-2 text-xs text-slate-500 mb-4">
         <button class="hover:text-slate-900">Pipeline</button>
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
         <button class="hover:text-slate-900">New</button>
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
         <span class="text-slate-900 font-medium">Referral RK-4821</span>
+        <span class="ml-auto text-[10px] bg-slate-100 text-slate-600 rounded px-2 py-0.5 font-mono">id: ref_01HXDEMO4821</span>
       </div>
 
       <!-- Patient header -->
-      <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5 mb-4">
+      <div data-demo="true" class="bg-white rounded-xl border border-slate-200 card-shadow p-5 mb-4">
         <div class="flex items-start justify-between gap-4">
           <div class="flex items-start gap-4">
-            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">RK</div>
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">JD</div>
             <div>
-              <div class="flex items-center gap-2 mb-1">
-                <h1 class="text-2xl font-bold text-slate-900">R.K., 82 M</h1>
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Jane Doe <span class="text-slate-400 font-normal text-lg">(PT-001)</span></h1>
+                <span class="text-[10px] font-semibold bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">82 F</span>
                 <span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare Part A</span>
-                <span class="text-[10px] font-semibold bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">MRN XXXXX</span>
+                <span class="text-[10px] font-semibold bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">MRN DEMO-4821</span>
+                <span class="text-[10px] font-semibold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">PHI masked</span>
               </div>
-              <div class="text-sm text-slate-600">Date of birth redacted · Sacramento, CA 95823 · Primary: Dr. Sarah Chen MD (NPI 1234567890)</div>
-              <div class="text-xs text-slate-500 mt-1">PHI shown to authorized roles only · view logged to audit trail</div>
+              <div class="text-sm text-slate-600">DOB 01/15/1945 &middot; Sacramento, CA 95823 &middot; Primary: Dr. Sarah Chen MD <span class="font-mono text-xs">(NPI 1234567890)</span></div>
+              <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-7a2 2 0 00-2-2H6a2 2 0 00-2 2v7a2 2 0 002 2zm10-9V7a4 4 0 00-8 0v4h8z"/></svg>PHI shown to authorized roles only &middot; this view was logged to the audit trail (entry #<span class="font-mono">4821-v7</span>)</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
             <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">Assign nurse</button>
-            <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">Print H&P</button>
-            <button class="text-xs font-semibold bg-emerald-600 text-white rounded-lg px-3 py-1.5">Move to eligibility →</button>
+            <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">Print H&amp;P</button>
+            <button class="text-xs font-semibold bg-emerald-600 text-white rounded-lg px-3 py-1.5">Move to eligibility &rarr;</button>
           </div>
         </div>
 
         <div class="grid grid-cols-5 gap-4 mt-5 pt-5 border-t border-slate-100">
-          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Source</div><div class="text-sm font-medium text-slate-900">Sutter Roseville</div><div class="text-[11px] text-slate-500">Case Mgmt · Ref #RK-4821</div></div>
+          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Source</div><div class="text-sm font-medium text-slate-900">Sutter Roseville</div><div class="text-[11px] text-slate-500">Case Mgmt &middot; Ref #RK-4821</div></div>
           <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Primary dx</div><div class="text-sm font-medium text-slate-900">Z47.1</div><div class="text-[11px] text-slate-500">Aftercare, joint replacement</div></div>
-          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Discharge</div><div class="text-sm font-medium text-slate-900">4/15 · 2:00 PM</div><div class="text-[11px] text-slate-500">Home w/ HH</div></div>
-          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Eligibility</div><div class="text-sm font-medium text-emerald-700">Verified via Stedi</div><div class="text-[11px] text-slate-500">270/271 · 2 min ago</div></div>
-          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Denial risk</div><div class="text-sm font-medium text-emerald-700">Low · 12/100</div><div class="text-[11px] text-slate-500">Scrubber OK</div></div>
+          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Discharge</div><div class="text-sm font-medium text-slate-900">4/23 &middot; 2:00 PM</div><div class="text-[11px] text-slate-500">Home w/ HH</div></div>
+          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Eligibility</div><div class="text-sm font-medium text-emerald-700">Verified via Stedi</div><div class="text-[11px] text-slate-500">270/271 &middot; 2 min ago</div></div>
+          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Denial risk</div><div class="text-sm font-medium text-emerald-700">Low &middot; 12/100</div><div class="text-[11px] text-slate-500">Scrubber OK</div></div>
         </div>
       </div>
 
@@ -385,41 +592,42 @@
         <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5">
           <h3 class="text-sm font-semibold text-slate-900 mb-3">Clinical summary</h3>
           <div class="space-y-3 text-xs">
-            <div><div class="font-semibold text-slate-700 mb-1">Orders</div><div class="text-slate-600 space-y-1"><div>• SN 2-3x/wk eval & treat</div><div>• PT 3x/wk gait training</div><div>• OT 2x/wk ADLs</div><div>• Home safety eval</div></div></div>
-            <div class="pt-3 border-t border-slate-100"><div class="font-semibold text-slate-700 mb-1">Meds (from NOE)</div><div class="text-slate-600 space-y-1"><div>• Oxycodone 5mg q4h PRN</div><div>• Enoxaparin 40mg qd × 14d</div><div>• Acetaminophen 650mg q6h PRN</div></div></div>
+            <div><div class="font-semibold text-slate-700 mb-1">Orders</div><div class="text-slate-600 space-y-1"><div>&bull; SN 2&ndash;3x/wk eval &amp; treat</div><div>&bull; PT 3x/wk gait training</div><div>&bull; OT 2x/wk ADLs</div><div>&bull; Home safety eval</div></div></div>
+            <div class="pt-3 border-t border-slate-100"><div class="font-semibold text-slate-700 mb-1">Meds (from NOE)</div><div class="text-slate-600 space-y-1"><div>&bull; Oxycodone 5mg q4h PRN</div><div>&bull; Enoxaparin 40mg qd &times; 14d</div><div>&bull; Acetaminophen 650mg q6h PRN</div></div></div>
             <div class="pt-3 border-t border-slate-100"><div class="font-semibold text-slate-700 mb-1">Comorbidities</div><div class="flex flex-wrap gap-1"><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">HTN</span><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">Type 2 DM</span><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">Hyperlipidemia</span></div></div>
+            <div class="pt-3 border-t border-slate-100"><div class="font-semibold text-slate-700 mb-1">Face-to-face</div><div class="text-slate-600">Dr. Chen &middot; 4/14 &middot; <span class="text-emerald-700 font-semibold">signed</span></div></div>
           </div>
         </div>
 
         <!-- Timeline -->
         <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5">
-          <h3 class="text-sm font-semibold text-slate-900 mb-4">Timeline</h3>
+          <h3 class="text-sm font-semibold text-slate-900 mb-4">Timeline &amp; audit trail</h3>
           <div class="relative pl-6">
             <div class="timeline-line"></div>
             <div class="relative mb-4">
-              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
               <div class="text-xs font-semibold text-slate-900">Fax received</div>
-              <div class="text-[11px] text-slate-500">4/15 · 9:42 AM · 3 pages</div>
+              <div class="text-[11px] text-slate-500">4/23 &middot; 9:42 AM &middot; 3 pages &middot; from 916-555-0138</div>
             </div>
             <div class="relative mb-4">
-              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
               <div class="text-xs font-semibold text-slate-900">AI extracted 12 fields</div>
-              <div class="text-[11px] text-slate-500">4/15 · 9:42 AM · Bedrock Sonnet 4.6</div>
+              <div class="text-[11px] text-slate-500">4/23 &middot; 9:42 AM &middot; Bedrock Sonnet 4.6 &middot; conf 94%</div>
             </div>
             <div class="relative mb-4">
-              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
               <div class="text-xs font-semibold text-slate-900">Eligibility verified</div>
-              <div class="text-[11px] text-slate-500">4/15 · 9:44 AM · Stedi 270/271</div>
+              <div class="text-[11px] text-slate-500">4/23 &middot; 9:44 AM &middot; Stedi 270/271</div>
             </div>
             <div class="relative mb-4">
-              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+              <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
               <div class="text-xs font-semibold text-slate-900">Scrubber pass</div>
-              <div class="text-[11px] text-slate-500">4/15 · 9:45 AM · risk 12/100</div>
+              <div class="text-[11px] text-slate-500">4/23 &middot; 9:45 AM &middot; risk 12/100</div>
             </div>
             <div class="relative mb-4">
               <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-white border-2 border-blue-500"></div>
               <div class="text-xs font-semibold text-slate-900">Needs SOC scheduling</div>
-              <div class="text-[11px] text-blue-600">current step</div>
+              <div class="text-[11px] text-blue-600">current step &middot; SLA 22h left</div>
             </div>
             <div class="relative">
               <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-slate-200"></div>
@@ -427,26 +635,30 @@
               <div class="text-[11px] text-slate-400">pending</div>
             </div>
           </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[10px] text-slate-500 flex items-center justify-between">
+            <span>13 events &middot; 4 actors</span>
+            <button class="text-emerald-700 font-semibold">Full audit &rarr;</button>
+          </div>
         </div>
 
         <!-- Documents + notes -->
         <div class="space-y-4">
           <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5">
-            <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">Documents</h3><span class="text-[10px] text-slate-500">S3 · KMS-encrypted</span></div>
+            <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">Documents</h3><span class="text-[10px] text-slate-500">S3 &middot; KMS-encrypted</span></div>
             <div class="space-y-2">
               <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
-                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <div class="flex-1 min-w-0"><div class="text-xs font-medium text-slate-900 truncate">referral-packet.pdf</div><div class="text-[10px] text-slate-500">3 pages · 4/15</div></div>
+                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <div class="flex-1 min-w-0"><div class="text-xs font-medium text-slate-900 truncate">referral-packet.pdf</div><div class="text-[10px] text-slate-500">3 pages &middot; 4/23</div></div>
               </div>
               <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
-                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <div class="flex-1 min-w-0"><div class="text-xs font-medium text-slate-900 truncate">face-to-face.pdf</div><div class="text-[10px] text-slate-500">1 page · 4/15</div></div>
+                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <div class="flex-1 min-w-0"><div class="text-xs font-medium text-slate-900 truncate">face-to-face.pdf</div><div class="text-[10px] text-slate-500">1 page &middot; 4/22</div></div>
               </div>
               <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100">
-                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <div class="flex-1 min-w-0"><div class="text-xs font-medium text-slate-900 truncate">hospital-h&p.pdf</div><div class="text-[10px] text-slate-500">4 pages · 4/14</div></div>
+                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <div class="flex-1 min-w-0"><div class="text-xs font-medium text-slate-900 truncate">hospital-h&amp;p.pdf</div><div class="text-[10px] text-slate-500">4 pages &middot; 4/22</div></div>
               </div>
-              <button class="w-full flex items-center justify-center gap-1 text-xs text-emerald-700 font-medium py-2 border border-dashed border-slate-300 rounded-lg hover:bg-emerald-50"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Upload</button>
+              <button class="w-full flex items-center justify-center gap-1 text-xs text-emerald-700 font-medium py-2 border border-dashed border-slate-300 rounded-lg hover:bg-emerald-50"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Upload</button>
             </div>
           </div>
           <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5">
@@ -455,18 +667,18 @@
               <div class="flex gap-2">
                 <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center shrink-0">CI</div>
                 <div class="flex-1">
-                  <div class="text-xs text-slate-700"><b>Clay</b> · 10m ago</div>
-                  <div class="text-xs text-slate-600 mt-0.5">Family available 24/7, wife is primary caregiver. Home has stairs to entry.</div>
+                  <div class="text-xs text-slate-700"><b>Clay Ikeem</b> &middot; 10m ago</div>
+                  <div class="text-xs text-slate-600 mt-0.5">Family available 24/7, spouse is primary caregiver. Home has stairs to entry.</div>
                 </div>
               </div>
               <div class="flex gap-2">
                 <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center shrink-0">AI</div>
                 <div class="flex-1">
-                  <div class="text-xs text-slate-700"><b>Auto-note</b> · 18m ago</div>
+                  <div class="text-xs text-slate-700"><b>Auto-note</b> &middot; 18m ago</div>
                   <div class="text-xs text-slate-600 mt-0.5">Extracted dx Z47.1, confirmed with Sutter case mgmt notes. Confidence 94%.</div>
                 </div>
               </div>
-              <textarea rows="2" class="w-full text-xs border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500" placeholder="Add a note..."></textarea>
+              <textarea rows="2" aria-label="Add a note" class="w-full text-xs border border-slate-200 rounded-lg p-2 focus:outline-none focus:border-emerald-500" placeholder="Add a note&hellip;"></textarea>
             </div>
           </div>
         </div>
@@ -475,194 +687,321 @@
 
     <!-- ============ ORGANIZATIONS ============ -->
     <div id="view-orgs" class="view p-6 max-w-7xl">
-      <div class="flex items-end justify-between mb-6"><div><h1 class="text-2xl font-bold text-slate-900">Organizations</h1><p class="text-sm text-slate-500 mt-0.5">Referring hospitals, SNFs, and physician practices</p></div></div>
+      <div class="flex items-end justify-between mb-6"><div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Organizations</h1><p class="text-sm text-slate-500 mt-0.5">Referring hospitals, SNFs, and physician practices &middot; 47 tracked</p></div>
+        <div class="flex gap-2">
+          <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[11px] font-medium">
+            <button class="subnav-item active px-2.5 py-1 rounded-md">All</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Acute</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">SNF</button>
+            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Physician</button>
+          </div>
+          <button class="text-xs font-semibold bg-emerald-600 text-white rounded-lg px-3 py-1.5">+ Add org</button>
+        </div>
+      </div>
       <div class="bg-white rounded-xl border border-slate-200 card-shadow overflow-hidden">
         <table class="w-full text-sm">
           <thead class="bg-slate-50 border-b border-slate-200 text-[11px] uppercase text-slate-500">
-            <tr><th class="text-left font-semibold px-4 py-3">Organization</th><th class="text-left font-semibold px-4 py-3">Type</th><th class="text-right font-semibold px-4 py-3">30d</th><th class="text-right font-semibold px-4 py-3">Conv.</th><th class="text-left font-semibold px-4 py-3">Owner</th><th class="text-left font-semibold px-4 py-3">Last contact</th></tr>
+            <tr>
+              <th class="text-left font-semibold px-4 py-3">Organization</th>
+              <th class="text-left font-semibold px-4 py-3">Type</th>
+              <th class="text-left font-semibold px-4 py-3">NPI</th>
+              <th class="text-right font-semibold px-4 py-3">30d</th>
+              <th class="text-left font-semibold px-4 py-3">Trend</th>
+              <th class="text-right font-semibold px-4 py-3">Conv.</th>
+              <th class="text-left font-semibold px-4 py-3">Owner</th>
+              <th class="text-left font-semibold px-4 py-3">Last contact</th>
+              <th class="text-left font-semibold px-4 py-3"></th>
+            </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
-            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Mercy General Hospital</div><div class="text-[11px] text-slate-500">Sacramento</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-right font-semibold">12</td><td class="px-4 py-3 text-right text-emerald-700 font-semibold">83%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">3h · BD visit</td></tr>
-            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Sutter Roseville</div><div class="text-[11px] text-slate-500">Roseville</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-right font-semibold">9</td><td class="px-4 py-3 text-right text-emerald-700 font-semibold">78%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">yesterday</td></tr>
-            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Pine Ridge SNF</div><div class="text-[11px] text-slate-500">Folsom</div></td><td class="px-4 py-3 text-slate-600">SNF</td><td class="px-4 py-3 text-right font-semibold">6</td><td class="px-4 py-3 text-right text-amber-700 font-semibold">50%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">3h · BD visit</td></tr>
-            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Kaiser South</div><div class="text-[11px] text-slate-500">Sacramento</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-right font-semibold">3</td><td class="px-4 py-3 text-right text-emerald-700 font-semibold">67%</td><td class="px-4 py-3 text-slate-400">Unassigned</td><td class="px-4 py-3 text-red-600 text-xs font-medium">12d · stale</td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Mercy General Hospital</div><div class="text-[11px] text-slate-500">Sacramento &middot; 4001 J St</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1336287449</td><td class="px-4 py-3 text-right font-semibold tabular-nums">12</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,14 10,12 20,10 30,8 40,6 50,5 60,3" fill="none" stroke="rgb(16 185 129)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-emerald-700 font-semibold tabular-nums">83%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">3h &middot; BD visit</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5 font-semibold">TIER A</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Sutter Roseville Medical Center</div><div class="text-[11px] text-slate-500">Roseville &middot; 1 Medical Plaza Dr</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1598762349</td><td class="px-4 py-3 text-right font-semibold tabular-nums">9</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,10 10,12 20,8 30,10 40,7 50,6 60,5" fill="none" stroke="rgb(16 185 129)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-emerald-700 font-semibold tabular-nums">78%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">yesterday</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5 font-semibold">TIER A</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">UC Davis Medical Center</div><div class="text-[11px] text-slate-500">Sacramento &middot; 2315 Stockton Blvd</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1104857329</td><td class="px-4 py-3 text-right font-semibold tabular-nums">7</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,16 10,14 20,12 30,10 40,9 50,7 60,6" fill="none" stroke="rgb(16 185 129)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-emerald-700 font-semibold tabular-nums">71%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">4d</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5 font-semibold">TIER A</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Pine Ridge SNF</div><div class="text-[11px] text-slate-500">Folsom &middot; 800 Oak Ave Ct</div></td><td class="px-4 py-3 text-slate-600">SNF</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1847502869</td><td class="px-4 py-3 text-right font-semibold tabular-nums">6</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,8 10,9 20,10 30,11 40,12 50,13 60,14" fill="none" stroke="rgb(239 68 68)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-amber-700 font-semibold tabular-nums">50%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">3h &middot; BD visit</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-amber-100 text-amber-700 rounded px-1.5 py-0.5 font-semibold">TIER B</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Kaiser South Sacramento</div><div class="text-[11px] text-slate-500">Sacramento &middot; 6600 Bruceville Rd</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1306928159</td><td class="px-4 py-3 text-right font-semibold tabular-nums">5</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,12 10,11 20,13 30,10 40,8 50,9 60,7" fill="none" stroke="rgb(16 185 129)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-emerald-700 font-semibold tabular-nums">67%</td><td class="px-4 py-3 text-slate-400">Unassigned</td><td class="px-4 py-3 text-red-600 text-xs font-medium">12d &middot; stale</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-slate-100 text-slate-600 rounded px-1.5 py-0.5 font-semibold">TIER C</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Mercy San Juan Medical Center</div><div class="text-[11px] text-slate-500">Carmichael &middot; 6501 Coyle Ave</div></td><td class="px-4 py-3 text-slate-600">Acute</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1659302189</td><td class="px-4 py-3 text-right font-semibold tabular-nums">4</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,13 10,11 20,12 30,9 40,10 50,8 60,9" fill="none" stroke="rgb(16 185 129)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-emerald-700 font-semibold tabular-nums">65%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">6d</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-amber-100 text-amber-700 rounded px-1.5 py-0.5 font-semibold">TIER B</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Dr. Chen Cardiology</div><div class="text-[11px] text-slate-500">Sacramento &middot; physician practice</div></td><td class="px-4 py-3 text-slate-600">Physician</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1234567890</td><td class="px-4 py-3 text-right font-semibold tabular-nums">4</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,14 10,12 20,11 30,10 40,8 50,9 60,6" fill="none" stroke="rgb(16 185 129)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-emerald-700 font-semibold tabular-nums">100%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">1d</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5 font-semibold">TIER A</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Dr. Patel Internal Medicine</div><div class="text-[11px] text-slate-500">Elk Grove &middot; physician practice</div></td><td class="px-4 py-3 text-slate-600">Physician</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1847362514</td><td class="px-4 py-3 text-right font-semibold tabular-nums">3</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,12 10,13 20,11 30,12 40,10 50,11 60,9" fill="none" stroke="rgb(16 185 129)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-emerald-700 font-semibold tabular-nums">75%</td><td class="px-4 py-3">Clay I.</td><td class="px-4 py-3 text-xs">1h &middot; lunch visit</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-amber-100 text-amber-700 rounded px-1.5 py-0.5 font-semibold">TIER B</span></td></tr>
+            <tr class="hover:bg-slate-50 cursor-pointer"><td class="px-4 py-3"><div class="font-semibold text-slate-900">Eskaton Care Center Fair Oaks</div><div class="text-[11px] text-slate-500">Fair Oaks &middot; SNF / rehab</div></td><td class="px-4 py-3 text-slate-600">SNF</td><td class="px-4 py-3 text-slate-600 font-mono text-xs">1780954203</td><td class="px-4 py-3 text-right font-semibold tabular-nums">2</td><td class="px-4 py-3"><svg width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,10 10,11 20,10 30,12 40,11 50,10 60,11" fill="none" stroke="rgb(148 163 184)" stroke-width="1.5"/></svg></td><td class="px-4 py-3 text-right text-slate-700 font-semibold tabular-nums">55%</td><td class="px-4 py-3 text-slate-400">Unassigned</td><td class="px-4 py-3 text-xs">18d</td><td class="px-4 py-3 text-right"><span class="text-[10px] bg-slate-100 text-slate-600 rounded px-1.5 py-0.5 font-semibold">TIER C</span></td></tr>
+          </tbody>
+        </table>
+        <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+          <span>9 of 47 shown</span>
+          <span>Sorted by 30-day volume</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ REPORTS ============ -->
+    <div id="view-reports" class="view p-6 max-w-7xl">
+      <div class="flex items-end justify-between mb-6">
+        <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Reports</h1><p class="text-sm text-slate-500 mt-0.5">Custom and scheduled reports &middot; exports honor minimum-necessary PHI rules</p></div>
+        <div class="flex gap-2"><button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">New report</button><button class="text-xs font-semibold bg-emerald-600 text-white rounded-lg px-3 py-1.5">Schedule</button></div>
+      </div>
+      <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Operational</div>
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 17 4-4 4 4 6-6"/></svg></div><div class="font-semibold text-sm mb-1">Referral velocity</div><div class="text-xs text-slate-500">Time to SOC by source</div></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="font-semibold text-sm mb-1">BD rep scorecard</div><div class="text-xs text-slate-500">Visits / contacts / refs</div></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/></svg></div><div class="font-semibold text-sm mb-1">Payer mix</div><div class="text-xs text-slate-500">Medicare / Medi-Cal / MA</div></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg></div><div class="font-semibold text-sm mb-1">Scrubber catches</div><div class="text-xs text-slate-500">Denials prevented by AI</div></div>
+      </div>
+      <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Clinical &amp; compliance</div>
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 113 3L7 19l-4 1 1-4z"/></svg></div><div class="font-semibold text-sm mb-1">OASIS audit log</div><div class="text-xs text-slate-500">Assessments late &gt; 48h</div></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="font-semibold text-sm mb-1">F2F compliance</div><div class="text-xs text-slate-500">Face-to-face within 30d</div></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="font-semibold text-sm mb-1">HHCAHPS readiness</div><div class="text-xs text-slate-500">Survey-eligible census</div></div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="font-semibold text-sm mb-1">LUPA watch</div><div class="text-xs text-slate-500">Episodes at risk &lt;5 visits</div></div>
+      </div>
+      <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5">
+        <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">Recent exports</h3><span class="text-[10px] text-slate-500">Last 30 days &middot; 100% audit-logged</span></div>
+        <table class="w-full text-xs">
+          <thead class="text-[10px] uppercase text-slate-500 border-b border-slate-100"><tr><th class="text-left font-semibold py-2">Report</th><th class="text-left font-semibold py-2">Actor</th><th class="text-left font-semibold py-2">When</th><th class="text-left font-semibold py-2">Records</th><th class="text-left font-semibold py-2">PHI level</th></tr></thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr><td class="py-2">BD rep scorecard Q2</td><td class="py-2">Clay Ikeem</td><td class="py-2">2h ago</td><td class="py-2 tabular-nums">127</td><td class="py-2"><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">aggregate</span></td></tr>
+            <tr><td class="py-2">Referral velocity 30d</td><td class="py-2">Sarah Lopez RN</td><td class="py-2">yesterday</td><td class="py-2 tabular-nums">34</td><td class="py-2"><span class="text-[10px] bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">min-necessary</span></td></tr>
+            <tr><td class="py-2">F2F compliance 04/2026</td><td class="py-2">Clay Ikeem</td><td class="py-2">3d ago</td><td class="py-2 tabular-nums">89</td><td class="py-2"><span class="text-[10px] bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">full PHI</span></td></tr>
+            <tr><td class="py-2">Audit log CY-TD</td><td class="py-2">Compliance agent</td><td class="py-2">7d ago</td><td class="py-2 tabular-nums">4,821</td><td class="py-2"><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">metadata</span></td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- ============ REPORTS ============ -->
-    <div id="view-reports" class="view p-6">
-      <h1 class="text-2xl font-bold text-slate-900 mb-2">Reports</h1>
-      <p class="text-sm text-slate-500">Custom and scheduled reports · exports honor minimum-necessary PHI rules</p>
-      <div class="grid grid-cols-3 gap-4 mt-6">
-        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 17 4-4 4 4 6-6"/></svg></div><div class="font-semibold text-sm mb-1">Referral velocity</div><div class="text-xs text-slate-500">Time to SOC by source</div></div>
-        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="font-semibold text-sm mb-1">BD rep scorecard</div><div class="text-xs text-slate-500">Visits / contacts / refs</div></div>
-        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg></div><div class="font-semibold text-sm mb-1">Payer mix</div><div class="text-xs text-slate-500">Medicare / Medi-Cal / MA</div></div>
-        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow hover-lift cursor-pointer"><div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg></div><div class="font-semibold text-sm mb-1">Scrubber catches</div><div class="text-xs text-slate-500">Denials prevented by AI</div></div>
-      </div>
-    </div>
-
-    <!-- ============ BD MOBILE (NEW) ============ -->
+    <!-- ============ BD MOBILE ============ -->
     <div id="view-bd-mobile" class="view p-6">
-      <div class="mb-6">
-        <h1 class="text-2xl font-bold text-slate-900">BD rep mobile</h1>
-        <p class="text-sm text-slate-500 mt-0.5">Field app for BD reps visiting hospitals, SNFs, physician offices. Same app, mobile-optimized.</p>
+      <div class="mb-6 flex items-end justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 tracking-tight">BD rep mobile</h1>
+          <p class="text-sm text-slate-500 mt-0.5">Field app for BD reps visiting hospitals, SNFs, physician offices. Same app, mobile-optimized.</p>
+        </div>
+        <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[11px] font-medium" role="tablist" aria-label="Phone screens">
+          <button onclick="showPhone('route')" id="pbtn-route" class="subnav-item active px-2.5 py-1 rounded-md">Route</button>
+          <button onclick="showPhone('checkin')" id="pbtn-checkin" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Check-in</button>
+          <button onclick="showPhone('voice')" id="pbtn-voice" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Voice note</button>
+          <button onclick="showPhone('visits')" id="pbtn-visits" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Nurse visits</button>
+        </div>
       </div>
-      <div class="flex justify-center py-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl">
+      <div class="flex justify-center items-start gap-8 py-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl">
+        <!-- PHONE 1: swappable -->
         <div class="phone-frame">
           <div class="phone-screen">
             <div class="phone-notch"></div>
-            <!-- Phone status bar -->
-            <div class="flex items-center justify-between px-6 pt-2 text-[10px] font-semibold text-slate-900"><span>9:41</span><div class="flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M2 22h20V2L2 22z"/></svg><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><div class="w-5 h-2.5 border border-slate-900 rounded-sm"><div class="w-3/4 h-full bg-slate-900 rounded-sm"></div></div></div></div>
+            <div class="flex items-center justify-between px-6 pt-2 text-[10px] font-semibold text-slate-900"><span>9:41</span><div class="flex items-center gap-1"><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 22h20V2L2 22z"/></svg><svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg><div class="w-5 h-2.5 border border-slate-900 rounded-sm"><div class="w-3/4 h-full bg-slate-900 rounded-sm"></div></div></div></div>
 
-            <!-- App header -->
-            <div class="px-5 pt-4 pb-3">
-              <div class="flex items-center justify-between mb-4">
-                <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">CI</div>
-                <div class="text-center"><div class="text-[10px] text-slate-500">Meridian Home Health</div></div>
-                <button class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg></button>
+            <!-- ROUTE SCREEN -->
+            <div class="phone-shot active" data-phone="route">
+              <div class="px-5 pt-4 pb-3">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">CI</div>
+                  <div class="text-center"><div class="text-[10px] text-slate-500">Meridian &middot; Christina CRM</div></div>
+                  <button aria-label="Notifications" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center"><svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg></button>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900">Today&rsquo;s route</h2>
+                <div class="text-xs text-slate-500">4 stops &middot; Wednesday 4/23</div>
               </div>
-              <h2 class="text-xl font-bold text-slate-900">Today's route</h2>
-              <div class="text-xs text-slate-500">4 stops · Wednesday</div>
-            </div>
-
-            <!-- KPI strip -->
-            <div class="px-5 mb-4 grid grid-cols-3 gap-2">
-              <div class="bg-slate-50 rounded-xl p-2.5"><div class="text-[9px] font-semibold uppercase text-slate-500">Referrals MTD</div><div class="text-base font-bold text-slate-900">18</div></div>
-              <div class="bg-slate-50 rounded-xl p-2.5"><div class="text-[9px] font-semibold uppercase text-slate-500">Visits MTD</div><div class="text-base font-bold text-slate-900">34</div></div>
-              <div class="bg-slate-50 rounded-xl p-2.5"><div class="text-[9px] font-semibold uppercase text-slate-500">Target</div><div class="text-base font-bold text-emerald-700">↑12%</div></div>
-            </div>
-
-            <!-- Stops list -->
-            <div class="px-5 space-y-2">
-              <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
-                <div class="flex items-start gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 text-[10px] font-bold">9A</div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-xs font-semibold text-slate-900">Mercy General Hospital</div>
-                    <div class="text-[10px] text-slate-500 truncate">4001 J St · Dr. Chen + case mgmt</div>
-                    <div class="flex gap-1 mt-1.5">
-                      <span class="text-[9px] font-semibold bg-emerald-50 text-emerald-700 rounded px-1.5 py-0.5">12 refs 30d</span>
-                      <span class="text-[9px] font-semibold bg-slate-100 text-slate-600 rounded px-1.5 py-0.5">83%</span>
+              <div class="px-5 mb-4 grid grid-cols-3 gap-2">
+                <div class="bg-slate-50 rounded-xl p-2.5"><div class="text-[9px] font-semibold uppercase text-slate-500">Refs MTD</div><div class="text-base font-bold text-slate-900 tabular-nums">18</div></div>
+                <div class="bg-slate-50 rounded-xl p-2.5"><div class="text-[9px] font-semibold uppercase text-slate-500">Visits MTD</div><div class="text-base font-bold text-slate-900 tabular-nums">34</div></div>
+                <div class="bg-slate-50 rounded-xl p-2.5"><div class="text-[9px] font-semibold uppercase text-slate-500">Target</div><div class="text-base font-bold text-emerald-700">&uarr;12%</div></div>
+              </div>
+              <div class="px-5 space-y-2">
+                <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
+                  <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 text-[10px] font-bold">9A</div>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-xs font-semibold text-slate-900">Mercy General Hospital</div>
+                      <div class="text-[10px] text-slate-500 truncate">4001 J St &middot; Dr. Chen + case mgmt</div>
+                      <div class="flex gap-1 mt-1.5"><span class="text-[9px] font-semibold bg-emerald-50 text-emerald-700 rounded px-1.5 py-0.5">12 refs 30d</span><span class="text-[9px] font-semibold bg-slate-100 text-slate-600 rounded px-1.5 py-0.5">83% conv</span></div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
-                <div class="flex items-start gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-slate-300 text-slate-700 flex items-center justify-center shrink-0 text-[10px] font-bold">11A</div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-xs font-semibold text-slate-900">Pine Ridge SNF</div>
-                    <div class="text-[10px] text-slate-500 truncate">Folsom · discharge planner</div>
-                    <div class="flex gap-1 mt-1.5">
-                      <span class="text-[9px] font-semibold bg-amber-50 text-amber-700 rounded px-1.5 py-0.5">6 refs · 50% conv</span>
-                      <span class="text-[9px] font-semibold bg-red-50 text-red-700 rounded px-1.5 py-0.5">stale 12d</span>
+                <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
+                  <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-slate-300 text-slate-700 flex items-center justify-center shrink-0 text-[10px] font-bold">11A</div>
+                    <div class="flex-1 min-w-0">
+                      <div class="text-xs font-semibold text-slate-900">Pine Ridge SNF</div>
+                      <div class="text-[10px] text-slate-500 truncate">Folsom &middot; discharge planner</div>
+                      <div class="flex gap-1 mt-1.5"><span class="text-[9px] font-semibold bg-amber-50 text-amber-700 rounded px-1.5 py-0.5">6 refs &middot; 50%</span><span class="text-[9px] font-semibold bg-red-50 text-red-700 rounded px-1.5 py-0.5">stale 12d</span></div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
-                <div class="flex items-start gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-slate-300 text-slate-700 flex items-center justify-center shrink-0 text-[10px] font-bold">1P</div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-xs font-semibold text-slate-900">Dr. Patel IM</div>
-                    <div class="text-[10px] text-slate-500 truncate">Elk Grove · lunch visit</div>
+                <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
+                  <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-slate-300 text-slate-700 flex items-center justify-center shrink-0 text-[10px] font-bold">1P</div>
+                    <div class="flex-1 min-w-0"><div class="text-xs font-semibold text-slate-900">Dr. Patel IM</div><div class="text-[10px] text-slate-500 truncate">Elk Grove &middot; lunch visit</div></div>
                   </div>
                 </div>
-              </div>
-              <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
-                <div class="flex items-start gap-2.5">
-                  <div class="w-8 h-8 rounded-lg bg-slate-300 text-slate-700 flex items-center justify-center shrink-0 text-[10px] font-bold">3P</div>
-                  <div class="flex-1 min-w-0">
-                    <div class="text-xs font-semibold text-slate-900">Sutter Roseville</div>
-                    <div class="text-[10px] text-slate-500 truncate">Case mgmt team</div>
+                <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
+                  <div class="flex items-start gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-slate-300 text-slate-700 flex items-center justify-center shrink-0 text-[10px] font-bold">3P</div>
+                    <div class="flex-1 min-w-0"><div class="text-xs font-semibold text-slate-900">Sutter Roseville</div><div class="text-[10px] text-slate-500 truncate">Case mgmt team</div></div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Bottom tab bar -->
+            <!-- CHECK-IN SCREEN -->
+            <div class="phone-shot" data-phone="checkin">
+              <div class="px-5 pt-4">
+                <button onclick="showPhone('route')" class="flex items-center gap-1 text-xs text-emerald-600 font-semibold mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Route</button>
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white font-bold">MG</div>
+                  <div class="flex-1 min-w-0">
+                    <h2 class="text-base font-bold text-slate-900 leading-tight">Mercy General Hospital</h2>
+                    <div class="text-[11px] text-slate-500">4001 J St &middot; Sacramento</div>
+                  </div>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-3">
+                  <div class="flex items-center gap-2 mb-1"><svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg><div class="text-xs font-semibold text-emerald-900">You&rsquo;re here</div></div>
+                  <div class="text-[11px] text-emerald-800">Within 120m of the address &middot; ready to check in</div>
+                </div>
+                <button class="w-full bg-emerald-600 text-white font-bold text-sm rounded-xl py-3 flex items-center justify-center gap-2 mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>Check in &middot; Mercy General</button>
+                <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Visit purpose</div>
+                <div class="space-y-2 mb-3">
+                  <button class="w-full text-left bg-slate-50 rounded-lg p-2.5 text-xs font-medium text-slate-800 flex items-center justify-between"><span>Relationship &middot; monthly</span><span class="text-emerald-600 text-xs">&#10003;</span></button>
+                  <button class="w-full text-left bg-white border border-slate-200 rounded-lg p-2.5 text-xs font-medium text-slate-700">New contact intro</button>
+                  <button class="w-full text-left bg-white border border-slate-200 rounded-lg p-2.5 text-xs font-medium text-slate-700">Close-out / issue follow-up</button>
+                  <button class="w-full text-left bg-white border border-slate-200 rounded-lg p-2.5 text-xs font-medium text-slate-700">In-service presentation</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button class="bg-slate-100 rounded-xl py-3 text-xs font-semibold text-slate-800 flex flex-col items-center gap-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>Photo</button>
+                  <button class="bg-slate-100 rounded-xl py-3 text-xs font-semibold text-slate-800 flex flex-col items-center gap-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>Voice note</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- VOICE NOTE SCREEN -->
+            <div class="phone-shot" data-phone="voice">
+              <div class="px-5 pt-4">
+                <button onclick="showPhone('checkin')" class="flex items-center gap-1 text-xs text-emerald-600 font-semibold mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Check-in</button>
+                <h2 class="text-lg font-bold text-slate-900 mb-1">Voice note</h2>
+                <div class="text-[11px] text-slate-500 mb-5">Mercy General &middot; 9:47 AM &middot; Dr. Chen relationship visit</div>
+                <div class="flex flex-col items-center py-8">
+                  <div class="relative w-32 h-32 rounded-full bg-red-500 flex items-center justify-center mb-4">
+                    <div class="absolute inset-0 rounded-full bg-red-400 opacity-40 pulse-dot"></div>
+                    <svg class="w-14 h-14 text-white relative" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>
+                  </div>
+                  <div class="text-2xl font-bold text-slate-900 tabular-nums mb-1">00:48</div>
+                  <div class="text-[10px] text-slate-500">Recording &middot; encrypted on-device</div>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-3 mb-3">
+                  <div class="text-[10px] font-semibold uppercase text-slate-500 mb-1">Live transcript</div>
+                  <div class="text-xs text-slate-700 leading-relaxed">Dr. Chen is happy with the last three CHF discharges. Asked about overnight on-call coverage &mdash; mentioned a patient who called the answering service at 2 AM last Tuesday&hellip;</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <button class="bg-slate-200 rounded-xl py-3 text-xs font-semibold text-slate-800">Pause</button>
+                  <button class="bg-emerald-600 text-white rounded-xl py-3 text-xs font-bold">Save note</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- NURSE VISITS SCREEN -->
+            <div class="phone-shot" data-phone="visits">
+              <div class="px-5 pt-4">
+                <h2 class="text-lg font-bold text-slate-900 mb-1">My visits today</h2>
+                <div class="text-[11px] text-slate-500 mb-4">Field clinician mode &middot; offline-capable</div>
+                <div class="space-y-2">
+                  <div class="bg-white border border-emerald-200 rounded-xl p-3 card-shadow">
+                    <div class="flex items-center justify-between mb-1"><div class="text-xs font-bold text-emerald-700">9:00 AM &middot; En route</div><span class="text-[9px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">SOC</span></div>
+                    <div class="text-xs font-semibold text-slate-900" data-demo="true">Jane Doe (PT-001)</div>
+                    <div class="text-[10px] text-slate-500">95823 Sacramento &middot; 2.1 mi &middot; hip post-op</div>
+                  </div>
+                  <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
+                    <div class="flex items-center justify-between mb-1"><div class="text-xs font-semibold text-slate-700">11:30 AM</div><span class="text-[9px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Recert</span></div>
+                    <div class="text-xs font-semibold text-slate-900" data-demo="true">Patient PT-020</div>
+                    <div class="text-[10px] text-slate-500">95825 Sacramento &middot; OASIS due</div>
+                  </div>
+                  <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
+                    <div class="flex items-center justify-between mb-1"><div class="text-xs font-semibold text-slate-700">1:00 PM</div><span class="text-[9px] font-semibold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5">Wound</span></div>
+                    <div class="text-xs font-semibold text-slate-900" data-demo="true">Patient PT-016</div>
+                    <div class="text-[10px] text-slate-500">95673 Rio Linda &middot; day 4/60</div>
+                  </div>
+                  <div class="bg-white border border-slate-200 rounded-xl p-3 card-shadow">
+                    <div class="flex items-center justify-between mb-1"><div class="text-xs font-semibold text-slate-700">3:15 PM</div><span class="text-[9px] font-semibold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">Discharge</span></div>
+                    <div class="text-xs font-semibold text-slate-900" data-demo="true">Patient PT-021</div>
+                    <div class="text-[10px] text-slate-500">95762 El Dorado Hills</div>
+                  </div>
+                </div>
+                <button class="w-full bg-emerald-600 text-white font-semibold text-xs rounded-xl py-3 mt-3 flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="5 12 19 12"/><polyline points="12 5 19 12 12 19"/></svg>Start route</button>
+              </div>
+            </div>
+
+            <!-- Bottom tab bar (shared, but context-specific highlight not wired) -->
             <div class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2 grid grid-cols-4 gap-1">
-              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="text-[9px] font-semibold text-emerald-600">Route</span></button>
-              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/></svg><span class="text-[9px] font-medium text-slate-500">Orgs</span></button>
-              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="text-[9px] font-medium text-slate-500">People</span></button>
-              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4z"/></svg><span class="text-[9px] font-medium text-slate-500">Log</span></button>
+              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span class="text-[9px] font-semibold text-emerald-600">Route</span></button>
+              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/></svg><span class="text-[9px] font-medium text-slate-500">Orgs</span></button>
+              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="text-[9px] font-medium text-slate-500">People</span></button>
+              <button class="flex flex-col items-center gap-0.5 py-1"><svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4z"/></svg><span class="text-[9px] font-medium text-slate-500">Log</span></button>
             </div>
           </div>
         </div>
 
-        <!-- Second phone: org detail -->
-        <div class="phone-frame ml-8">
+        <!-- PHONE 2: static context phone (Org detail) -->
+        <div class="phone-frame">
           <div class="phone-screen">
             <div class="phone-notch"></div>
             <div class="flex items-center justify-between px-6 pt-2 text-[10px] font-semibold text-slate-900"><span>9:47</span><div class="flex items-center gap-1"><div class="w-5 h-2.5 border border-slate-900 rounded-sm"><div class="w-3/4 h-full bg-slate-900 rounded-sm"></div></div></div></div>
-
             <div class="px-5 pt-4">
-              <button class="flex items-center gap-1 text-xs text-emerald-600 font-semibold mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Route</button>
+              <button class="flex items-center gap-1 text-xs text-emerald-600 font-semibold mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Route</button>
               <div class="flex items-center gap-3 mb-3">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white font-bold">MG</div>
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center text-white font-bold" aria-hidden="true">MG</div>
                 <div class="flex-1 min-w-0">
                   <h2 class="text-base font-bold text-slate-900 leading-tight">Mercy General Hospital</h2>
-                  <div class="text-[11px] text-slate-500">4001 J St · Sacramento</div>
+                  <div class="text-[11px] text-slate-500">4001 J St &middot; Sacramento</div>
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-2 mb-4">
-                <div class="bg-emerald-50 rounded-lg p-2 text-center"><div class="text-[10px] font-semibold text-emerald-700">30d refs</div><div class="text-base font-bold text-emerald-900">12</div></div>
-                <div class="bg-slate-50 rounded-lg p-2 text-center"><div class="text-[10px] font-semibold text-slate-600">Conversion</div><div class="text-base font-bold text-slate-900">83%</div></div>
+                <div class="bg-emerald-50 rounded-lg p-2 text-center"><div class="text-[10px] font-semibold text-emerald-700">30d refs</div><div class="text-base font-bold text-emerald-900 tabular-nums">12</div></div>
+                <div class="bg-slate-50 rounded-lg p-2 text-center"><div class="text-[10px] font-semibold text-slate-600">Conversion</div><div class="text-base font-bold text-slate-900 tabular-nums">83%</div></div>
                 <div class="bg-slate-50 rounded-lg p-2 text-center"><div class="text-[10px] font-semibold text-slate-600">Last visit</div><div class="text-base font-bold text-slate-900">7d</div></div>
               </div>
-
               <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-2">Contacts</div>
               <div class="space-y-2 mb-4">
                 <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
                   <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">SC</div>
-                  <div class="flex-1 min-w-0"><div class="text-xs font-semibold text-slate-900 truncate">Dr. Sarah Chen</div><div class="text-[10px] text-slate-500 truncate">Cardiology · NPI 1234567890</div></div>
-                  <button class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                  <div class="flex-1 min-w-0"><div class="text-xs font-semibold text-slate-900 truncate">Dr. Sarah Chen</div><div class="text-[10px] text-slate-500 truncate">Cardiology &middot; NPI 1234567890</div></div>
+                  <button aria-label="Call Dr. Chen" class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
                   <div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center">LJ</div>
-                  <div class="flex-1 min-w-0"><div class="text-xs font-semibold text-slate-900 truncate">Lisa Johnson RN</div><div class="text-[10px] text-slate-500 truncate">Case manager · 4E</div></div>
-                  <button class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center"><svg class="w-3.5 h-3.5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg></button>
+                  <div class="flex-1 min-w-0"><div class="text-xs font-semibold text-slate-900 truncate">Lisa Johnson RN</div><div class="text-[10px] text-slate-500 truncate">Case manager &middot; 4E</div></div>
+                  <button aria-label="Email Lisa Johnson" class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center"><svg class="w-3.5 h-3.5 text-slate-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg></button>
                 </div>
               </div>
-
-              <button class="w-full bg-emerald-600 text-white font-semibold text-xs rounded-xl py-3 flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4z"/></svg>Log visit now</button>
-              <button class="w-full bg-slate-100 text-slate-700 font-semibold text-xs rounded-xl py-3 mt-2 flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add contact</button>
+              <button class="w-full bg-emerald-600 text-white font-semibold text-xs rounded-xl py-3 flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4z"/></svg>Log visit now</button>
+              <button class="w-full bg-slate-100 text-slate-700 font-semibold text-xs rounded-xl py-3 mt-2 flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add contact</button>
             </div>
           </div>
         </div>
       </div>
-      <div class="text-center text-xs text-slate-500 mt-4">Two screens shown: Today's route (left) and Organization detail (right). Offline capable. Logs sync when back on Wi-Fi.</div>
+      <div class="text-center text-xs text-slate-500 mt-4">Phone 1 cycles through 4 screens above &middot; Phone 2: organization detail. Offline capable &middot; logs sync on Wi-Fi.</div>
     </div>
 
-    <!-- ============ SETTINGS (NEW) ============ -->
+    <!-- ============ SETTINGS ============ -->
     <div id="view-settings" class="view p-6 max-w-6xl">
       <div class="mb-6">
-        <h1 class="text-2xl font-bold text-slate-900">Settings</h1>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Settings</h1>
         <p class="text-sm text-slate-500 mt-0.5">Agency configuration, users, compliance posture</p>
       </div>
 
-      <div class="flex gap-2 p-1 bg-slate-100 rounded-lg mb-6 w-fit text-xs font-medium">
+      <div class="flex gap-2 p-1 bg-slate-100 rounded-lg mb-6 w-fit text-xs font-medium" role="tablist">
         <button class="subnav-item active px-3 py-1.5 rounded-md">Agency</button>
-        <button class="subnav-item px-3 py-1.5 rounded-md text-slate-600">Users & roles</button>
+        <button class="subnav-item px-3 py-1.5 rounded-md text-slate-600">Users &amp; roles</button>
         <button class="subnav-item px-3 py-1.5 rounded-md text-slate-600">Integrations</button>
         <button class="subnav-item px-3 py-1.5 rounded-md text-slate-600">Billing</button>
         <button class="subnav-item px-3 py-1.5 rounded-md text-slate-600">Audit log</button>
         <button class="subnav-item px-3 py-1.5 rounded-md text-slate-600">Compliance</button>
       </div>
 
-      <!-- Agency section -->
       <div class="grid grid-cols-3 gap-4 mb-4">
         <div class="col-span-2 bg-white rounded-xl border border-slate-200 card-shadow p-5">
           <h3 class="text-sm font-semibold text-slate-900 mb-4">Agency information</h3>
           <div class="grid grid-cols-2 gap-4 text-sm">
             <div><label class="text-[11px] font-semibold uppercase text-slate-500">Legal name</label><div class="text-slate-900 mt-1">Meridian Home Health, LLC</div></div>
-            <div><label class="text-[11px] font-semibold uppercase text-slate-500">EIN</label><div class="text-slate-900 mt-1">XX-XXX4821</div></div>
-            <div><label class="text-[11px] font-semibold uppercase text-slate-500">NPI</label><div class="text-slate-900 mt-1">1987654321</div></div>
-            <div><label class="text-[11px] font-semibold uppercase text-slate-500">Medicare PTAN</label><div class="text-slate-900 mt-1">05XXXX</div></div>
-            <div><label class="text-[11px] font-semibold uppercase text-slate-500">MAC jurisdiction</label><div class="text-slate-900 mt-1">Noridian (J-E) · California</div></div>
-            <div><label class="text-[11px] font-semibold uppercase text-slate-500">Medi-Cal provider #</label><div class="text-slate-900 mt-1">XXXX82</div></div>
+            <div><label class="text-[11px] font-semibold uppercase text-slate-500">EIN</label><div class="text-slate-900 mt-1 font-mono">XX-XXX4821</div></div>
+            <div><label class="text-[11px] font-semibold uppercase text-slate-500">NPI</label><div class="text-slate-900 mt-1 font-mono">1987654321</div></div>
+            <div><label class="text-[11px] font-semibold uppercase text-slate-500">Medicare PTAN</label><div class="text-slate-900 mt-1 font-mono">05XXXX</div></div>
+            <div><label class="text-[11px] font-semibold uppercase text-slate-500">MAC jurisdiction</label><div class="text-slate-900 mt-1">Noridian (J-E) &middot; California</div></div>
+            <div><label class="text-[11px] font-semibold uppercase text-slate-500">Medi-Cal provider #</label><div class="text-slate-900 mt-1 font-mono">XXXX82</div></div>
             <div class="col-span-2"><label class="text-[11px] font-semibold uppercase text-slate-500">Service area</label><div class="text-slate-900 mt-1">Sacramento, Placer, El Dorado counties</div></div>
           </div>
         </div>
@@ -671,12 +1010,12 @@
           <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-3 mb-3">
             <div class="text-[10px] font-semibold text-emerald-700 uppercase">Current plan</div>
             <div class="text-lg font-bold text-slate-900 mt-1">Scrubber + CRM</div>
-            <div class="text-[11px] text-slate-600 mt-1">Founding-customer rate · locked 12mo</div>
+            <div class="text-[11px] text-slate-600 mt-1">Founding-customer rate &middot; locked 12mo</div>
           </div>
           <div class="space-y-2 text-xs">
-            <div class="flex justify-between"><span class="text-slate-500">Monthly</span><span class="font-semibold text-slate-900">$2,400</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Monthly</span><span class="font-semibold text-slate-900 tabular-nums">$2,400</span></div>
             <div class="flex justify-between"><span class="text-slate-500">Seats</span><span class="font-semibold text-slate-900">8 / unlimited</span></div>
-            <div class="flex justify-between"><span class="text-slate-500">Next billing</span><span class="font-semibold text-slate-900">May 15</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Next billing</span><span class="font-semibold text-slate-900">May 23</span></div>
           </div>
           <div class="mt-3 pt-3 border-t border-slate-100 text-[11px] text-emerald-700 font-semibold">Saving $5,600/mo vs WellSky</div>
         </div>
@@ -690,7 +1029,7 @@
             <div class="flex items-center justify-between text-sm"><span class="text-slate-700">WorkOS BAA</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">ACTIVE</span></div>
             <div class="flex items-center justify-between text-sm"><span class="text-slate-700">Stedi BAA</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">ACTIVE</span></div>
             <div class="flex items-center justify-between text-sm"><span class="text-slate-700">Datadog BAA</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">ACTIVE</span></div>
-            <div class="flex items-center justify-between text-sm"><span class="text-slate-700">Agency ↔ Platform BAA</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">SIGNED</span></div>
+            <div class="flex items-center justify-between text-sm"><span class="text-slate-700">Agency &harr; Platform BAA</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">SIGNED</span></div>
             <div class="flex items-center justify-between text-sm"><span class="text-slate-700">KMS encryption</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">AES-256</span></div>
             <div class="flex items-center justify-between text-sm"><span class="text-slate-700">Audit log retention</span><span class="text-[10px] font-semibold bg-slate-100 text-slate-700 rounded-full px-2 py-0.5">6 years</span></div>
             <div class="flex items-center justify-between text-sm"><span class="text-slate-700">SOC 2 Type 1</span><span class="text-[10px] font-semibold bg-amber-100 text-amber-700 rounded-full px-2 py-0.5">IN PROGRESS</span></div>
@@ -701,17 +1040,22 @@
           <div class="space-y-2">
             <div class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg">
               <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center">CI</div>
-              <div class="flex-1 min-w-0"><div class="text-xs font-semibold">Clay Ikeem</div><div class="text-[10px] text-slate-500">clayikeem11@gmail.com · SSO (WorkOS)</div></div>
+              <div class="flex-1 min-w-0"><div class="text-xs font-semibold">Clay Ikeem</div><div class="text-[10px] text-slate-500">clayikeem11@gmail.com &middot; SSO (WorkOS)</div></div>
               <span class="text-[10px] font-semibold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5">ADMIN</span>
             </div>
             <div class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg">
               <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center">SL</div>
-              <div class="flex-1 min-w-0"><div class="text-xs font-semibold">Sarah Lopez RN</div><div class="text-[10px] text-slate-500">slopez@meridian.com · Intake</div></div>
+              <div class="flex-1 min-w-0"><div class="text-xs font-semibold">Sarah Lopez RN</div><div class="text-[10px] text-slate-500">slopez@meridian.demo &middot; Intake</div></div>
               <span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">INTAKE</span>
+            </div>
+            <div class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-lg">
+              <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">YK</div>
+              <div class="flex-1 min-w-0"><div class="text-xs font-semibold">Yuki Kim RN</div><div class="text-[10px] text-slate-500">ykim@meridian.demo &middot; Field clinician</div></div>
+              <span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">FIELD</span>
             </div>
           </div>
           <button class="mt-3 w-full flex items-center justify-center gap-1 text-xs font-semibold text-emerald-700 border border-dashed border-slate-300 rounded-lg py-2 hover:bg-emerald-50">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             Invite user
           </button>
           <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500">Directory Sync available via WorkOS for enterprise agencies</div>
@@ -722,10 +1066,14 @@
   </main>
 </div>
 
-<div class="fixed bottom-4 right-4 bg-slate-900 text-white text-xs font-medium rounded-lg px-4 py-3 shadow-2xl flex items-center gap-3 max-w-sm">
-  <div class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></div>
-  <div><div class="font-semibold">v2 mockup · 4 new views</div><div class="text-slate-300 text-[11px] mt-0.5">Referral detail · BD mobile · Settings · Agency switcher</div></div>
-  <button onclick="this.parentElement.remove()" class="ml-2 text-slate-400 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+<!-- Floating CTA (bottom right) -->
+<div id="cta-card" class="fixed bottom-4 right-4 bg-slate-900 text-white text-xs font-medium rounded-xl px-4 py-3 shadow-2xl flex items-center gap-3 max-w-sm z-40">
+  <div class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot" aria-hidden="true"></div>
+  <div>
+    <div class="font-semibold">Christina CRM &middot; pilot demo</div>
+    <div class="text-slate-300 text-[11px] mt-0.5">Want this for your agency? <a href="mailto:clayikeem11@gmail.com?subject=Christina%20CRM%20pilot" class="text-emerald-300 font-semibold hover:text-emerald-200">Email Clay &rarr;</a></div>
+  </div>
+  <button onclick="document.getElementById('cta-card').remove()" aria-label="Dismiss CTA" class="ml-2 text-slate-400 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
 </div>
 
 <script>
@@ -739,9 +1087,28 @@
   function toggleDropdown(id) {
     document.getElementById(id).classList.toggle('open');
   }
+  function showPhone(name) {
+    document.querySelectorAll('.phone-shot').forEach(s => s.classList.remove('active'));
+    const target = document.querySelector('[data-phone="' + name + '"]');
+    if (target) target.classList.add('active');
+    ['route','checkin','voice','visits'].forEach(n => {
+      const b = document.getElementById('pbtn-' + n);
+      if (!b) return;
+      if (n === name) { b.classList.add('active'); b.classList.remove('text-slate-600'); }
+      else { b.classList.remove('active'); b.classList.add('text-slate-600'); }
+    });
+  }
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#tenant-dropdown') && !e.target.closest('[onclick*="tenant-dropdown"]')) {
       document.getElementById('tenant-dropdown').classList.remove('open');
+    }
+  });
+  // keyboard: ctrl/cmd+K focuses search
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      const input = document.querySelector('header input[type=""], header input:not([type])');
+      if (input) input.focus();
     }
   });
 </script>

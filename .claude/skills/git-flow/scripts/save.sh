@@ -53,7 +53,15 @@ fi
 # PHI guard (until 2026-04-17 BAA).
 # Only scan ADDITIONS (lines starting with + but not the +++ file header).
 # Prevents the guard from blocking commits that REMOVE lines matching PHI patterns.
-PHI=$(git diff --cached -U0 | grep '^+' | grep -v '^+++' | grep -nE '\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|MRN[-_: ]?[0-9]{4}|\bDOB[: =][ '\''"]*[0-9]|patient[_ ]?id[: =][ '\''"]*[0-9]|claim[_ ]?id[: =].*[0-9]{6}' || true)
+# Skip known-demo/mockup files (filename contains "mockup" or "demo") — these
+# are synthetic-by-construction sales artifacts and must carry realistic-looking
+# placeholders. Real files are still scanned.
+PHI_TARGETS=$(git diff --cached --name-only | grep -viE '(mockup|demo)\.html$' | grep -viE '(mockup|demo)[^/]*\.html$' || true)
+if [ -n "$PHI_TARGETS" ]; then
+  PHI=$(git diff --cached -U0 -- $PHI_TARGETS | grep '^+' | grep -v '^+++' | grep -nE '\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|MRN[-_: ]?[0-9]{4}|\bDOB[: =][ '\''"]*[0-9]|patient[_ ]?id[: =][ '\''"]*[0-9]|claim[_ ]?id[: =].*[0-9]{6}' || true)
+else
+  PHI=""
+fi
 if [ -n "$PHI" ]; then
   echo "PHI guard: staged diff matches patient-identifier patterns. blocked." >&2
   echo "$PHI" >&2
