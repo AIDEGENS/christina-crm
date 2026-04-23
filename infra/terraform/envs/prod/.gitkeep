@@ -1,0 +1,3 @@
+# prod/ placeholder
+# Fill in after staging is validated end-to-end.
+# Mirror envs/dev/ structure with prod overrides (Multi-AZ on, 30d backups, deletion protection locked).

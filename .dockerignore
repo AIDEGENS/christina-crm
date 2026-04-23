@@ -1,0 +1,44 @@
+# .dockerignore — exclude developer cruft and secrets from the build context.
+#
+# Anything that lands in the build context gets shipped over the docker
+# daemon socket and re-hashed for every `docker build`. Aggressive pruning
+# here keeps builds fast and keeps secrets from ever reaching a layer.
+
+# --- dependencies / build artifacts ---
+**/node_modules
+**/.next
+**/.turbo
+**/dist
+**/coverage
+**/tsconfig.tsbuildinfo
+
+# --- secrets (belt-and-suspenders; .env should never be committed) ---
+.env
+.env.*
+!.env.example
+
+# --- vcs / tooling ---
+.git
+.gitignore
+.editorconfig
+.eslintrc*
+.prettierrc*
+.omc
+.claude
+.github
+
+# --- local-only assets ---
+REF
+Plans
+docs
+hh-crm-mockup.html
+README.md
+CLAUDE.md
+
+# --- test / infra state not needed by runtime ---
+infra/terraform/**/.terraform
+infra/terraform/**/terraform.tfstate*
+
+# --- os ---
+Thumbs.db
+.DS_Store

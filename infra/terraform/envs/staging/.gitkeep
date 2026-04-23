@@ -1,0 +1,3 @@
+# staging/ placeholder
+# Fill in after dev is validated end-to-end.
+# Mirror envs/dev/ structure: main.tf, backend.tf, variables.tf, terraform.tfvars.example, outputs.tf, versions.tf.

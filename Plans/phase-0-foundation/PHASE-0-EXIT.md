@@ -113,14 +113,26 @@ DELETE FROM crm.audit_log WHERE action = 'test';
 ## 7. Secrets (Doppler)
 
 - [ ] `doppler secrets` lists all required secrets for the `dev` config
+- [ ] `DEV_AUTH_TENANT_ID` and `DEV_AUTH_ROLE` are ABSENT from Doppler `staging` and `prod` configs
+      (Run `doppler secrets --config staging --only-names` and `doppler secrets --config prod --only-names`
+      — neither key may appear. The API throws `DEV_SHIM_IN_PROD` at boot if either leaks into prod.)
+- [ ] `WORKOS_ISSUER` is set in all three configs (dev/staging/prod) — required for JWT verification
+- [ ] `WORKOS_COOKIE_PASSWORD_KEYRING` is set in staging/prod (single-key form OK for dev)
+- [ ] `ALLOWED_ORIGINS` is set in all three configs (required, empty fails closed)
 - [ ] No secrets in Vercel UI manually (removed in favor of Doppler sync)
 - [ ] `grep -rE "(AKIA|sk-|ghp_|password|SECRET)" .` returns no results in tracked files (rule out accidental commits; may flag example files which is fine)
 - [ ] `git log --all -p | grep -iE "(API_KEY|SECRET_KEY|PASSWORD|DATABASE_URL)" | head` — nothing leaked in history
 - [ ] Doppler project has dev/staging/prod configs
 - [ ] Vercel Doppler integration is linked and syncing
-- [ ] CI workflow uses `doppler run`
+- [ ] CI workflow uses `doppler run` (ci.yml + deploy.yml both updated — verify with a CI run)
 - [ ] Rotation calendar entries created
 - [ ] Doppler BAA is active
+- [ ] `docs/SECRETS-HANDOFF.md` checklist fully completed (all checkboxes ticked)
+- [ ] `scripts/doppler-setup.sh` runs clean on a fresh clone: `./scripts/doppler-setup.sh`
+- [ ] `.env.example` contains all vars from `process.env.` grep across codebase (count: 20 vars)
+- [ ] `.gitignore` blocks `.env.*`, `terraform.tfvars`, `*.tfvars` (verified with `git check-ignore -v .env.production`)
+- [ ] Service tokens scoped per environment (not personal tokens) — verify in Doppler UI -> Service Tokens
+- [ ] `doppler run -- pnpm turbo lint typecheck build` passes end-to-end without manually set env vars
 
 ## 8. Compliance posture summary
 

@@ -8,35 +8,105 @@ CRM replacement (WellSky successor) for the BrightPath / Christina / EPS engagem
 - `.claude/skills/` — shared skills (`git-flow`, `ikeem`, `landon`)
 - Planning docs, working agreement, roadmap
 
+## Prerequisites
+
+- **Node 20** (`nvm use` picks it up from `.nvmrc`)
+- **pnpm 9** — `npm i -g pnpm@9`
+- **Git Bash / MSYS** on Windows (scripts are bash)
+
+## Install
+
+```bash
+pnpm install
+```
+
+## Dev
+
+```bash
+pnpm dev           # starts all apps in parallel via Turborepo
+# or individually:
+cd apps/web && pnpm dev    # Next.js on :3000
+cd apps/api && pnpm dev    # Hono on :3001
+```
+
+Health checks:
+- `http://localhost:3000/health` — Next.js route → `{ok:true, phase:"0.1"}`
+- `http://localhost:3001/health` — Hono → `{ok:true}`
+
+## Build / Lint / Typecheck
+
+```bash
+pnpm build
+pnpm lint
+pnpm typecheck
+```
+
+## Git workflow (non-negotiable)
+
+All git actions go through `git-flow` skill or the scripts directly.
+
+### Start a feature branch
+
+```bash
+./scripts/start-feature.sh <area> <desc>
+# Example:
+./scripts/start-feature.sh backend initial-hono-server
+```
+
+Valid areas: `frontend backend infra db auth verification docs security qa growth`
+
+### Commit and push
+
+```bash
+# Stage new/untracked files first if needed:
+git add <specific-file>
+
+# Then commit (stages tracked changes, PHI-checks, commits, pushes):
+./scripts/save.sh "feat: add referral form"
+```
+
+`save.sh` requires `AI_CHANNEL_IDENTITY` in `.env` (one of `stone|ikeem|landon`).
+
+### Windows Git Bash note
+
+Scripts use `#!/usr/bin/env bash`. After cloning, mark them executable:
+
+```bash
+git update-index --chmod=+x scripts/save.sh scripts/start-feature.sh
+```
+
+Or run directly with bash:
+
+```bash
+bash scripts/start-feature.sh backend my-feature
+```
+
+## Phase roadmap
+
+See `Plans/STEP_INDEX.md` for the full dependency graph.
+
+| Phase | Focus | Blocks |
+|---|---|---|
+| 0.1 | Repo scaffold (this step) | 0.2–0.5 |
+| 0.2 | AWS infra (us-west-1) | 0.3, 0.5 |
+| 0.3 | Postgres schema + RLS | 1.1 |
+| 0.4 | WorkOS auth | 1.1, 3.3 |
+| 0.5 | Vercel deploy (dev) | 0.6 |
+| 1.x | Referral CRUD + pipeline | 2.x |
+
 ## Clone topology
 
 Clone both repos as siblings:
 
 ```
 Documents/
-├── Christina/          # workspace — everyone needs this
+├── Christina/          # workspace — coordination, vault, handoff channel
 └── christina-crm/      # this repo — product code
 ```
-
-When working here, Claude can see the workspace by running `/add-dir ../Christina` in the session (grants read/write access). Or run a separate Claude Code session in each directory.
-
-## Rules
-
-- `git-flow` skill governs all git actions (identity check, PHI guard, conventional commits). See `.claude/skills/git-flow/SKILL.md`.
-- PHI rule: **no protected health information in this repo until the HIPAA BAA is signed** (target 2026-04-17).
-- Channel handoffs (stone-claude ↔ ikeem-claude ↔ landon-claude) go to `../Christina/BrightPath_Vault/_ai-channel/chat.md`, not here. Single source of truth for coordination.
-- Branch: `main` protected. Feature branches `feat/<area>/<desc>`. Never force-push `main`.
-
-## Getting started (Ikeem — first push)
-
-1. Clone sibling to Christina: `cd Documents && git clone https://github.com/AIDEGENS/christina-crm.git`
-2. Set identity: `cp ../Christina/.env.example .env && echo "AI_CHANNEL_IDENTITY=ikeem" >> .env` (ignored by git).
-3. Start a feature branch for your import: `bash .claude/skills/git-flow/scripts/start-feature.sh crm ikeem-initial-import`
-4. Copy your current CRM code into this repo (explicit paths, no `git add -A`).
-5. Save + ship through `git-flow` scripts.
 
 ## Links
 
 - Workspace repo: https://github.com/AIDEGENS/Christina
-- Module spec (intended design): `Christina/BrightPath_Vault/03_AI_Solutions/Custom_CRM.md`
+- Module spec: `Christina/BrightPath_Vault/03_AI_Solutions/Custom_CRM.md`
 - Working agreement: `Christina/WORKING_AGREEMENT.md`
+- PHI guard spec: comments in `scripts/save.sh` + `.github/workflows/ci.yml`

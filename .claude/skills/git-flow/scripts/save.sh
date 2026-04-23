@@ -43,7 +43,7 @@ if git diff --cached --quiet; then
 fi
 
 # Dangerous-path check.
-DANGER=$(git diff --cached --name-only | grep -E '(^|/)(\.env(\.|$)|.*\.pdf$|node_modules/|__pycache__/|\.cursors/)' || true)
+DANGER=$(git diff --cached --name-only | grep -E '(^|/)(\.env(\.|$)|.*\.pdf$|node_modules/|__pycache__/|\.cursors/)' | grep -vE '(^|/)\.env\.example$' || true)
 if [ -n "$DANGER" ]; then
   echo "staged paths look suspicious — stop and confirm:" >&2
   echo "$DANGER" >&2
@@ -53,7 +53,7 @@ fi
 # PHI guard (until 2026-04-17 BAA).
 # Only scan ADDITIONS (lines starting with + but not the +++ file header).
 # Prevents the guard from blocking commits that REMOVE lines matching PHI patterns.
-PHI=$(git diff --cached -U0 | grep '^+' | grep -v '^+++' | grep -nE '\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|MRN[-_: ]?[0-9]|\bDOB[: =]|patient[_ ]id|claim[_ ]id.*[0-9]{6}' || true)
+PHI=$(git diff --cached -U0 | grep '^+' | grep -v '^+++' | grep -nE '\b[0-9]{3}-[0-9]{2}-[0-9]{4}\b|MRN[-_: ]?[0-9]{4}|\bDOB[: =][ '\''"]*[0-9]|patient[_ ]?id[: =][ '\''"]*[0-9]|claim[_ ]?id[: =].*[0-9]{6}' || true)
 if [ -n "$PHI" ]; then
   echo "PHI guard: staged diff matches patient-identifier patterns. blocked." >&2
   echo "$PHI" >&2

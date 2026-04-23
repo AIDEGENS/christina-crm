@@ -1,0 +1,26 @@
+############################################
+# Copy to terraform.tfvars before `terraform plan`.
+# NEVER commit the real terraform.tfvars (it holds account-specific ARNs).
+############################################
+
+environment = "dev"
+region      = "us-west-1"
+vpc_cidr    = "10.0.0.0/16"
+
+# RDS — dev defaults (small + cheap). Override per-env in staging/prod.
+db_instance_class        = "db.t4g.medium"
+db_storage_gb            = 100
+db_max_storage_gb        = 500
+db_multi_az              = false
+db_backup_retention_days = 7
+db_deletion_protection   = true
+
+# GitHub Actions OIDC — create the provider in the account first, then paste ARN here.
+# Docs: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+github_oidc_provider_arn = "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
+github_oidc_sub_claim    = "repo:AIDEGENS/christina-crm:*"
+
+# Human SSO principals allowed to assume db-admin (require MFA).
+db_admin_principal_arns = [
+  # "arn:aws:iam::<ACCOUNT_ID>:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DBAdmin_xxxxxxxxxxxx",
+]

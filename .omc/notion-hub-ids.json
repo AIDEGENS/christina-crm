@@ -1,0 +1,32 @@
+{
+  "_comment": "Christina CRM — 24-7 Team Hub Notion IDs. Created 2026-04-22. Skills read this to dispatch work.",
+  "hub_page_id": "34b52998-9385-8190-ba6b-c9e0a928e715",
+  "hub_url": "https://www.notion.so/34b5299893858190ba6bc9e0a928e715",
+  "databases": {
+    "sprint_board": "43e3c790-4ac5-45cc-882b-61d17aeceb44",
+    "verification_rules": "b6fd2f74-a3bd-4964-b4a3-438a55ca2797",
+    "vr_test_cases": "32f38727-5488-4d47-b2d3-8c6f3f77daee",
+    "product_backlog": "89b5c66a-cbf5-48c1-947c-2c57b6ccf190",
+    "design_backlog": "51b06910-5ad1-476a-9c28-f0cebff18844",
+    "frontend_tasks": "a45136f2-8977-44b9-b384-67b4f516eb93",
+    "backend_tasks": "43bd237c-a42b-46d4-8840-41827efafbe3",
+    "qa_test_runs": "3630fcec-a9a4-4e67-9840-27dbfb6b9eb8",
+    "devops_infra": "c9fcbd47-ed5e-48b2-a78c-d0cd20c5c863",
+    "security_findings": "bf7aa00e-3c7a-4004-a0bf-066547232957",
+    "data_catalog": "2cc75d09-3295-4b59-92cc-ab3e11c9d464",
+    "growth_demo": "d913ab93-ad5d-4d7b-be22-d9b752a94904",
+    "blockers": "dbae5e3e-d9cc-49a9-9c0c-2d0dabe64987",
+    "handoff_log": "aaf29743-a989-4943-8cbc-31a6228b5b67",
+    "pr_inbox": "af55e954-a709-4a4c-a393-8919bc01af94"
+  },
+  "env_vars": {
+    "CHRISTINA_CRM_HUB_ID": "34b52998-9385-8190-ba6b-c9e0a928e715",
+    "CHRISTINA_CRM_SPRINT_DB": "43e3c790-4ac5-45cc-882b-61d17aeceb44",
+    "CHRISTINA_CRM_VR_DB": "b6fd2f74-a3bd-4964-b4a3-438a55ca2797"
+  },
+  "deployed_at": "2026-04-22",
+  "parent_of_hub": {
+    "master_247_hub": "21f52998-9385-83af-a333-01393ec78bd0",
+    "note": "Christina hub is a subpage of master 24-7 Team Hub for discoverability; separate data so Claims scope stays clean"
+  }
+}

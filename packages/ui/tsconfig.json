@@ -1,0 +1,8 @@
+{
+  "extends": "@christina-crm/config/tsconfig/nextjs",
+  "compilerOptions": {
+    "rootDir": "src",
+    "noEmit": true
+  },
+  "include": ["src"]
+}

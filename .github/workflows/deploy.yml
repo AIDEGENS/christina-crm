@@ -1,0 +1,98 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Target environment (dev | stg | prd)'
+        required: true
+        default: 'dev'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  AWS_REGION: us-west-1
+
+jobs:
+  deploy:
+    name: Build images + ECS deploy
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service: [web, api]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint and typecheck
+        run: pnpm turbo lint typecheck
+
+      # OIDC auth — no long-lived AWS keys in GitHub secrets. The IAM role
+      # 'gha-deploy' is provisioned in Phase B terraform with a trust policy
+      # pinned to this repo + main branch.
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/gha-deploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/${{ matrix.service }}/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.ecr.outputs.registry }}/christina-crm-${{ matrix.service }}:${{ github.sha }}
+            ${{ steps.ecr.outputs.registry }}/christina-crm-${{ matrix.service }}:latest
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,scope=${{ matrix.service }},mode=max
+
+      # Task definitions live in the repo under infra/ecs/*.json. The
+      # render step swaps the image URI, then the deploy step tells ECS
+      # to roll the service. Secrets are NOT injected here — the
+      # container's IAM role fetches from SSM at boot via
+      # packages/config/src/secrets.ts.
+      - name: Render task def
+        id: td
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: infra/ecs/task-def-${{ matrix.service }}.json
+          container-name: christina-crm-${{ matrix.service }}
+          image: ${{ steps.ecr.outputs.registry }}/christina-crm-${{ matrix.service }}:${{ github.sha }}
+
+      - name: ECS deploy
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.td.outputs.task-definition }}
+          service: christina-crm-${{ matrix.service }}
+          cluster: christina-crm-${{ inputs.env || 'dev' }}
+          wait-for-service-stability: true
