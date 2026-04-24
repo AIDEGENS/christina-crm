@@ -44,6 +44,35 @@
   .heat-4 { background: rgb(16 185 129); }
   .scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: rgb(203 213 225); border-radius: 3px; }
+  /* AI Ops affordances */
+  .ai-grad { background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%); }
+  .ai-grad-soft { background: linear-gradient(135deg, rgba(14,165,233,.08), rgba(168,85,247,.08)); }
+  .shimmer { background: linear-gradient(90deg, rgba(99,102,241,.08), rgba(16,185,129,.12), rgba(99,102,241,.08)); background-size: 200% 100%; animation: shim 3s linear infinite; }
+  @keyframes shim { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+  .wave-bar { animation: wv 1.1s ease-in-out infinite; transform-origin: bottom; }
+  @keyframes wv { 0%,100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+  /* Supervised-mode toggle */
+  .sm-toggle { width: 34px; height: 18px; border-radius: 999px; background: rgb(16 185 129); position: relative; transition: background .2s; flex-shrink: 0; }
+  .sm-toggle::after { content: ''; position: absolute; top: 2px; left: 18px; width: 14px; height: 14px; border-radius: 50%; background: white; transition: left .2s; }
+  .sm-toggle[data-on="false"] { background: rgb(203 213 225); }
+  .sm-toggle[data-on="false"]::after { left: 2px; }
+  /* Modal */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.6); backdrop-filter: blur(4px); z-index: 60; display: none; align-items: center; justify-content: center; padding: 2rem; }
+  .modal-backdrop.open { display: flex; animation: fade 200ms ease-out; }
+  /* Provenance tooltip */
+  .prov { position: relative; border-bottom: 1px dashed rgb(148 163 184); cursor: help; }
+  .prov:hover .prov-tip { display: block; }
+  .prov-tip { display: none; position: absolute; bottom: 100%; left: 0; margin-bottom: 6px; background: rgb(15 23 42); color: white; font-size: 10px; padding: 8px 10px; border-radius: 6px; white-space: nowrap; z-index: 20; box-shadow: 0 10px 25px rgb(0 0 0 / 0.3); }
+  .prov-tip::after { content: ''; position: absolute; top: 100%; left: 20px; border: 4px solid transparent; border-top-color: rgb(15 23 42); }
+  /* Triage score pill */
+  .triage-hi { background: rgb(254 226 226); color: rgb(153 27 27); }
+  .triage-md { background: rgb(254 243 199); color: rgb(146 64 14); }
+  .triage-lo { background: rgb(220 252 231); color: rgb(22 101 52); }
+  /* AI state chip */
+  .chip-shadow { background: rgb(241 245 249); color: rgb(71 85 105); }
+  .chip-assist { background: rgb(219 234 254); color: rgb(30 64 175); }
+  .chip-auto { background: rgb(220 252 231); color: rgb(22 101 52); }
+  .chip-off { background: rgb(241 245 249); color: rgb(100 116 139); }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
@@ -167,6 +196,32 @@
         Reports
       </button>
 
+      <div class="pt-4 pb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+        <span>AI Ops</span>
+        <span class="text-[9px] font-bold text-indigo-600 bg-indigo-50 rounded px-1 py-0.5">NEW</span>
+      </div>
+      <button onclick="showView('ai-console', this)" class="nav-item w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
+        <span class="flex items-center gap-3">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/><path d="M9 15h6"/><path d="M12 2v2"/></svg>
+          AI Console
+        </span>
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot" aria-label="AI agents live"></span>
+      </button>
+      <button onclick="showView('conversations', this)" class="nav-item w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
+        <span class="flex items-center gap-3">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Conversations
+        </span>
+        <span class="text-[10px] bg-indigo-500 text-white rounded-full px-1.5 py-0.5 font-semibold" aria-label="12 unread">12</span>
+      </button>
+      <button onclick="showView('outbound-queue', this)" class="nav-item w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
+        <span class="flex items-center gap-3">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Outbound queue
+        </span>
+        <span class="text-[10px] bg-amber-500 text-white rounded-full px-1.5 py-0.5 font-semibold" aria-label="9 awaiting send">9</span>
+      </button>
+
       <div class="pt-4 pb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Field</div>
       <button onclick="showView('bd-mobile', this)" class="nav-item w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
         <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
@@ -190,7 +245,10 @@
       </div>
       <div class="flex items-center justify-between px-1">
         <div class="text-[10px] text-slate-400">powered by</div>
-        <div class="text-[10px] font-bold text-slate-600 tracking-tight">Christina CRM<span class="text-emerald-500">.</span></div>
+        <div class="flex items-center gap-1.5">
+          <div class="text-[10px] font-bold text-slate-600 tracking-tight">Christina CRM<span class="text-emerald-500">.</span></div>
+          <span class="text-[8px] font-bold bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full px-1.5 py-0.5 uppercase tracking-wider">Pilot-ready</span>
+        </div>
       </div>
     </div>
   </aside>
@@ -232,6 +290,83 @@
           <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">Active episodes</div><span class="text-[10px] font-semibold text-slate-600 bg-slate-100 rounded px-1.5 py-0.5">stable</span></div>
           <div class="text-2xl font-bold text-slate-900 tabular-nums">127</div>
           <div class="text-[11px] text-slate-500 mt-1">89 Medicare · 38 Medi-Cal</div>
+        </div>
+      </div>
+
+      <!-- AI OPS ROW: SLA + AI Activity + Today's AI wins -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-20 h-20 ai-grad-soft rounded-full -mr-8 -mt-8" aria-hidden="true"></div>
+          <div class="flex items-center justify-between mb-3 relative"><div class="text-xs font-semibold text-slate-900">SLA &middot; inbox &rarr; first touch</div><span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">&minus;47% vs WellSky</span></div>
+          <div class="flex items-baseline gap-2 relative">
+            <div class="text-2xl font-bold text-slate-900 tabular-nums">14m</div>
+            <span class="text-[10px] font-semibold text-slate-500">p50</span>
+            <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+          </div>
+          <div class="flex items-baseline gap-2 mt-1 relative">
+            <div class="text-sm font-semibold text-slate-700 tabular-nums">52m</div>
+            <span class="text-[10px] text-slate-500">p99</span>
+            <span class="text-[10px] text-slate-400">&middot; baseline 26m / 98m</span>
+          </div>
+          <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-slate-500">Beats industry benchmark by <b class="text-emerald-700">47%</b></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
+          <div class="flex items-center justify-between mb-2"><div class="text-xs font-semibold text-slate-900">Today&rsquo;s AI wins</div><span class="text-[9px] font-semibold text-indigo-700 bg-indigo-50 rounded px-1.5 py-0.5">live</span></div>
+          <div class="space-y-1.5">
+            <div class="flex items-baseline justify-between"><span class="text-[11px] text-slate-600">Drafts sent</span><span class="text-lg font-bold text-slate-900 tabular-nums">42</span></div>
+            <div class="flex items-baseline justify-between"><span class="text-[11px] text-slate-600">Minutes saved</span><span class="text-lg font-bold text-emerald-700 tabular-nums">168</span></div>
+            <div class="flex items-baseline justify-between"><span class="text-[11px] text-slate-600">Dupe faxes killed</span><span class="text-lg font-bold text-amber-600 tabular-nums">7</span></div>
+          </div>
+        </div>
+        <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-4 card-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-xs font-semibold text-slate-900">AI activity &middot; last 10 decisions</h3>
+            <button onclick="showView('ai-console', document.querySelectorAll('.nav-item')[6])" class="text-[10px] font-semibold text-indigo-700 hover:text-indigo-900">Open AI Console &rarr;</button>
+          </div>
+          <div class="space-y-1.5 text-[11px] max-h-40 overflow-y-auto scrollbar-thin pr-1">
+            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:47</span><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1 py-0.5 w-14 text-center">draft</span><span class="flex-1 text-slate-700 truncate">SMS: "Confirming SOC 4/24 10a" &rarr; Mercy / PT-002</span><span class="text-[9px] text-emerald-700 font-semibold">94%</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
+            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:44</span><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1 py-0.5 w-14 text-center">extract</span><span class="flex-1 text-slate-700 truncate">12 fields parsed &rarr; PT-001 fax</span><span class="text-[9px] text-emerald-700 font-semibold">97%</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
+            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:41</span><span class="text-[9px] font-bold bg-violet-100 text-violet-700 rounded px-1 py-0.5 w-14 text-center">thanks</span><span class="flex-1 text-slate-700 truncate">Physician auto-thanks &rarr; Dr. Chen</span><span class="text-[9px] text-amber-700 font-semibold">edit</span><span class="text-[9px] text-amber-700">&#9998;</span></div>
+            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:38</span><span class="text-[9px] font-bold bg-amber-100 text-amber-700 rounded px-1 py-0.5 w-14 text-center">dedupe</span><span class="flex-1 text-slate-700 truncate">Kaiser fax matches PT-001 (95%)</span><span class="text-[9px] text-amber-700 font-semibold">95%</span><span class="text-[9px] text-slate-500">hold</span></div>
+            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:33</span><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1 py-0.5 w-14 text-center">triage</span><span class="flex-1 text-slate-700 truncate">Score 87 &rarr; route to Lopez RN</span><span class="text-[9px] text-emerald-700 font-semibold">87</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
+            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:28</span><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1 py-0.5 w-14 text-center">draft</span><span class="flex-1 text-slate-700 truncate">Email: F2F follow-up &rarr; Pine Ridge SNF</span><span class="text-[9px] text-red-700 font-semibold">62%</span><span class="text-[9px] text-red-700">reject</span></div>
+            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:22</span><span class="text-[9px] font-bold bg-sky-100 text-sky-700 rounded px-1 py-0.5 w-14 text-center">eligib</span><span class="flex-1 text-slate-700 truncate">Stedi 270/271 verified &rarr; PT-004</span><span class="text-[9px] text-emerald-700 font-semibold">&mdash;</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Physician scoreboard + compliance row -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
+          <div class="flex items-center justify-between mb-4">
+            <div><h3 class="text-sm font-semibold text-slate-900">Physician scoreboard <span class="text-[10px] font-normal text-indigo-600 bg-indigo-50 rounded px-1.5 py-0.5 ml-1">AI moat</span></h3><p class="text-xs text-slate-500 mt-0.5">Top 5 referring docs by 90-day yield &middot; competitors are blind to this</p></div>
+            <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[10px] font-medium"><button class="subnav-item active px-2 py-0.5 rounded">Yield</button><button class="subnav-item px-2 py-0.5 rounded text-slate-600">Response time</button><button class="subnav-item px-2 py-0.5 rounded text-slate-600">Quality</button></div>
+          </div>
+          <table class="w-full text-xs">
+            <thead><tr class="text-[10px] text-slate-500 uppercase tracking-wider"><th class="text-left font-semibold pb-2">Physician</th><th class="text-right font-semibold pb-2">Refs</th><th class="text-right font-semibold pb-2">Conv</th><th class="text-right font-semibold pb-2">Avg resp</th><th class="text-center font-semibold pb-2">Tier</th><th class="text-center font-semibold pb-2">AI signal</th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">SC</div><div><div class="font-semibold text-slate-900">Dr. Sarah Chen</div><div class="text-[10px] text-slate-500">Cardiology &middot; NPI 1234567890</div></div></div></td><td class="text-right tabular-nums font-semibold">24</td><td class="text-right tabular-nums text-emerald-700 font-semibold">92%</td><td class="text-right tabular-nums">2.1h</td><td class="text-center"><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">A</span></td><td class="text-center"><span class="text-[9px] text-emerald-700 font-semibold">&uarr; trending</span></td></tr>
+              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center">RP</div><div><div class="font-semibold text-slate-900">Dr. Raj Patel</div><div class="text-[10px] text-slate-500">Internal Med &middot; NPI 1847362514</div></div></div></td><td class="text-right tabular-nums font-semibold">18</td><td class="text-right tabular-nums text-emerald-700 font-semibold">83%</td><td class="text-right tabular-nums">3.8h</td><td class="text-center"><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">A</span></td><td class="text-center"><span class="text-[9px] text-slate-500">stable</span></td></tr>
+              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center">MK</div><div><div class="font-semibold text-slate-900">Dr. Maya Kim</div><div class="text-[10px] text-slate-500">Pulmonology &middot; NPI 1029384756</div></div></div></td><td class="text-right tabular-nums font-semibold">14</td><td class="text-right tabular-nums text-emerald-700 font-semibold">71%</td><td class="text-right tabular-nums">5.2h</td><td class="text-center"><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">B</span></td><td class="text-center"><span class="text-[9px] text-amber-700 font-semibold">&#9888; slow replies</span></td></tr>
+              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center">LW</div><div><div class="font-semibold text-slate-900">Dr. Lin Wu</div><div class="text-[10px] text-slate-500">Ortho &middot; NPI 1765432109</div></div></div></td><td class="text-right tabular-nums font-semibold">11</td><td class="text-right tabular-nums text-slate-700 font-semibold">64%</td><td class="text-right tabular-nums">7.1h</td><td class="text-center"><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">B</span></td><td class="text-center"><span class="text-[9px] text-emerald-700">BD visit due</span></td></tr>
+              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center">TN</div><div><div class="font-semibold text-slate-900">Dr. Tran Nguyen</div><div class="text-[10px] text-slate-500">Geriatrics &middot; NPI 1583920174</div></div></div></td><td class="text-right tabular-nums font-semibold">8</td><td class="text-right tabular-nums text-amber-700 font-semibold">50%</td><td class="text-right tabular-nums">11.4h</td><td class="text-center"><span class="text-[9px] font-bold bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">C</span></td><td class="text-center"><span class="text-[9px] text-red-700 font-semibold">churn risk</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-semibold text-slate-900">Compliance posture</h3>
+            <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 rounded-full px-2 py-0.5">GREEN</span>
+          </div>
+          <div class="space-y-2 text-[11px]">
+            <div class="flex items-center justify-between"><span class="text-slate-700">TCPA opt-ins on file</span><span class="font-semibold text-slate-900 tabular-nums">118 / 127</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">CA 2-party disclosures fired</span><span class="font-semibold text-emerald-700 tabular-nums">100%</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">FCC 24-28 AI-disclosures</span><span class="font-semibold text-emerald-700 tabular-nums">100%</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Supervised-mode coverage</span><span class="font-semibold text-emerald-700 tabular-nums">8 / 8 templates</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Audit events (today)</span><span class="font-semibold text-slate-900 tabular-nums">1,284</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">PHI scrubber hits</span><span class="font-semibold text-slate-900 tabular-nums">0</span></div>
+          </div>
+          <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500 leading-snug">No AI outbound fires until consent is on file &middot; <b class="text-slate-700">Supervised Mode</b> on by default across all surfaces.</div>
         </div>
       </div>
 
@@ -330,27 +465,38 @@
 
     <!-- ============ INTAKE INBOX ============ -->
     <div id="view-inbox" class="view p-6 max-w-7xl">
-      <div class="flex items-end justify-between mb-6">
+      <div class="flex items-end justify-between mb-4">
         <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Intake inbox</h1><p class="text-sm text-slate-500 mt-0.5">Faxes, emails, and e-referrals waiting to be triaged &middot; parsed on AWS Bedrock</p></div>
-        <div class="flex gap-2">
-          <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[11px] font-medium">
-            <button class="subnav-item active px-2.5 py-1 rounded-md">All (7)</button>
-            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Needs review (2)</button>
-            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">High conf (4)</button>
-            <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Dupes (1)</button>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-2.5 py-1" title="Supervised Mode keeps AI drafts in a human queue. Toggle off to enable full auto-send for this surface.">
+            <span class="text-[10px] font-semibold text-slate-700">Supervised</span>
+            <button onclick="this.querySelector('span').remove; this.parentElement.querySelector('.sm-toggle').dataset.on = (this.parentElement.querySelector('.sm-toggle').dataset.on==='true'?'false':'true')" aria-label="Toggle supervised mode" class="flex"><span class="sm-toggle" data-on="true"></span></button>
           </div>
-          <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5">Sort: Newest</button>
+          <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5">Sort: Triage score</button>
           <button class="text-xs font-semibold bg-emerald-600 text-white rounded-lg px-3 py-1.5">Auto-triage all</button>
         </div>
+      </div>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[11px] font-medium" role="tablist">
+          <button class="subnav-item active px-2.5 py-1 rounded-md">All (7)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-red-700">&#9888; SLA at risk (2)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">AI-triaged (4)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Needs review (2)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Dupes (1)</button>
+        </div>
+        <div class="text-[10px] text-slate-500 ml-auto">Channels: <span class="text-slate-700">&#128224; Fax 4</span> &middot; <span class="text-slate-700">&#9993; Email 2</span> &middot; <span class="text-slate-700">&#128241; SMS 0</span> &middot; <span class="text-slate-700">&#128222; Voice 0</span> &middot; <span class="text-slate-700">&#127760; Epic 1</span></div>
       </div>
       <div class="bg-white rounded-xl border border-slate-200 card-shadow overflow-hidden">
         <div class="divide-y divide-slate-100">
           <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer flex items-start gap-4">
-            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div class="flex flex-col items-center gap-1 shrink-0">
+              <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center" title="Fax"><span aria-hidden="true">&#128224;</span></div>
+              <span class="text-[9px] font-bold triage-hi rounded px-1.5 py-0.5 tabular-nums" title="Triage score 92/100">92</span>
+            </div>
             <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Sutter Roseville &mdash; Case Mgmt</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">HIGH CONF 94%</span></div>
-              <div class="text-xs text-slate-600 mb-2"><b>Jane Doe (PT-001), 82 F</b> &middot; DOB 01/15/1945 &middot; MRN DEMO-4821 &middot; Post-op right hip replacement &middot; Medicare Part A &middot; SN + PT + OT &middot; Dr. Sarah Chen NPI <span class="tabular-nums">1234567890</span></div>
-              <div class="text-[11px] text-slate-500">Fax &middot; 18 min ago &middot; Bedrock extracted 12 fields &middot; 3 pages</div>
+              <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="text-sm font-semibold text-slate-900">Sutter Roseville &mdash; Case Mgmt</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5" title="Extraction confidence">&#9679; 94% CONF</span><span class="text-[10px] font-semibold bg-red-50 text-red-700 rounded px-1.5 py-0.5" title="SLA-at-risk flag">&#9201; SLA 1h 22m</span></div>
+              <div class="text-xs text-slate-600 mb-2"><b>Jane Doe (PT-001), 82 F</b> &middot; DOB 01/15/1945 &middot; MRN DEMO-4821 &middot; Post-op right hip replacement &middot; Medicare Part A &middot; SN + PT + OT &middot; Dr. Sarah Chen NPI <span class="tabular-nums">1XXXXXXXX0</span></div>
+              <div class="text-[11px] text-slate-500 flex items-center gap-2"><span>Fax &middot; 18 min ago &middot; Bedrock extracted 12 fields &middot; 3 pages</span><span class="text-indigo-600 font-semibold">&#128279; duplicate candidate &rarr; PT-001</span></div>
             </div>
             <button onclick="showView('referral-detail', document.querySelectorAll('.nav-item')[3])" class="text-xs font-semibold text-emerald-700 shrink-0">Open &rarr;</button>
           </div>
@@ -554,6 +700,16 @@
         <span class="ml-auto text-[10px] bg-slate-100 text-slate-600 rounded px-2 py-0.5 font-mono">id: ref_01HXDEMO4821</span>
       </div>
 
+      <!-- Hospice LOS banner (visible only on hospice referrals; shown for demo) -->
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 flex items-center gap-3" role="alert">
+        <div class="w-8 h-8 rounded-full bg-amber-200 text-amber-900 flex items-center justify-center shrink-0" aria-hidden="true">&#9888;</div>
+        <div class="flex-1 text-xs">
+          <div class="font-bold text-amber-900">Hospice LOS approaching cert-renewal window</div>
+          <div class="text-amber-800 mt-0.5">LOS 172 days &middot; 8 days until 180-day Face-to-Face required &middot; CMS GIP audit risk if F2F not completed before day 180.</div>
+        </div>
+        <button class="text-xs font-semibold bg-amber-600 text-white rounded-lg px-3 py-1.5 shrink-0 hover:bg-amber-700">Schedule F2F</button>
+      </div>
+
       <!-- Patient header -->
       <div data-demo="true" class="bg-white rounded-xl border border-slate-200 card-shadow p-5 mb-4">
         <div class="flex items-start justify-between gap-4">
@@ -566,8 +722,9 @@
                 <span class="text-[10px] font-semibold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">Medicare Part A</span>
                 <span class="text-[10px] font-semibold bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">MRN DEMO-4821</span>
                 <span class="text-[10px] font-semibold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">PHI masked</span>
+                <span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5" title="TCPA SMS opt-in recorded">&#10003; TCPA SMS opt-in</span>
               </div>
-              <div class="text-sm text-slate-600">DOB 01/15/1945 &middot; Sacramento, CA 95823 &middot; Primary: Dr. Sarah Chen MD <span class="font-mono text-xs">(NPI 1234567890)</span></div>
+              <div class="text-sm text-slate-600">DOB 01/15/1945 &middot; Sacramento, CA 95823 &middot; Primary: Dr. Sarah Chen MD <span class="font-mono text-xs">(NPI 1XXXXXXXX0)</span></div>
               <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-7a2 2 0 00-2-2H6a2 2 0 00-2 2v7a2 2 0 002 2zm10-9V7a4 4 0 00-8 0v4h8z"/></svg>PHI shown to authorized roles only &middot; this view was logged to the audit trail (entry #<span class="font-mono">4821-v7</span>)</div>
             </div>
           </div>
@@ -580,10 +737,118 @@
 
         <div class="grid grid-cols-5 gap-4 mt-5 pt-5 border-t border-slate-100">
           <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Source</div><div class="text-sm font-medium text-slate-900">Sutter Roseville</div><div class="text-[11px] text-slate-500">Case Mgmt &middot; Ref #RK-4821</div></div>
-          <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Primary dx</div><div class="text-sm font-medium text-slate-900">Z47.1</div><div class="text-[11px] text-slate-500">Aftercare, joint replacement</div></div>
+          <div>
+            <div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Primary dx</div>
+            <div class="text-sm font-medium text-slate-900 prov">Z47.1<span class="prov-tip">Source: referral-packet.pdf, page 2 &middot; conf 97% &middot; <u>verify in doc &rarr;</u></span></div>
+            <div class="text-[11px] text-slate-500">Aftercare, joint replacement</div>
+          </div>
           <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Discharge</div><div class="text-sm font-medium text-slate-900">4/23 &middot; 2:00 PM</div><div class="text-[11px] text-slate-500">Home w/ HH</div></div>
           <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Eligibility</div><div class="text-sm font-medium text-emerald-700">Verified via Stedi</div><div class="text-[11px] text-slate-500">270/271 &middot; 2 min ago</div></div>
           <div><div class="text-[10px] font-semibold uppercase text-slate-400 mb-1">Denial risk</div><div class="text-sm font-medium text-emerald-700">Low &middot; 12/100</div><div class="text-[11px] text-slate-500">Scrubber OK</div></div>
+        </div>
+      </div>
+
+      <!-- Eligibility strip -->
+      <div class="bg-white rounded-xl border border-slate-200 card-shadow p-4 mb-4 flex items-center gap-4 flex-wrap">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div><div class="text-[10px] font-semibold uppercase text-slate-400">Payer</div><div class="text-sm font-semibold text-slate-900">Medicare Part A &middot; Noridian</div></div>
+        </div>
+        <div class="h-8 w-px bg-slate-200"></div>
+        <div><div class="text-[10px] font-semibold uppercase text-slate-400">Coverage</div><div class="text-sm font-semibold text-emerald-700">&#10003; Active &middot; 01/2005 &rarr; present</div></div>
+        <div class="h-8 w-px bg-slate-200"></div>
+        <div><div class="text-[10px] font-semibold uppercase text-slate-400">HH benefit period</div><div class="text-sm font-semibold text-slate-900">Days available: 60/60</div></div>
+        <div class="h-8 w-px bg-slate-200"></div>
+        <div><div class="text-[10px] font-semibold uppercase text-slate-400">Auth required</div><div class="text-sm font-semibold text-slate-700">None for Medicare HH</div></div>
+        <div class="h-8 w-px bg-slate-200"></div>
+        <div><div class="text-[10px] font-semibold uppercase text-slate-400">Stedi 270/271</div><div class="text-sm font-semibold text-slate-900 font-mono">req 9:44 &middot; resp 9:44:08</div></div>
+        <button class="ml-auto text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200 rounded-lg px-3 py-1.5 hover:bg-sky-100">Check eligibility again</button>
+      </div>
+
+      <!-- Next Best Action + AI-draft composer -->
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="col-span-2 bg-white rounded-xl border border-indigo-200 card-shadow overflow-hidden">
+          <div class="ai-grad text-white px-4 py-2 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              <span class="text-xs font-bold uppercase tracking-wider">Next Best Action</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="flex items-center gap-1 bg-white/20 rounded-full px-2 py-0.5" title="Supervised mode default on — you approve each AI action">
+                <span class="text-[9px] font-semibold uppercase tracking-wider">Supervised</span>
+                <button aria-label="Toggle supervised mode" class="flex"><span class="sm-toggle" data-on="true"></span></button>
+              </div>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full ai-grad flex items-center justify-center text-white shrink-0 shadow-md" aria-hidden="true"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg></div>
+              <div class="flex-1">
+                <div class="text-sm font-bold text-slate-900">Confirm SOC visit 4/24 at 10 AM with the patient (SMS)</div>
+                <div class="text-xs text-slate-600 mt-1">Hip post-op, family 24/7, spouse primary caregiver. Lopez RN free 10a&ndash;12p. Confirm arrival window + parking on stairs entry.</div>
+                <details class="mt-2">
+                  <summary class="text-[11px] text-indigo-700 font-semibold cursor-pointer select-none">Why this action &middot; click to expand</summary>
+                  <div class="text-[11px] text-slate-600 mt-2 pl-3 border-l-2 border-indigo-200 space-y-1">
+                    <div>&bull; Discharge is in 4h 20m &mdash; SLA pressure.</div>
+                    <div>&bull; TCPA SMS opt-in recorded 4/22 @ 3:14 PM via Sutter consent form.</div>
+                    <div>&bull; Lopez RN route has 9:40 slot free, 2.1 mi from Mercy.</div>
+                    <div>&bull; Similar 82F post-hip cohort: 89% confirm-on-first-SMS rate.</div>
+                    <div>&bull; Source: face-to-face.pdf p.1 &middot; referral-packet.pdf p.2 &middot; confidence 94%.</div>
+                  </div>
+                </details>
+              </div>
+              <div class="flex flex-col items-end gap-1 shrink-0">
+                <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">94% conf</span>
+                <button class="text-xs font-bold bg-emerald-600 text-white rounded-lg px-4 py-2 hover:bg-emerald-700 whitespace-nowrap">Execute &rarr;</button>
+                <button class="text-[10px] text-slate-500 hover:text-slate-900">Dismiss</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 card-shadow p-4">
+          <div class="flex items-center justify-between mb-2"><h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Face-to-Face</h3><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">COMPLETE</span></div>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-slate-500">Completed</span><span class="font-semibold text-slate-900">4/14/2026</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">By</span><span class="font-semibold text-slate-900">Dr. S. Chen</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Signed</span><span class="font-semibold text-emerald-700">&#10003; digital</span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Next (if recert)</span><span class="font-semibold text-slate-900">6/13/2026</span></div>
+          </div>
+          <button class="mt-3 w-full text-[11px] font-semibold text-indigo-700 bg-indigo-50 rounded-lg py-1.5 hover:bg-indigo-100">Draft physician thank-you &rarr;</button>
+        </div>
+      </div>
+
+      <!-- AI-draft response composer -->
+      <div class="bg-white rounded-xl border border-slate-200 card-shadow mb-4 overflow-hidden">
+        <div class="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-900">AI-draft composer</span>
+            <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 rounded-full px-2 py-0.5" title="No outbound will send until consent is verified">&#10003; Consent on file</span>
+            <span class="text-[9px] font-bold text-slate-600 bg-slate-100 rounded-full px-2 py-0.5">&#128274; Supervised</span>
+          </div>
+          <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[10px] font-semibold" role="tablist" aria-label="Channel">
+            <button onclick="switchComposer(this,'sms')" class="subnav-item active px-2.5 py-1 rounded-md">&#128241; SMS</button>
+            <button onclick="switchComposer(this,'email')" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">&#9993; Email</button>
+            <button onclick="switchComposer(this,'voice')" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">&#128222; Voice-VM</button>
+            <button onclick="switchComposer(this,'fax')" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">&#128224; Fax</button>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="flex items-center gap-2 mb-2 text-[11px] text-slate-600"><span class="font-semibold text-slate-700">To:</span><span>Jane Doe (PT-001) &middot; +1 (555) DEMO-PT1</span><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded-full px-1.5 py-0.5 ml-auto">&#10003; TCPA opt-in 4/22</span></div>
+          <textarea rows="4" class="w-full text-sm border border-slate-200 rounded-lg p-3 focus:outline-none focus:border-indigo-500 bg-indigo-50/30" aria-label="AI draft">Hi Jane, this is Meridian Home Health confirming your nursing visit tomorrow, Thu 4/24 at 10:00 AM. Sarah Lopez RN will call when 10 min out. Reply YES to confirm, RESCHED to change, or STOP to opt out.</textarea>
+          <div class="flex items-center justify-between mt-2">
+            <div class="flex items-center gap-3 text-[11px] text-slate-500">
+              <span>128 / 160 chars &middot; 1 SMS segment</span>
+              <span class="text-emerald-700 font-semibold">&#10003; STOP keyword appended</span>
+              <a href="#" class="text-slate-500 hover:text-slate-900" title="View audit trail">&#128269; audit</a>
+            </div>
+            <div class="flex gap-2">
+              <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">Regenerate</button>
+              <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5 hover:bg-slate-50">Edit</button>
+              <button class="text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg px-3 py-1.5">Reject</button>
+              <button class="text-xs font-bold bg-emerald-600 text-white rounded-lg px-4 py-1.5 hover:bg-emerald-700">Send &rarr;</button>
+            </div>
+          </div>
+          <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500 flex items-center gap-2"><span class="font-semibold text-slate-700">Provenance:</span><span>Bedrock Claude Sonnet 4.6 &middot; prompt v12 &middot; PHI-scrubbed &middot; audit log <span class="font-mono text-indigo-600">evt_04ba1f</span></span></div>
         </div>
       </div>
 
@@ -777,6 +1042,7 @@
           <button onclick="showPhone('route')" id="pbtn-route" class="subnav-item active px-2.5 py-1 rounded-md">Route</button>
           <button onclick="showPhone('checkin')" id="pbtn-checkin" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Check-in</button>
           <button onclick="showPhone('voice')" id="pbtn-voice" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Voice note</button>
+          <button onclick="showPhone('ambient')" id="pbtn-ambient" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Start visit &middot; ambient</button>
           <button onclick="showPhone('visits')" id="pbtn-visits" class="subnav-item px-2.5 py-1 rounded-md text-slate-600">Nurse visits</button>
         </div>
       </div>
@@ -894,6 +1160,58 @@
               </div>
             </div>
 
+            <!-- AMBIENT CAPTURE SCREEN -->
+            <div class="phone-shot" data-phone="ambient">
+              <div class="px-5 pt-4">
+                <button onclick="showPhone('checkin')" class="flex items-center gap-1 text-xs text-emerald-600 font-semibold mb-3"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>Check-in</button>
+                <div class="flex items-center justify-between mb-2">
+                  <h2 class="text-lg font-bold text-slate-900">Start visit &middot; ambient</h2>
+                  <div class="flex items-center gap-1 bg-red-50 text-red-700 rounded-full px-2 py-0.5"><span class="w-1.5 h-1.5 rounded-full bg-red-500 pulse-dot"></span><span class="text-[9px] font-bold uppercase">REC</span></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mb-3">Mercy General &middot; Dr. Chen &middot; 9:52 AM</div>
+                <!-- 2-party consent banner -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 mb-3">
+                  <div class="text-[10px] font-bold text-amber-900 mb-0.5">CA 2-party recording disclosure</div>
+                  <div class="text-[10px] text-amber-800 leading-snug">"This visit is being recorded for quality &amp; documentation. Dr. Chen has acknowledged on-file consent. <b>Press pause</b> to stop recording at any time."</div>
+                </div>
+                <div class="flex items-center gap-1.5 mb-2 text-[10px] text-slate-600"><span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span><span class="font-semibold text-indigo-700">AI listening</span><span class="text-slate-400">&middot; on-device, PHI-scrubbed</span></div>
+                <!-- Live waveform -->
+                <div class="bg-slate-900 rounded-xl p-4 mb-3">
+                  <div class="flex items-end justify-center gap-0.5 h-16" aria-hidden="true">
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:40%;animation-delay:0s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:70%;animation-delay:.1s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:55%;animation-delay:.2s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:90%;animation-delay:.3s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:45%;animation-delay:.05s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:80%;animation-delay:.15s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:65%;animation-delay:.25s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:50%;animation-delay:.35s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:75%;animation-delay:.08s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:60%;animation-delay:.18s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:85%;animation-delay:.28s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:40%;animation-delay:.38s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:70%;animation-delay:.02s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:55%;animation-delay:.12s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:95%;animation-delay:.22s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:50%;animation-delay:.32s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:75%;animation-delay:.04s"></div>
+                    <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:60%;animation-delay:.14s"></div>
+                  </div>
+                  <div class="text-center text-[10px] text-slate-400 mt-2 tabular-nums font-mono">04:23 &middot; <span class="text-emerald-400">Deepgram</span></div>
+                </div>
+                <!-- Post-visit summary preview (live-streaming) -->
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 mb-3">
+                  <div class="text-[10px] font-bold text-indigo-900 mb-1 flex items-center justify-between"><span>Post-visit summary &middot; preview</span><span class="text-[9px] bg-white rounded px-1.5 py-0.5 text-indigo-700 font-semibold">streaming</span></div>
+                  <div class="text-[11px] text-slate-700 leading-relaxed">Dr. Chen confirmed 3 new CHF discharges for this week. Noted concern about overnight on-call &mdash; suggested Meridian&rsquo;s 24/7 RN line. Topics: cardiac rehab pathway, F2F turnaround, ICD-10 coding on recert&hellip;<span class="inline-block w-1 h-3 bg-indigo-600 ml-0.5 animate-pulse"></span></div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <button class="bg-slate-200 rounded-xl py-2.5 text-[11px] font-semibold text-slate-800">Pause</button>
+                  <button class="bg-slate-200 rounded-xl py-2.5 text-[11px] font-semibold text-slate-800">Tag</button>
+                  <button class="bg-emerald-600 text-white rounded-xl py-2.5 text-[11px] font-bold">End + save</button>
+                </div>
+              </div>
+            </div>
+
             <!-- NURSE VISITS SCREEN -->
             <div class="phone-shot" data-phone="visits">
               <div class="px-5 pt-4">
@@ -960,6 +1278,7 @@
                   <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">SC</div>
                   <div class="flex-1 min-w-0"><div class="text-xs font-semibold text-slate-900 truncate">Dr. Sarah Chen</div><div class="text-[10px] text-slate-500 truncate">Cardiology &middot; NPI 1234567890</div></div>
                   <button aria-label="Call Dr. Chen" class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>
+                  <button aria-label="SMS Dr. Chen" class="w-7 h-7 rounded-full bg-indigo-500 text-white flex items-center justify-center" title="Pre-filled BD thank-you"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></button>
                 </div>
                 <div class="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
                   <div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center">LJ</div>
@@ -1063,7 +1382,444 @@
       </div>
     </div>
 
+
+    <!-- ============ AI CONSOLE ============ -->
+    <div id="view-ai-console" class="view p-6 max-w-7xl">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">AI Console</h1>
+            <span class="text-[10px] font-bold ai-grad text-white rounded-full px-2 py-0.5">LIVE</span>
+          </div>
+          <p class="text-sm text-slate-500">Per-template agent state &middot; cost &middot; live takeover. Every AI surface funnels through here.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-1.5">
+            <span class="text-[10px] font-semibold text-slate-700 uppercase tracking-wider">Supervised mode</span>
+            <button aria-label="Toggle supervised mode globally" class="flex"><span class="sm-toggle" data-on="true"></span></button>
+          </div>
+          <button class="text-xs font-semibold bg-red-600 text-white rounded-lg px-3 py-1.5 hover:bg-red-700">Kill-switch all AI</button>
+        </div>
+      </div>
+
+      <!-- Cost + activity top row -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
+          <div class="text-xs font-medium text-slate-500 mb-1">Spend today</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">$4.82</div>
+          <div class="text-[11px] text-slate-500 mt-1">budget $25 &middot; <span class="text-emerald-700 font-semibold">on track</span></div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
+          <div class="text-xs font-medium text-slate-500 mb-1">Spend MTD</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">$81.20</div>
+          <div class="text-[11px] text-slate-500 mt-1">projected $112 &middot; well under $400 cap</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
+          <div class="text-xs font-medium text-slate-500 mb-1">Draft queue depth</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">9</div>
+          <div class="text-[11px] text-amber-700 mt-1 font-semibold">2 SLA-at-risk &rarr; review</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
+          <div class="text-xs font-medium text-slate-500 mb-1">Error rate 24h</div>
+          <div class="text-2xl font-bold text-emerald-700 tabular-nums">0.2%</div>
+          <div class="text-[11px] text-slate-500 mt-1">1 prompt timeout &middot; 0 PHI scrubber hits</div>
+        </div>
+      </div>
+
+      <!-- Agent state grid + live calls -->
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="col-span-2 bg-white rounded-xl border border-slate-200 card-shadow overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between"><h3 class="text-sm font-semibold text-slate-900">Agent templates</h3><span class="text-[10px] text-slate-500">Shadow &rarr; Assist &rarr; Auto progression gated by per-template opt-in after 30d metrics</span></div>
+          <table class="w-full text-xs">
+            <thead><tr class="text-[10px] uppercase tracking-wider text-slate-500 bg-slate-50"><th class="text-left font-semibold px-4 py-2">Template</th><th class="text-left font-semibold py-2">Channel</th><th class="text-left font-semibold py-2">State</th><th class="text-right font-semibold py-2">Approve</th><th class="text-right font-semibold py-2">Edit</th><th class="text-right font-semibold py-2">Reject</th><th class="text-center font-semibold px-4 py-2">Action</th></tr></thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">Intake extraction</td><td class="py-2 text-slate-600">&#128224; fax</td><td class="py-2"><span class="text-[9px] font-bold chip-auto rounded-full px-2 py-0.5">AUTO</span></td><td class="text-right tabular-nums">94%</td><td class="text-right tabular-nums">4%</td><td class="text-right tabular-nums">2%</td><td class="text-center"><button class="text-[10px] font-semibold text-slate-500 hover:text-slate-900">configure</button></td></tr>
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">SOC-confirm SMS</td><td class="py-2 text-slate-600">&#128241; SMS</td><td class="py-2"><span class="text-[9px] font-bold chip-assist rounded-full px-2 py-0.5">ASSIST</span></td><td class="text-right tabular-nums">87%</td><td class="text-right tabular-nums">10%</td><td class="text-right tabular-nums">3%</td><td class="text-center"><button class="text-[10px] font-semibold text-indigo-700 hover:text-indigo-900">promote</button></td></tr>
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">Physician thank-you</td><td class="py-2 text-slate-600">&#9993; email</td><td class="py-2"><span class="text-[9px] font-bold chip-assist rounded-full px-2 py-0.5">ASSIST</span></td><td class="text-right tabular-nums">76%</td><td class="text-right tabular-nums">18%</td><td class="text-right tabular-nums">6%</td><td class="text-center"><button class="text-[10px] font-semibold text-slate-500 hover:text-slate-900">configure</button></td></tr>
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">Referral-missing-field follow-up</td><td class="py-2 text-slate-600">&#128224; fax</td><td class="py-2"><span class="text-[9px] font-bold chip-shadow rounded-full px-2 py-0.5">SHADOW</span></td><td class="text-right tabular-nums">&mdash;</td><td class="text-right tabular-nums">&mdash;</td><td class="text-right tabular-nums">&mdash;</td><td class="text-center"><span class="text-[10px] text-slate-400">30d gate</span></td></tr>
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">Voice bot &middot; eligibility check-in</td><td class="py-2 text-slate-600">&#128222; voice</td><td class="py-2"><span class="text-[9px] font-bold chip-assist rounded-full px-2 py-0.5">ASSIST</span></td><td class="text-right tabular-nums">82%</td><td class="text-right tabular-nums">12%</td><td class="text-right tabular-nums">6%</td><td class="text-center"><button onclick="openPhoneBot()" class="text-[10px] font-semibold text-red-700 hover:text-red-900">live call &rarr;</button></td></tr>
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">Hospice F2F reminder</td><td class="py-2 text-slate-600">&#9993; email</td><td class="py-2"><span class="text-[9px] font-bold chip-shadow rounded-full px-2 py-0.5">SHADOW</span></td><td class="text-right tabular-nums">&mdash;</td><td class="text-right tabular-nums">&mdash;</td><td class="text-right tabular-nums">&mdash;</td><td class="text-center"><span class="text-[10px] text-slate-400">30d gate</span></td></tr>
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">Duplicate-fax merger</td><td class="py-2 text-slate-600">&#128224; fax</td><td class="py-2"><span class="text-[9px] font-bold chip-assist rounded-full px-2 py-0.5">ASSIST</span></td><td class="text-right tabular-nums">91%</td><td class="text-right tabular-nums">6%</td><td class="text-right tabular-nums">3%</td><td class="text-center"><button class="text-[10px] font-semibold text-slate-500 hover:text-slate-900">configure</button></td></tr>
+              <tr><td class="px-4 py-2 font-semibold text-slate-900">Triage scorer</td><td class="py-2 text-slate-600">&#128269; meta</td><td class="py-2"><span class="text-[9px] font-bold chip-auto rounded-full px-2 py-0.5">AUTO</span></td><td class="text-right tabular-nums">95%</td><td class="text-right tabular-nums">4%</td><td class="text-right tabular-nums">1%</td><td class="text-center"><button class="text-[10px] font-semibold text-slate-500 hover:text-slate-900">configure</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-200 card-shadow overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between"><h3 class="text-sm font-semibold text-slate-900">Live calls</h3><span class="flex items-center gap-1 text-[10px] text-emerald-700"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot"></span>2 active</span></div>
+          <div class="divide-y divide-slate-100">
+            <button onclick="openPhoneBot()" data-demo="true" class="w-full text-left p-4 hover:bg-slate-50">
+              <div class="flex items-center justify-between mb-1">
+                <div class="text-xs font-semibold text-slate-900">PT-002 &middot; CHF check-in</div>
+                <span class="text-[9px] font-bold bg-red-50 text-red-700 rounded-full px-1.5 py-0.5 flex items-center gap-1"><span class="w-1 h-1 rounded-full bg-red-500 pulse-dot"></span>LIVE 2:14</span>
+              </div>
+              <div class="text-[11px] text-slate-500">Outbound &middot; voice bot &middot; human on standby</div>
+              <div class="text-[11px] text-indigo-700 font-semibold mt-1">open transcript &rarr;</div>
+            </button>
+            <div data-demo="true" class="p-4">
+              <div class="flex items-center justify-between mb-1">
+                <div class="text-xs font-semibold text-slate-900">Mercy General &middot; F2F reminder</div>
+                <span class="text-[9px] font-bold bg-amber-50 text-amber-700 rounded-full px-1.5 py-0.5">RINGING</span>
+              </div>
+              <div class="text-[11px] text-slate-500">Outbound &middot; bot ID disclosure queued</div>
+            </div>
+          </div>
+          <div class="p-4 border-t border-slate-100 bg-slate-50 text-[10px] text-slate-500">
+            <div class="font-semibold text-slate-700 mb-1">Voice agent config</div>
+            <div class="leading-relaxed"><b>FCC 24-28:</b> AI voice must self-identify. Script locked: <span class="font-mono text-slate-700">&ldquo;This is an AI assistant for Meridian Hospice.&rdquo;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Draft queue summary + Shadow log -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5">
+          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">Shadow-mode evaluation log</h3><span class="text-[10px] text-slate-500">last 24h</span></div>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between"><span class="text-slate-700">Referral-missing-field follow-up</span><span class="text-[10px] text-slate-500 tabular-nums">121 silent runs &middot; 94% would-match-human</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Hospice F2F reminder</span><span class="text-[10px] text-slate-500 tabular-nums">38 silent runs &middot; 79% would-match-human</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Night-shift triage</span><span class="text-[10px] text-slate-500 tabular-nums">47 silent runs &middot; 96% would-match-human</span></div>
+          </div>
+          <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500">Shadow mode compares AI decisions against human decisions without sending. Promote to Assist after 30d &ge; 80%.</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 card-shadow p-5">
+          <div class="flex items-center justify-between mb-3"><h3 class="text-sm font-semibold text-slate-900">Cost breakdown &middot; today</h3><span class="text-[10px] text-slate-500">Bedrock + Deepgram + Cartesia</span></div>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center justify-between"><span class="text-slate-700">Claude Sonnet 4.6 (drafts)</span><span class="font-semibold tabular-nums">$2.41</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Claude Haiku (triage)</span><span class="font-semibold tabular-nums">$0.62</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Deepgram STT</span><span class="font-semibold tabular-nums">$0.87</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Cartesia TTS</span><span class="font-semibold tabular-nums">$0.54</span></div>
+            <div class="flex items-center justify-between"><span class="text-slate-700">Textract fallback OCR</span><span class="font-semibold tabular-nums">$0.38</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ CONVERSATIONS ============ -->
+    <div id="view-conversations" class="view">
+      <div class="flex h-[calc(100vh-7rem)]">
+        <!-- Contact list -->
+        <div class="w-80 border-r border-slate-200 bg-white overflow-y-auto">
+          <div class="p-4 border-b border-slate-200">
+            <h1 class="text-lg font-bold text-slate-900">Conversations</h1>
+            <p class="text-[11px] text-slate-500 mt-0.5">Unified thread per contact &middot; fax + voice + SMS + email</p>
+            <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[10px] font-medium mt-3"><button class="subnav-item active px-2 py-0.5 rounded">All</button><button class="subnav-item px-2 py-0.5 rounded text-slate-600">Patients</button><button class="subnav-item px-2 py-0.5 rounded text-slate-600">Physicians</button><button class="subnav-item px-2 py-0.5 rounded text-slate-600">Orgs</button></div>
+          </div>
+          <div class="divide-y divide-slate-100">
+            <div data-demo="true" class="p-4 hover:bg-slate-50 bg-indigo-50/40 border-l-2 border-indigo-500 cursor-pointer">
+              <div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-[10px] font-bold flex items-center justify-center">JD</div><div class="text-xs font-semibold text-slate-900">Jane Doe (PT-001)</div></div><span class="text-[9px] text-slate-400">2m</span></div>
+              <div class="text-[11px] text-slate-600 truncate ml-10">&ldquo;Yes, 10 AM works. I&rsquo;ll be home.&rdquo;</div>
+              <div class="flex items-center gap-1 ml-10 mt-1">
+                <span class="text-[9px] bg-emerald-100 text-emerald-700 rounded px-1 py-0.5">&#10003; TCPA</span>
+                <span class="text-[9px] bg-slate-100 text-slate-600 rounded px-1 py-0.5">SMS</span>
+              </div>
+            </div>
+            <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer">
+              <div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">SC</div><div class="text-xs font-semibold text-slate-900">Dr. Sarah Chen</div></div><span class="text-[9px] text-slate-400">18m</span></div>
+              <div class="text-[11px] text-slate-600 truncate ml-10">Thank-you note acknowledged &middot; email replied</div>
+              <div class="flex items-center gap-1 ml-10 mt-1"><span class="text-[9px] bg-slate-100 text-slate-600 rounded px-1 py-0.5">Email</span></div>
+            </div>
+            <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer">
+              <div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center">PS</div><div class="text-xs font-semibold text-slate-900">Pine Ridge SNF</div></div><span class="text-[9px] text-slate-400">1h</span></div>
+              <div class="text-[11px] text-slate-600 truncate ml-10">Fax received &middot; AI awaiting F2F clarification</div>
+              <div class="flex items-center gap-1 ml-10 mt-1">
+                <span class="text-[9px] bg-amber-100 text-amber-700 rounded px-1 py-0.5">&#9888; No consent on file &middot; AI outbound disabled</span>
+              </div>
+            </div>
+            <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer">
+              <div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center">JS</div><div class="text-xs font-semibold text-slate-900">John Sample (PT-002)</div></div><span class="text-[9px] text-slate-400">3h</span></div>
+              <div class="text-[11px] text-slate-600 truncate ml-10">Voice bot completed CHF check-in &middot; summary saved</div>
+              <div class="flex items-center gap-1 ml-10 mt-1">
+                <span class="text-[9px] bg-emerald-100 text-emerald-700 rounded px-1 py-0.5">&#10003; TCPA</span>
+                <span class="text-[9px] bg-slate-100 text-slate-600 rounded px-1 py-0.5">Voice</span>
+                <span class="text-[9px] bg-slate-100 text-slate-600 rounded px-1 py-0.5">SMS</span>
+              </div>
+            </div>
+            <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer">
+              <div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center">MG</div><div class="text-xs font-semibold text-slate-900">Mercy General &middot; Case Mgmt</div></div><span class="text-[9px] text-slate-400">5h</span></div>
+              <div class="text-[11px] text-slate-600 truncate ml-10">Fax to 916-555-0138 confirmed delivered</div>
+              <div class="flex items-center gap-1 ml-10 mt-1"><span class="text-[9px] bg-slate-100 text-slate-600 rounded px-1 py-0.5">Fax</span></div>
+            </div>
+            <div data-demo="true" class="p-4 hover:bg-slate-50 cursor-pointer">
+              <div class="flex items-start justify-between mb-1"><div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center">PT7</div><div class="text-xs font-semibold text-slate-900">Patient PT-007</div></div><span class="text-[9px] text-slate-400">7h</span></div>
+              <div class="text-[11px] text-slate-600 truncate ml-10">&#9888; STOP keyword received &middot; TCPA opt-out logged</div>
+              <div class="flex items-center gap-1 ml-10 mt-1"><span class="text-[9px] bg-red-100 text-red-700 rounded px-1 py-0.5">&#10006; SMS opt-out</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thread timeline -->
+        <div class="flex-1 bg-slate-50 flex flex-col">
+          <div class="px-6 py-3 bg-white border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold flex items-center justify-center" aria-hidden="true">JD</div>
+              <div>
+                <div class="font-semibold text-slate-900 flex items-center gap-2">Jane Doe (PT-001) <span class="text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">&#10003; TCPA opt-in</span></div>
+                <div class="text-[11px] text-slate-500">+1 (555) DEMO-PT1 &middot; jane.doe@demo.example &middot; fax 916-555-0138</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 bg-slate-50 rounded-lg px-2 py-1 border border-slate-200">
+              <span class="text-[10px] font-semibold text-slate-700">Supervised</span>
+              <button aria-label="Toggle supervised mode" class="flex"><span class="sm-toggle" data-on="true"></span></button>
+            </div>
+          </div>
+          <div class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Fax inbound -->
+            <div class="flex items-start gap-2">
+              <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 text-xs">&#128224;</div>
+              <div class="max-w-lg">
+                <div class="text-[10px] text-slate-500 mb-1">Fax &middot; from Sutter Roseville &middot; 4/23 9:42 AM</div>
+                <div class="bg-white rounded-xl rounded-tl-sm border border-slate-200 p-3 text-xs text-slate-700">Referral packet &middot; 3 pages &middot; PT-001 post-op right hip. <a href="#" class="text-indigo-700 font-semibold">View packet &rarr;</a></div>
+              </div>
+            </div>
+            <!-- AI draft sent SMS -->
+            <div class="flex items-start gap-2 justify-end">
+              <div class="max-w-lg">
+                <div class="text-[10px] text-slate-500 mb-1 text-right">SMS &rarr; 4/23 9:47 AM &middot; <span class="text-indigo-700 font-semibold">AI draft &middot; human approved</span> &middot; <a href="#" class="text-slate-500">&#128269; audit</a></div>
+                <div class="ai-grad-soft rounded-xl rounded-tr-sm border border-indigo-200 p-3 text-xs text-slate-800">Hi Jane, this is Meridian Home Health confirming your nursing visit tomorrow, Thu 4/24 at 10:00 AM. Sarah Lopez RN will call when 10 min out. Reply YES to confirm, RESCHED to change, or STOP to opt out.</div>
+                <div class="flex items-center justify-end gap-1 mt-1">
+                  <span class="text-[9px] bg-indigo-100 text-indigo-700 rounded px-1.5 py-0.5 font-semibold">AI draft</span>
+                  <span class="text-[9px] bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5 font-semibold">&#10003; human approved</span>
+                  <span class="text-[9px] bg-slate-100 text-slate-600 rounded px-1.5 py-0.5 font-semibold">94% conf</span>
+                </div>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-[10px] font-bold">CI</div>
+            </div>
+            <!-- Patient reply -->
+            <div class="flex items-start gap-2">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center shrink-0 text-[10px] font-bold">JD</div>
+              <div class="max-w-lg">
+                <div class="text-[10px] text-slate-500 mb-1">SMS &middot; 4/23 9:49 AM</div>
+                <div class="bg-white rounded-xl rounded-tl-sm border border-slate-200 p-3 text-xs text-slate-700">Yes, 10 AM works. I&rsquo;ll be home.</div>
+              </div>
+            </div>
+            <!-- Suggested next turn -->
+            <div class="flex items-start gap-2 justify-end">
+              <div class="max-w-lg">
+                <div class="text-[10px] text-slate-500 mb-1 text-right">SMS &rarr; <span class="text-amber-700 font-semibold">AI draft &middot; awaiting your approval</span></div>
+                <div class="bg-amber-50 rounded-xl rounded-tr-sm border border-amber-200 p-3 text-xs text-slate-800">Perfect &mdash; we&rsquo;ll see you tomorrow at 10 AM. Please have your insurance card and medication list handy. Questions? Reply here or call (916) 555-0100.</div>
+                <div class="flex items-center justify-end gap-2 mt-2">
+                  <button class="text-[10px] font-semibold bg-white border border-slate-200 rounded px-2 py-1">Regenerate</button>
+                  <button class="text-[10px] font-semibold bg-white border border-slate-200 rounded px-2 py-1">Edit</button>
+                  <button class="text-[10px] font-semibold bg-emerald-600 text-white rounded px-3 py-1">Send &rarr;</button>
+                </div>
+              </div>
+              <div class="w-8 h-8 rounded-full ai-grad text-white flex items-center justify-center shrink-0 text-[10px] font-bold">AI</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ OUTBOUND QUEUE ============ -->
+    <div id="view-outbound-queue" class="view p-6 max-w-7xl">
+      <div class="flex items-end justify-between mb-6">
+        <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Outbound queue</h1><p class="text-sm text-slate-500 mt-0.5">AI-drafted messages awaiting human send. Supervised Mode keeps you in the loop.</p></div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 py-1.5">
+            <span class="text-[10px] font-semibold text-slate-700 uppercase tracking-wider">Supervised</span>
+            <button aria-label="Toggle supervised mode" class="flex"><span class="sm-toggle" data-on="true"></span></button>
+          </div>
+          <button class="text-xs font-semibold bg-emerald-600 text-white rounded-lg px-3 py-1.5">Send all approved</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[11px] font-medium" role="tablist">
+          <button class="subnav-item active px-2.5 py-1 rounded-md">All (9)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-red-700">&#9201; SLA at risk (2)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">&#128241; SMS (4)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">&#9993; Email (3)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">&#128222; Voice-VM (1)</button>
+          <button class="subnav-item px-2.5 py-1 rounded-md text-slate-600">&#128224; Fax (1)</button>
+        </div>
+        <div class="text-[10px] text-slate-500 ml-auto">Sort: Urgency &middot; SLA-at-risk first</div>
+      </div>
+
+      <div class="space-y-3">
+        <!-- SLA at risk -->
+        <div data-demo="true" class="bg-white rounded-xl border border-red-200 card-shadow p-4 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-lg bg-red-100 text-red-700 flex items-center justify-center shrink-0" aria-hidden="true">&#128241;</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="text-sm font-bold text-slate-900">SOC-confirm SMS &rarr; John Sample (PT-002)</span>
+              <span class="text-[9px] font-bold bg-red-100 text-red-700 rounded-full px-2 py-0.5">&#9201; SLA 14 min</span>
+              <span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded-full px-2 py-0.5">&#10003; TCPA opt-in</span>
+              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">94% conf</span>
+              <a href="#" class="text-[9px] text-slate-500 hover:text-slate-700 ml-auto">&#128269; audit</a>
+            </div>
+            <div class="text-xs text-slate-700 bg-slate-50 rounded-lg p-3 my-2 leading-relaxed">Hi John, confirming your SOC visit tomorrow 4/24 at 10:00 AM with Sarah Lopez RN. Reply YES to confirm, RESCHED to change, or STOP to opt out.</div>
+            <div class="text-[11px] text-slate-500">to: +1 (555) DEMO-PT2 &middot; generated 2 min ago &middot; 138/160 chars</div>
+          </div>
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <button class="text-xs font-bold bg-emerald-600 text-white rounded-lg px-4 py-1.5 hover:bg-emerald-700">Send</button>
+            <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1">Edit</button>
+            <button class="text-xs font-medium bg-slate-100 text-slate-600 rounded-lg px-3 py-1">Reject</button>
+          </div>
+        </div>
+
+        <!-- No-consent blocked -->
+        <div data-demo="true" class="bg-white rounded-xl border border-amber-200 card-shadow p-4 flex items-start gap-4 opacity-70">
+          <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0" aria-hidden="true">&#128241;</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="text-sm font-bold text-slate-900">Intake follow-up SMS &rarr; Patient PT-007</span>
+              <span class="text-[9px] font-bold bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">&#9888; No consent on file &middot; AI outbound disabled</span>
+              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">83% conf</span>
+            </div>
+            <div class="text-xs text-slate-700 bg-slate-50 rounded-lg p-3 my-2 leading-relaxed">[blocked preview] Hi, we received your referral from Mercy San Juan and have a few questions about your F2F date&hellip;</div>
+            <div class="text-[11px] text-amber-800">Collect TCPA opt-in via intake packet before sending. <a href="#" class="font-semibold">Send consent form &rarr;</a></div>
+          </div>
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <button class="text-xs font-bold bg-slate-100 text-slate-400 rounded-lg px-4 py-1.5 cursor-not-allowed" disabled>Send</button>
+            <button class="text-xs font-medium bg-white border border-amber-200 text-amber-800 rounded-lg px-3 py-1">Collect consent</button>
+          </div>
+        </div>
+
+        <!-- Email physician thanks -->
+        <div data-demo="true" class="bg-white rounded-xl border border-slate-200 card-shadow p-4 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center shrink-0" aria-hidden="true">&#9993;</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="text-sm font-bold text-slate-900">Physician thank-you &rarr; Dr. Sarah Chen</span>
+              <span class="text-[9px] font-bold bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5">AI moat &middot; auto-thanks</span>
+              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">76% conf</span>
+              <a href="#" class="text-[9px] text-slate-500 hover:text-slate-700 ml-auto">&#128269; audit</a>
+            </div>
+            <div class="text-xs text-slate-700 bg-slate-50 rounded-lg p-3 my-2 leading-relaxed"><b>Subject:</b> Thank you for the PT-001 referral<br/><br/>Dr. Chen &mdash; Sarah Lopez RN is completing the SOC tomorrow at 10 AM. We&rsquo;ll send you a visit summary by Friday EOD. The family mentioned your care around her recent admission was extraordinary. Appreciate you thinking of Meridian.</div>
+            <div class="text-[11px] text-slate-500">to: schen@mercy.demo &middot; generated 18 min ago</div>
+          </div>
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <button class="text-xs font-bold bg-emerald-600 text-white rounded-lg px-4 py-1.5">Send</button>
+            <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1">Edit</button>
+          </div>
+        </div>
+
+        <!-- Voice VM -->
+        <div data-demo="true" class="bg-white rounded-xl border border-slate-200 card-shadow p-4 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center shrink-0" aria-hidden="true">&#128222;</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="text-sm font-bold text-slate-900">Voicemail drop &rarr; Pine Ridge SNF case mgr</span>
+              <span class="text-[9px] font-bold bg-sky-100 text-sky-700 rounded-full px-2 py-0.5">&#10003; FCC 24-28 disclosure script locked</span>
+              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">Cartesia TTS</span>
+            </div>
+            <div class="text-xs text-slate-700 bg-slate-50 rounded-lg p-3 my-2 leading-relaxed italic">&ldquo;This is an AI assistant for Meridian Home Health. I&rsquo;m following up on the referral for PT-003 sent Tuesday. The F2F date we have does not match the packet &mdash; could a human at Pine Ridge please call us back at (916) 555-0100? This call may be recorded and used for quality. California law requires both parties consent. Press 1 to consent, 2 to decline.&rdquo;</div>
+            <div class="text-[11px] text-slate-500">to: Pine Ridge main &middot; generated 1h ago &middot; 32s &middot; &#127760; CA 2-party language included</div>
+          </div>
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <button class="text-xs font-bold bg-emerald-600 text-white rounded-lg px-4 py-1.5">Send</button>
+            <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1">Edit</button>
+            <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1">Human call</button>
+          </div>
+        </div>
+
+        <!-- Fax -->
+        <div data-demo="true" class="bg-white rounded-xl border border-slate-200 card-shadow p-4 flex items-start gap-4">
+          <div class="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0" aria-hidden="true">&#128224;</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <span class="text-sm font-bold text-slate-900">Accept-of-referral fax &rarr; UC Davis Medical</span>
+              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">Documo outbound</span>
+              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">91% conf</span>
+            </div>
+            <div class="text-xs text-slate-700 bg-slate-50 rounded-lg p-3 my-2 leading-relaxed">Cover sheet + signed acceptance form confirming Meridian Home Health will admit PT-004 starting 4/24. CPO signature by Lopez RN attached.</div>
+            <div class="text-[11px] text-slate-500">to: 916-555-0247 &middot; generated 32 min ago &middot; 2 pages</div>
+          </div>
+          <div class="flex flex-col gap-1.5 shrink-0">
+            <button class="text-xs font-bold bg-emerald-600 text-white rounded-lg px-4 py-1.5">Send</button>
+            <button class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
+</div>
+
+<!-- ============ PHONE BOT MODAL ============ -->
+<div id="modal-phone-bot" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="phone-bot-title">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
+    <div class="ai-grad text-white px-5 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"><span class="w-2 h-2 rounded-full bg-red-400 pulse-dot"></span></div>
+        <div>
+          <div id="phone-bot-title" class="font-bold text-sm">Voice bot &middot; LIVE &middot; PT-002 CHF check-in</div>
+          <div class="text-[11px] text-indigo-100">Outbound &middot; Twilio + Deepgram + Cartesia &middot; round-trip 1.12s</div>
+        </div>
+        <span class="text-[10px] font-bold bg-white/20 rounded-full px-2 py-0.5 tabular-nums">02:14</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1.5 bg-white/20 rounded-full px-2 py-0.5">
+          <span class="text-[10px] font-bold uppercase tracking-wider">Supervised</span>
+          <button aria-label="Toggle supervised mode" class="flex"><span class="sm-toggle" data-on="true"></span></button>
+        </div>
+        <button onclick="closePhoneBot()" aria-label="Close" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+
+    <!-- Disclosure banner -->
+    <div class="bg-sky-50 border-b border-sky-200 px-5 py-2 text-[11px] text-sky-900 flex items-center gap-2">
+      <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span><b>FCC 24-28:</b> &ldquo;This is an AI assistant for Meridian Hospice.&rdquo; played at 0:02. <b>CA 2-party:</b> &ldquo;This call may be recorded&hellip; Press 1 to consent, 2 to decline.&rdquo; Patient pressed 1 at 0:09. <a href="#" class="font-semibold underline">view recording &rarr;</a></span>
+    </div>
+
+    <div class="grid grid-cols-2 divide-x divide-slate-200 flex-1 overflow-hidden">
+      <!-- Live STT -->
+      <div class="p-5 overflow-y-auto">
+        <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Live transcript &middot; Deepgram</h3><span class="text-[10px] text-slate-500">PHI scrubbed &middot; on wire</span></div>
+        <div class="space-y-3 text-sm">
+          <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:02</span><div class="flex-1"><div class="text-[10px] font-semibold text-indigo-700">AI</div><div class="text-slate-800">Hello, this is an AI assistant for Meridian Hospice. Am I speaking with John?</div></div></div>
+          <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:09</span><div class="flex-1"><div class="text-[10px] font-semibold text-slate-600">Patient</div><div class="text-slate-800">Yes, this is John.</div></div></div>
+          <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:11</span><div class="flex-1"><div class="text-[10px] font-semibold text-indigo-700">AI</div><div class="text-slate-800">Thanks. This call may be recorded for quality. California law requires both parties consent. Press 1 to consent, 2 to decline.</div></div></div>
+          <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:18</span><div class="flex-1"><div class="text-[10px] font-semibold text-slate-600">Patient</div><div class="text-slate-800">[pressed 1]</div></div></div>
+          <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:22</span><div class="flex-1"><div class="text-[10px] font-semibold text-indigo-700">AI</div><div class="text-slate-800">Great. Can you tell me on a scale of 0 to 10, how is your shortness of breath today compared to yesterday?</div></div></div>
+          <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:34</span><div class="flex-1"><div class="text-[10px] font-semibold text-slate-600">Patient</div><div class="text-slate-800">Maybe a 4. I had to sit down after climbing the porch.</div></div></div>
+          <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">1:58</span><div class="flex-1"><div class="text-[10px] font-semibold text-slate-600">Patient</div><div class="text-slate-800">I did take my Lasix this morning, yes.</div></div></div>
+          <div class="flex gap-2 shimmer rounded-lg p-2 -ml-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">2:14</span><div class="flex-1"><div class="text-[10px] font-semibold text-indigo-700">AI <span class="text-slate-400">&middot; streaming</span></div><div class="text-slate-800">Good. One more question &mdash; have you weighed yourself today?<span class="inline-block w-1 h-3 bg-indigo-600 ml-0.5 animate-pulse"></span></div></div></div>
+        </div>
+      </div>
+
+      <!-- AI intent + suggested turn -->
+      <div class="p-5 overflow-y-auto bg-slate-50">
+        <div class="mb-4">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Detected intent</h3>
+          <div class="bg-white rounded-lg border border-slate-200 p-3 space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-slate-600">Primary intent</span><span class="font-semibold">CHF symptom check-in</span></div>
+            <div class="flex justify-between"><span class="text-slate-600">Patient sentiment</span><span class="font-semibold text-amber-700">mildly distressed</span></div>
+            <div class="flex justify-between"><span class="text-slate-600">Dyspnea &middot; self-report</span><span class="font-semibold tabular-nums">4 / 10 &uarr;</span></div>
+            <div class="flex justify-between"><span class="text-slate-600">Lasix adherence</span><span class="font-semibold text-emerald-700">confirmed today</span></div>
+            <div class="flex justify-between"><span class="text-slate-600">Escalation risk</span><span class="font-semibold text-amber-700">moderate</span></div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Suggested next turn</h3>
+          <div class="bg-white rounded-lg border border-indigo-200 p-3">
+            <div class="text-xs text-slate-800 italic">&ldquo;Thanks for sharing &mdash; I&rsquo;d like to have your nurse Sarah give you a call in the next hour to check in. She&rsquo;s available. Does that work for you?&rdquo;</div>
+            <div class="flex gap-2 mt-3">
+              <button class="text-[10px] font-bold bg-emerald-600 text-white rounded-lg px-3 py-1.5">Allow AI to speak</button>
+              <button class="text-[10px] font-bold bg-slate-200 text-slate-700 rounded-lg px-3 py-1.5">Edit &amp; allow</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Controls</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 flex items-center justify-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>Interrupt AI</button>
+            <button class="bg-amber-500 text-white rounded-lg px-3 py-2 text-xs font-semibold flex items-center justify-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Take over &middot; human</button>
+            <button class="bg-slate-200 text-slate-700 rounded-lg px-3 py-2 text-xs font-semibold flex items-center justify-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12"/><path d="M15 9.34V4a3 3 0 0 0-5.94-.6"/></svg>Mute</button>
+            <button class="bg-red-600 text-white rounded-lg px-3 py-2 text-xs font-semibold flex items-center justify-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>End call</button>
+          </div>
+        </div>
+
+        <div class="text-[10px] text-slate-500 pt-3 border-t border-slate-200">
+          <div class="font-semibold text-slate-700 mb-1">Session audit</div>
+          <div class="font-mono">session_id: sess_0EBF24 &middot; model: sonnet-4.6 &middot; stt: deepgram-nova-3 &middot; tts: cartesia-v3 &middot; BAA: all active &middot; phi-scrubber: on</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Floating CTA (bottom right) -->
@@ -1091,13 +1847,35 @@
     document.querySelectorAll('.phone-shot').forEach(s => s.classList.remove('active'));
     const target = document.querySelector('[data-phone="' + name + '"]');
     if (target) target.classList.add('active');
-    ['route','checkin','voice','visits'].forEach(n => {
+    ['route','checkin','voice','ambient','visits'].forEach(n => {
       const b = document.getElementById('pbtn-' + n);
       if (!b) return;
       if (n === name) { b.classList.add('active'); b.classList.remove('text-slate-600'); }
       else { b.classList.remove('active'); b.classList.add('text-slate-600'); }
     });
   }
+  function openPhoneBot() {
+    const m = document.getElementById('modal-phone-bot');
+    if (m) m.classList.add('open');
+  }
+  function closePhoneBot() {
+    const m = document.getElementById('modal-phone-bot');
+    if (m) m.classList.remove('open');
+  }
+  function switchComposer(btn, channel) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('button').forEach(b => { b.classList.remove('active'); b.classList.add('text-slate-600'); });
+    btn.classList.add('active'); btn.classList.remove('text-slate-600');
+  }
+  // Supervised-mode toggle: toggle data-on
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('.sm-toggle');
+    if (t) { t.dataset.on = (t.dataset.on === 'true' ? 'false' : 'true'); e.stopPropagation(); }
+  });
+  // ESC closes phone bot modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePhoneBot();
+  });
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#tenant-dropdown') && !e.target.closest('[onclick*="tenant-dropdown"]')) {
       document.getElementById('tenant-dropdown').classList.remove('open');
