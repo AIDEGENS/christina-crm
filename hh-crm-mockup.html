@@ -3,27 +3,279 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Christina CRM — Pilot Demo (Meridian Home Health)</title>
-<meta name="description" content="Christina CRM — home-health + hospice referral management. Pilot demo for prospective agencies.">
+<title>Christina CRM &mdash; Pilot Demo (Meridian Home Health)</title>
+<meta name="description" content="Christina CRM &mdash; AI-ops layer for home-health and hospice. Stop losing money to missing docs, slow responses, and physician churn. Pilot demo for prospective agencies.">
+<meta name="theme-color" content="#0d9488">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>(function(){try{var t=localStorage.getItem('cc-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var d=localStorage.getItem('cc-density')||'comfortable';document.documentElement.setAttribute('data-density',d);}catch(_){}})();</script>
 <style>
-  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-feature-settings: "cv11","ss01"; }
+  /* ===== Theme variables: light (default) ===== */
+  :root {
+    --bg: rgb(248 250 252);
+    --surface: #ffffff;
+    --surface-2: rgb(241 245 249);
+    --surface-elev: #ffffff;
+    --text: rgb(15 23 42);
+    --text-muted: rgb(100 116 139);
+    --text-faint: rgb(148 163 184);
+    --border: rgb(226 232 240);
+    --border-strong: rgb(203 213 225);
+    --accent: rgb(13 148 136);
+    --accent-soft: rgba(20, 184, 166, .10);
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 3px rgb(0 0 0 / 0.06);
+    --shadow-2: 0 4px 12px rgb(0 0 0 / 0.08);
+    --shadow-3: 0 10px 30px rgb(0 0 0 / 0.12);
+    --shadow-glow: 0 0 0 3px rgba(20,184,166,.15);
+    --hairline: rgb(226 232 240);
+    --row-hover: rgb(248 250 252);
+    --code-bg: rgb(241 245 249);
+    --kbd: #ffffff;
+  }
+  /* ===== Dark theme ===== */
+  html[data-theme="dark"] {
+    --bg: rgb(2 6 23);
+    --surface: rgb(15 23 42);
+    --surface-2: rgb(30 41 59);
+    --surface-elev: rgb(15 23 42);
+    --text: rgb(241 245 249);
+    --text-muted: rgb(148 163 184);
+    --text-faint: rgb(100 116 139);
+    --border: rgb(30 41 59);
+    --border-strong: rgb(51 65 85);
+    --accent: rgb(45 212 191);
+    --accent-soft: rgba(45, 212, 191, .14);
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5), 0 1px 3px rgb(0 0 0 / 0.4);
+    --shadow-2: 0 6px 18px rgb(0 0 0 / 0.55);
+    --shadow-3: 0 14px 40px rgb(0 0 0 / 0.65);
+    --shadow-glow: 0 0 0 3px rgba(45,212,191,.22);
+    --hairline: rgb(30 41 59);
+    --row-hover: rgba(30, 41, 59, .55);
+    --code-bg: rgb(30 41 59);
+    --kbd: rgb(15 23 42);
+  }
+  /* ===== Density ===== */
+  html { --pad-1: 0.25rem; --pad-2: 0.5rem; --pad-3: 0.75rem; --pad-4: 1rem; --pad-5: 1.25rem; --pad-6: 1.5rem; }
+  html[data-density="compact"] { --pad-1: 0.125rem; --pad-2: 0.3rem; --pad-3: 0.45rem; --pad-4: 0.6rem; --pad-5: 0.8rem; --pad-6: 1rem; }
+  html[data-density="compact"] .density-pad { padding: var(--pad-3) var(--pad-4) !important; }
+  html[data-density="compact"] .density-row { padding-top: var(--pad-2) !important; padding-bottom: var(--pad-2) !important; }
+
+  /* ===== Globals ===== */
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-feature-settings: "cv11","ss01";
+    background: var(--bg);
+    color: var(--text);
+    transition: background-color .25s ease, color .25s ease;
+  }
+  /* Themeable Tailwind overrides — minimal surgical map so the bulk of the file keeps its utility classes */
+  html[data-theme="dark"] .bg-white { background-color: var(--surface) !important; }
+  html[data-theme="dark"] .bg-slate-50 { background-color: var(--bg) !important; }
+  html[data-theme="dark"] .bg-slate-100 { background-color: var(--surface-2) !important; }
+  html[data-theme="dark"] .bg-slate-200 { background-color: rgb(51 65 85) !important; }
+  html[data-theme="dark"] .text-slate-900 { color: var(--text) !important; }
+  html[data-theme="dark"] .text-slate-800 { color: rgb(226 232 240) !important; }
+  html[data-theme="dark"] .text-slate-700 { color: rgb(203 213 225) !important; }
+  html[data-theme="dark"] .text-slate-600 { color: var(--text-muted) !important; }
+  html[data-theme="dark"] .text-slate-500 { color: var(--text-muted) !important; }
+  html[data-theme="dark"] .text-slate-400 { color: var(--text-faint) !important; }
+  html[data-theme="dark"] .border-slate-100,
+  html[data-theme="dark"] .border-slate-200,
+  html[data-theme="dark"] .border-slate-300 { border-color: var(--border) !important; }
+  html[data-theme="dark"] .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: var(--border) !important; }
+  html[data-theme="dark"] .hover\:bg-slate-50:hover,
+  html[data-theme="dark"] .hover\:bg-slate-100:hover { background-color: var(--row-hover) !important; }
+  html[data-theme="dark"] .bg-slate-900 { background-color: rgb(2 6 23) !important; }
+  html[data-theme="dark"] .ring-white { --tw-ring-color: rgb(15 23 42) !important; }
+  /* Soft tint blocks (badges) — keep readable against dark surface */
+  html[data-theme="dark"] .bg-emerald-50 { background-color: rgba(16, 185, 129, .12) !important; }
+  html[data-theme="dark"] .bg-emerald-100 { background-color: rgba(16, 185, 129, .18) !important; }
+  html[data-theme="dark"] .bg-blue-50 { background-color: rgba(59, 130, 246, .12) !important; }
+  html[data-theme="dark"] .bg-blue-100 { background-color: rgba(59, 130, 246, .18) !important; }
+  html[data-theme="dark"] .bg-amber-50 { background-color: rgba(245, 158, 11, .12) !important; }
+  html[data-theme="dark"] .bg-amber-100 { background-color: rgba(245, 158, 11, .18) !important; }
+  html[data-theme="dark"] .bg-red-50 { background-color: rgba(239, 68, 68, .12) !important; }
+  html[data-theme="dark"] .bg-red-100 { background-color: rgba(239, 68, 68, .18) !important; }
+  html[data-theme="dark"] .bg-violet-50 { background-color: rgba(139, 92, 246, .12) !important; }
+  html[data-theme="dark"] .bg-violet-100 { background-color: rgba(139, 92, 246, .18) !important; }
+  html[data-theme="dark"] .bg-indigo-50 { background-color: rgba(99, 102, 241, .12) !important; }
+  html[data-theme="dark"] .bg-indigo-100 { background-color: rgba(99, 102, 241, .18) !important; }
+  html[data-theme="dark"] .bg-sky-50 { background-color: rgba(14, 165, 233, .12) !important; }
+  html[data-theme="dark"] .bg-sky-100 { background-color: rgba(14, 165, 233, .18) !important; }
+  html[data-theme="dark"] .bg-slate-50.border-t { background-color: var(--surface-2) !important; }
+  html[data-theme="dark"] input, html[data-theme="dark"] textarea, html[data-theme="dark"] select {
+    background-color: var(--surface-2) !important;
+    color: var(--text) !important;
+    border-color: var(--border-strong) !important;
+  }
+  html[data-theme="dark"] kbd { background: var(--surface-2) !important; color: var(--text-muted) !important; border-color: var(--border-strong) !important; }
+  html[data-theme="dark"] .ai-grad-soft { background: linear-gradient(135deg, rgba(45,212,191,.18), rgba(99,102,241,.18)); }
+  html[data-theme="dark"] .heat-0 { background: rgb(30 41 59); }
+  html[data-theme="dark"] .heat-1 { background: rgba(45, 212, 191, .18); }
+  html[data-theme="dark"] .heat-2 { background: rgba(45, 212, 191, .35); }
+  html[data-theme="dark"] .heat-3 { background: rgba(45, 212, 191, .55); }
+  html[data-theme="dark"] .heat-4 { background: rgb(45 212 191); }
+
   .view { display: none; }
-  .view.active { display: block; animation: fade 160ms ease-out; }
-  @keyframes fade { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
-  .nav-item.active { background: rgb(16 185 129 / 0.10); color: rgb(4 120 87); }
-  .nav-item.active svg { color: rgb(16 185 129); }
-  .subnav-item.active { background: white; color: rgb(15 23 42); box-shadow: 0 1px 2px rgb(0 0 0 / 0.06); }
-  .card-shadow { box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 3px rgb(0 0 0 / 0.06); }
-  .hover-lift { transition: all 0.15s ease; }
-  .hover-lift:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgb(0 0 0 / 0.08); }
+  .view.active { display: block; animation: fade-up 280ms ease-out; }
+  @keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .nav-item { transition: background-color .18s ease, color .18s ease; }
+  .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+  .nav-item.active svg { color: var(--accent); }
+  html[data-theme="dark"] .nav-item.active { color: rgb(94 234 212); }
+  .subnav-item { transition: background-color .15s ease, color .15s ease, box-shadow .15s ease; }
+  .subnav-item.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgb(0 0 0 / 0.06); }
+  html[data-theme="dark"] .subnav-item.active { background: rgb(51 65 85); color: var(--text); }
+  .card-shadow { box-shadow: var(--shadow-1); transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease; }
+  .hover-lift { transition: transform .18s ease, box-shadow .18s ease; }
+  .hover-lift:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
   .pulse-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
   .dropdown { display: none; }
-  .dropdown.open { display: block; }
+  .dropdown.open { display: block; animation: fade-up 160ms ease-out; }
+
+  /* ===== Top Action Bar (sticky urgency strip) ===== */
+  .action-bar {
+    background: linear-gradient(135deg, rgba(244, 63, 94, .04), rgba(245, 158, 11, .04) 60%, rgba(20, 184, 166, .03));
+    border-bottom: 1px solid var(--border);
+    transition: background-color .25s ease, border-color .25s ease;
+  }
+  html[data-theme="dark"] .action-bar {
+    background: linear-gradient(135deg, rgba(244, 63, 94, .08), rgba(245, 158, 11, .08) 60%, rgba(20, 184, 166, .06));
+  }
+  .urgency-card {
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    background: var(--surface);
+  }
+  .urgency-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
+  .urgency-amber { border-left: 3px solid rgb(245 158 11); }
+  .urgency-red { border-left: 3px solid rgb(239 68 68); }
+  .urgency-rose { border-left: 3px solid rgb(244 63 94); }
+
+  /* ===== KPI hero — staggered fade-up, larger scale ===== */
+  .kpi-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.4rem 1.5rem;
+    box-shadow: var(--shadow-1);
+    transition: transform .25s ease, box-shadow .25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-hero:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+  .kpi-hero .kpi-num { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .kpi-hero .kpi-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+  .kpi-secondary { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 0.85rem 1rem; box-shadow: var(--shadow-1); }
+  .kpi-secondary .kpi-num { font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .view.active .stagger-in > * { opacity: 0; transform: translateY(6px); animation: stagger 360ms ease-out forwards; }
+  .view.active .stagger-in > *:nth-child(1) { animation-delay: 0ms; }
+  .view.active .stagger-in > *:nth-child(2) { animation-delay: 40ms; }
+  .view.active .stagger-in > *:nth-child(3) { animation-delay: 80ms; }
+  .view.active .stagger-in > *:nth-child(4) { animation-delay: 120ms; }
+  .view.active .stagger-in > *:nth-child(5) { animation-delay: 160ms; }
+  .view.active .stagger-in > *:nth-child(6) { animation-delay: 200ms; }
+  @keyframes stagger { to { opacity: 1; transform: none; } }
+
+  /* ===== Toast notifications ===== */
+  #toast-stack { position: fixed; top: 80px; right: 16px; z-index: 70; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .toast {
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    box-shadow: var(--shadow-3); border-radius: 10px;
+    padding: 10px 14px; font-size: 12px; font-weight: 500;
+    min-width: 240px; max-width: 360px;
+    animation: toast-in .28s cubic-bezier(.2,.7,.3,1.1);
+    pointer-events: auto;
+  }
+  .toast.toast-out { animation: toast-out .22s ease-in forwards; }
+  @keyframes toast-in { from { opacity: 0; transform: translateX(40px) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes toast-out { to { opacity: 0; transform: translateX(40px) scale(.96); } }
+
+  /* ===== Command palette (Ctrl-K) ===== */
+  .cmdk-backdrop { position: fixed; inset: 0; background: rgba(2,6,23,.55); backdrop-filter: blur(6px); z-index: 80; display: none; align-items: flex-start; justify-content: center; padding-top: 12vh; }
+  .cmdk-backdrop.open { display: flex; animation: fade-up 160ms ease-out; }
+  .cmdk-panel { width: 100%; max-width: 640px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-3); overflow: hidden; }
+  .cmdk-input { width: 100%; padding: 14px 18px; font-size: 15px; background: transparent; color: var(--text); border: none; outline: none; border-bottom: 1px solid var(--border); }
+  .cmdk-section { padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .cmdk-section:last-child { border-bottom: none; }
+  .cmdk-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); padding: 6px 18px; }
+  .cmdk-row { display: flex; align-items: center; gap: 10px; padding: 8px 18px; cursor: pointer; transition: background-color .12s ease; font-size: 13px; }
+  .cmdk-row:hover, .cmdk-row.cmdk-active { background: var(--accent-soft); }
+  .cmdk-row .cmdk-icon { width: 26px; height: 26px; border-radius: 6px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; }
+  .cmdk-row .cmdk-meta { margin-left: auto; font-size: 10px; color: var(--text-faint); font-family: ui-monospace, SFMono-Regular, monospace; }
+  .cmdk-foot { padding: 8px 14px; background: var(--surface-2); display: flex; justify-content: space-between; font-size: 10px; color: var(--text-faint); }
+
+  /* ===== Tip-of-day rotating pill ===== */
+  .tip-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, rgba(20,184,166,.10), rgba(99,102,241,.10));
+    border: 1px solid var(--border);
+    border-radius: 999px; padding: 4px 10px;
+    font-size: 11px; color: var(--text-muted);
+    transition: opacity .3s ease;
+  }
+  .tip-pill .tip-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* ===== Compliance status pill (collapsed) ===== */
+  .compliance-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px;
+    background: rgba(16, 185, 129, .10);
+    border: 1px solid rgba(16, 185, 129, .25);
+    color: rgb(4 120 87);
+    font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: background-color .18s ease;
+  }
+  html[data-theme="dark"] .compliance-pill { color: rgb(94 234 212); background: rgba(45, 212, 191, .12); border-color: rgba(45, 212, 191, .3); }
+  .compliance-pill:hover { background: rgba(16, 185, 129, .16); }
+  .compliance-detail { display: none; margin-top: 12px; }
+  .compliance-detail.open { display: block; animation: fade-up 220ms ease-out; }
+
+  /* ===== Confidence pill ===== */
+  .conf-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .conf-hi { background: rgba(16, 185, 129, .14); color: rgb(4 120 87); }
+  .conf-md { background: rgba(245, 158, 11, .16); color: rgb(146 64 14); }
+  .conf-lo { background: rgba(239, 68, 68, .14); color: rgb(153 27 27); }
+  html[data-theme="dark"] .conf-hi { color: rgb(94 234 212); }
+  html[data-theme="dark"] .conf-md { color: rgb(252 211 77); }
+  html[data-theme="dark"] .conf-lo { color: rgb(252 165 165); }
+  .why-tip { position: relative; cursor: help; display: inline-block; }
+  .why-tip:hover .why-pop { display: block; }
+  .why-pop {
+    display: none; position: absolute; bottom: calc(100% + 6px); right: 0;
+    background: rgb(15 23 42); color: white; font-size: 10px; font-weight: 500;
+    padding: 8px 10px; border-radius: 8px; min-width: 240px; max-width: 320px;
+    box-shadow: var(--shadow-3); z-index: 30; line-height: 1.45; text-align: left;
+  }
+  .why-pop b { color: rgb(94 234 212); }
+
+  /* ===== Revenue Leakage panel ===== */
+  .leak-panel {
+    background: linear-gradient(135deg, rgba(244, 63, 94, .04), rgba(239, 68, 68, .03), var(--surface));
+    border: 1px solid rgba(244, 63, 94, .25);
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: var(--shadow-1);
+  }
+  html[data-theme="dark"] .leak-panel {
+    background: linear-gradient(135deg, rgba(244, 63, 94, .10), rgba(239, 68, 68, .07), var(--surface));
+    border-color: rgba(244, 63, 94, .3);
+  }
+  .leak-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px; cursor: pointer;
+    transition: background-color .15s ease, transform .15s ease;
+    border: 1px solid transparent;
+  }
+  .leak-row:hover { background: var(--surface-2); transform: translateX(2px); border-color: var(--border); }
+  .leak-row .leak-amount { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px; color: rgb(190 18 60); }
+  html[data-theme="dark"] .leak-row .leak-amount { color: rgb(251 113 133); }
+
+  /* ===== Phone frame (preserved) ===== */
   .phone-frame {
     width: 340px; background: #0f172a; border-radius: 44px; padding: 12px;
     box-shadow: 0 25px 60px -15px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.05) inset;
@@ -33,8 +285,8 @@
   .phone-shot { display: none; }
   .phone-shot.active { display: block; }
   .timeline-line { position: absolute; left: 11px; top: 24px; bottom: 0; width: 2px; background: rgb(226 232 240); }
+  html[data-theme="dark"] .timeline-line { background: rgb(51 65 85); }
   .timeline-dot { position: relative; z-index: 1; }
-  .demo-chip { background: linear-gradient(90deg, rgba(16,185,129,.08), rgba(20,184,166,.08)); }
   tr[data-demo="true"] td { position: relative; }
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
   .heat-0 { background: rgb(241 245 249); }
@@ -73,9 +325,95 @@
   .chip-assist { background: rgb(219 234 254); color: rgb(30 64 175); }
   .chip-auto { background: rgb(220 252 231); color: rgb(22 101 52); }
   .chip-off { background: rgb(241 245 249); color: rgb(100 116 139); }
+  html[data-theme="dark"] .chip-shadow { background: rgb(30 41 59); color: rgb(148 163 184); }
+  html[data-theme="dark"] .chip-assist { background: rgba(59,130,246,.18); color: rgb(147 197 253); }
+  html[data-theme="dark"] .chip-auto { background: rgba(16,185,129,.18); color: rgb(110 231 183); }
+  html[data-theme="dark"] .chip-off { background: rgb(30 41 59); color: rgb(148 163 184); }
+
+  /* Inline action buttons (Undo / Override) */
+  .inline-btn {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 6px;
+    background: var(--surface-2); color: var(--text-muted);
+    border: 1px solid var(--border); transition: all .15s ease;
+  }
+  .inline-btn:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .inline-btn.btn-undo:hover { background: rgba(245,158,11,.14); color: rgb(180 83 9); border-color: rgb(245 158 11); }
+  .inline-btn.btn-override:hover { background: rgba(99,102,241,.14); color: rgb(79 70 229); border-color: rgb(99 102 241); }
+
+  /* Action button hover lift */
+  button { transition: background-color .15s ease, transform .12s ease, box-shadow .15s ease, color .15s ease; }
+  button:not(:disabled):active { transform: translateY(0.5px); }
+
+  /* Sparkline trend container */
+  .sparkline { display: inline-block; vertical-align: middle; }
+
+  /* Theme/density toggle button */
+  .icon-btn {
+    width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 8px; color: var(--text-muted); transition: all .15s ease; background: transparent;
+  }
+  .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+
+  /* Animation utility */
+  .animate-rise { animation: fade-up 320ms ease-out both; }
+
+  /* Tier movement banner */
+  .tier-banner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px; margin-bottom: 12px;
+    background: linear-gradient(90deg, rgba(245,158,11,.10), rgba(245,158,11,.02));
+    border: 1px solid rgba(245,158,11,.25);
+    border-left: 3px solid rgb(245 158 11);
+    border-radius: 10px; font-size: 12px;
+  }
+  .tier-banner .tier-arrow { font-weight: 700; color: rgb(180 83 9); }
+  html[data-theme="dark"] .tier-banner .tier-arrow { color: rgb(252 211 77); }
+
+  /* Insight cards under charts */
+  .insight-card {
+    padding: 12px 14px; border-radius: 10px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    cursor: default;
+  }
+  .insight-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); border-color: var(--border-strong); }
+  .insight-card .insight-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; line-height: 1.35; }
+  .insight-card .insight-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+  /* Cmd-K chord style */
+  kbd.chord {
+    display: inline-flex; align-items: center; padding: 1px 5px; border-radius: 4px;
+    background: var(--kbd); border: 1px solid var(--border-strong);
+    font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10px; color: var(--text-muted);
+  }
+
+  /* Greeting + tip rotator helper */
+  .rotate-fade { transition: opacity .35s ease; }
+  .rotate-fade.fade-out { opacity: 0; }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
 </style>
 </head>
-<body class="bg-slate-50 text-slate-900 antialiased">
+<body class="antialiased">
+
+<!-- TOAST STACK (live) -->
+<div id="toast-stack" aria-live="polite" aria-atomic="false"></div>
+
+<!-- COMMAND PALETTE -->
+<div id="cmdk" class="cmdk-backdrop" role="dialog" aria-modal="true" aria-labelledby="cmdk-input">
+  <div class="cmdk-panel" onclick="event.stopPropagation()">
+    <input id="cmdk-input" class="cmdk-input" placeholder="Search referrals, patients, orgs &mdash; or type a command&hellip;" aria-label="Command palette" autocomplete="off">
+    <div id="cmdk-results" class="max-h-[60vh] overflow-y-auto"></div>
+    <div class="cmdk-foot">
+      <span><kbd class="chord">&uarr;</kbd> <kbd class="chord">&darr;</kbd> navigate &middot; <kbd class="chord">&#9166;</kbd> open &middot; <kbd class="chord">esc</kbd> close</span>
+      <span>Christina CRM &middot; <kbd class="chord">&#8984;K</kbd></span>
+    </div>
+  </div>
+</div>
 
 <!-- DEMO MODE BANNER -->
 <div id="demo-banner" class="bg-slate-900 text-white text-[11px] font-medium px-6 py-1.5 flex items-center justify-between gap-4 sticky top-0 z-40" role="region" aria-label="Demo mode notice">
@@ -144,14 +482,24 @@
       </div>
     </div>
     <div class="flex-1 max-w-xl mx-8">
-      <div class="relative">
+      <button onclick="openCmdK()" aria-label="Open command palette (Ctrl+K)" class="w-full group flex items-center gap-2 pl-9 pr-3 py-2 text-sm bg-slate-100 hover:bg-slate-50 border border-transparent hover:border-slate-200 rounded-lg text-left text-slate-500 relative transition-colors">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input aria-label="Global search" class="w-full pl-9 pr-4 py-2 text-sm bg-slate-100 border border-transparent rounded-lg focus:bg-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="Search referrals, patients, organizations&hellip;">
-        <kbd class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 bg-white border border-slate-200 rounded px-1.5 py-0.5">Ctrl K</kbd>
-      </div>
+        <span class="truncate flex-1">Search or run command&hellip;</span>
+        <kbd class="text-[10px] text-slate-400 bg-white border border-slate-200 rounded px-1.5 py-0.5 shrink-0">&#8984; K</kbd>
+      </button>
     </div>
-    <div class="flex items-center gap-2">
-      <button class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-1.5" aria-label="Create new referral">
+    <div class="flex items-center gap-1.5">
+      <span id="tip-pill" class="tip-pill hidden lg:inline-flex" title="Tip of the day">
+        <span class="tip-dot"></span>
+        <span id="tip-text" class="rotate-fade truncate max-w-[220px]">Press &#8984;K to jump to anything in 1 second</span>
+      </span>
+      <button onclick="toggleDensity()" class="icon-btn hidden md:inline-flex" aria-label="Toggle density" title="Density: comfortable / compact">
+        <svg id="density-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <button onclick="toggleTheme()" class="icon-btn" aria-label="Toggle dark mode" title="Toggle theme">
+        <svg id="theme-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <button class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-1.5 ml-1" aria-label="Create new referral" onclick="toast('New referral form opened', 'success')">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
         New referral
       </button>
@@ -159,14 +507,48 @@
         <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
         <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full pulse-dot"></span>
       </button>
-      <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-semibold text-slate-700 ring-2 ring-white" aria-label="User Clay Ikeem">CI</div>
+      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-xs font-bold text-white ring-2 ring-white shadow-sm" aria-label="User Christina" title="Christina &middot; Admin">CW</div>
     </div>
   </div>
 </header>
 
+<!-- ============ TOP ACTION BAR (sticky, every view) ============ -->
+<div class="action-bar sticky top-[5.75rem] z-20 px-6 py-2.5">
+  <div class="flex items-center gap-3 max-w-[1600px] mx-auto">
+    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 shrink-0 hidden md:inline">2-min triage</span>
+    <span class="hidden md:inline-block w-px h-5 bg-slate-200" aria-hidden="true"></span>
+    <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-2.5">
+      <a href="#view-inbox" onclick="actionLink(event,'inbox','at-risk')" class="urgency-card urgency-amber rounded-lg px-3 py-2 flex items-center gap-3 group" role="button">
+        <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0 text-base" aria-hidden="true">&#9888;</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-semibold text-slate-900 leading-tight">6 referrals at risk &middot; missing docs</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Avg 1h 14m to SLA breach &middot; <span class="text-amber-700 font-semibold">Fix now &rarr;</span></div>
+        </div>
+      </a>
+      <a href="#view-outbound-queue" onclick="actionLink(event,'outbound-queue','pending-approvals')" class="urgency-card urgency-rose rounded-lg px-3 py-2 flex items-center gap-3 group" role="button">
+        <div class="w-9 h-9 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shrink-0 text-base" aria-hidden="true">&#128176;</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-semibold text-slate-900 leading-tight">$18,420 stuck in pending approvals</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">9 drafts awaiting human send &middot; <span class="text-rose-700 font-semibold">Review &rarr;</span></div>
+        </div>
+      </a>
+      <a href="#view-orgs" onclick="actionLink(event,'orgs','dr-nguyen')" class="urgency-card urgency-red rounded-lg px-3 py-2 flex items-center gap-3 group" role="button">
+        <div class="w-9 h-9 rounded-lg bg-red-50 text-red-700 flex items-center justify-center shrink-0 text-base" aria-hidden="true">&#128308;</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-xs font-semibold text-slate-900 leading-tight">Dr. Nguyen declining &middot; conversion -34%</div>
+          <div class="text-[11px] text-slate-500 mt-0.5">Was Tier B, now C in 14 days &middot; <span class="text-red-700 font-semibold">Investigate &rarr;</span></div>
+        </div>
+      </a>
+    </div>
+    <button onclick="dismissActionBar()" class="icon-btn shrink-0" aria-label="Hide action bar" title="Hide for this session">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
 <div class="flex">
   <!-- SIDEBAR -->
-  <aside class="w-60 bg-white border-r border-slate-200 min-h-[calc(100vh-5.75rem)] flex flex-col sticky top-[5.75rem] h-[calc(100vh-5.75rem)]">
+  <aside class="w-60 bg-white border-r border-slate-200 min-h-[calc(100vh-8.5rem)] flex flex-col sticky top-[8.5rem] h-[calc(100vh-8.5rem)]">
     <nav class="p-3 space-y-0.5 overflow-y-auto" aria-label="Primary">
       <button onclick="showView('dashboard', this)" class="nav-item active w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100">
         <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
@@ -257,11 +639,11 @@
   <main class="flex-1 overflow-auto">
 
     <!-- ============ DASHBOARD ============ -->
-    <div id="view-dashboard" class="view active p-6 max-w-7xl">
+    <div id="view-dashboard" class="view active p-6 max-w-[1600px]">
       <div class="flex items-end justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
-          <p class="text-sm text-slate-500 mt-0.5">Wednesday, April 23 &middot; Good morning, Clay</p>
+          <h1 class="text-2xl font-bold tracking-tight" style="color: var(--text)"><span id="greeting">Good morning</span>, Christina</h1>
+          <p class="text-sm text-slate-500 mt-0.5"><span id="today-date">Wednesday, April 23</span> &middot; here&rsquo;s where the money is moving today.</p>
         </div>
         <div class="flex gap-2">
           <select aria-label="Date range" class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-3 py-1.5"><option>Last 7 days</option><option>Last 30 days</option><option>QTD</option></select>
@@ -270,139 +652,444 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">New referrals</div><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">+18%</span></div>
-          <div class="text-2xl font-bold text-slate-900 tabular-nums">34</div>
-          <div class="text-[11px] text-slate-500 mt-1">vs 29 last week</div>
+      <!-- ===== Hero KPIs: revenue-first ===== -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 stagger-in">
+        <div class="kpi-hero">
+          <div class="absolute top-0 right-0 w-28 h-28 rounded-full -mr-10 -mt-10" style="background: radial-gradient(circle, rgba(16,185,129,.18), transparent 70%);" aria-hidden="true"></div>
+          <div class="flex items-center justify-between mb-2 relative">
+            <div class="kpi-label flex items-center gap-1.5"><span aria-hidden="true">&#128176;</span>Revenue captured &middot; 7d</div>
+            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 rounded-full px-2 py-0.5">+22% WoW</span>
+          </div>
+          <div class="kpi-num relative" style="color: rgb(4 120 87)">$284,500</div>
+          <div class="text-[12px] text-slate-500 mt-1.5 relative">61 episodes admitted &middot; <span class="text-emerald-700 font-semibold">$4,664 avg</span></div>
+          <svg class="absolute bottom-0 right-0 opacity-40" width="120" height="34" viewBox="0 0 120 34" aria-hidden="true"><polyline points="0,28 12,24 24,26 36,20 48,22 60,16 72,18 84,12 96,14 108,8 120,10" fill="none" stroke="rgb(16 185 129)" stroke-width="2"/></svg>
         </div>
-        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">Conversion to SOC</div><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">+4.2pt</span></div>
-          <div class="text-2xl font-bold text-slate-900 tabular-nums">72%</div>
-          <div class="text-[11px] text-slate-500 mt-1">industry avg: 58%</div>
+        <div class="kpi-hero why-tip" style="cursor: help;">
+          <div class="absolute top-0 right-0 w-28 h-28 rounded-full -mr-10 -mt-10" style="background: radial-gradient(circle, rgba(244,63,94,.18), transparent 70%);" aria-hidden="true"></div>
+          <div class="flex items-center justify-between mb-2 relative">
+            <div class="kpi-label flex items-center gap-1.5"><span aria-hidden="true">&#10060;</span>Revenue at risk</div>
+            <span class="text-[10px] font-bold text-rose-700 rounded-full px-2 py-0.5" style="background: rgba(244,63,94,.10)">5 root causes</span>
+          </div>
+          <div class="kpi-num relative" style="color: rgb(190 18 60)">$42,180</div>
+          <div class="text-[12px] text-slate-500 mt-1.5 relative">Hover for breakdown &middot; <a href="#leakage" onclick="document.getElementById('leakage').scrollIntoView({behavior:'smooth'});return false;" class="text-rose-700 font-semibold">drill down &rarr;</a></div>
+          <div class="why-pop">
+            <b>$42,180 at risk &middot; this week</b><br/>
+            &middot; Missing docs &mdash; $12,400<br/>
+            &middot; Eligibility issues &mdash; $8,200<br/>
+            &middot; Slow response (&gt;4h) &mdash; $5,900<br/>
+            &middot; Authorization gaps &mdash; $11,500<br/>
+            &middot; Underpayments &mdash; $4,180
+          </div>
         </div>
-        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">1st-pass approval</div><span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">+31%</span></div>
-          <div class="text-2xl font-bold text-slate-900 tabular-nums">89%</div>
-          <div class="text-[11px] text-slate-500 mt-1">scrubber wedge live</div>
-        </div>
-        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="flex items-center justify-between mb-2"><div class="text-xs font-medium text-slate-500">Active episodes</div><span class="text-[10px] font-semibold text-slate-600 bg-slate-100 rounded px-1.5 py-0.5">stable</span></div>
-          <div class="text-2xl font-bold text-slate-900 tabular-nums">127</div>
-          <div class="text-[11px] text-slate-500 mt-1">89 Medicare · 38 Medi-Cal</div>
+        <div class="kpi-hero">
+          <div class="absolute top-0 right-0 w-28 h-28 rounded-full -mr-10 -mt-10" style="background: radial-gradient(circle, rgba(20,184,166,.18), transparent 70%);" aria-hidden="true"></div>
+          <div class="flex items-center justify-between mb-2 relative">
+            <div class="kpi-label flex items-center gap-1.5"><span aria-hidden="true">&#9201;</span>Avg time to SOC</div>
+            <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 rounded-full px-2 py-0.5 flex items-center gap-1"><svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6,15 12,9 18,15"/></svg>41% faster</span>
+          </div>
+          <div class="kpi-num relative" style="color: rgb(13 148 136)">2.4 <span class="text-xl font-semibold text-slate-500">days</span></div>
+          <div class="text-[12px] text-slate-500 mt-1.5 relative">vs <b class="text-slate-700">4.1d WellSky benchmark</b> &middot; p99 5.8d</div>
         </div>
       </div>
 
-      <!-- AI OPS ROW: SLA + AI Activity + Today's AI wins -->
-      <div class="grid grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-20 h-20 ai-grad-soft rounded-full -mr-8 -mt-8" aria-hidden="true"></div>
-          <div class="flex items-center justify-between mb-3 relative"><div class="text-xs font-semibold text-slate-900">SLA &middot; inbox &rarr; first touch</div><span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 rounded px-1.5 py-0.5">&minus;47% vs WellSky</span></div>
-          <div class="flex items-baseline gap-2 relative">
-            <div class="text-2xl font-bold text-slate-900 tabular-nums">14m</div>
-            <span class="text-[10px] font-semibold text-slate-500">p50</span>
-            <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
-          </div>
-          <div class="flex items-baseline gap-2 mt-1 relative">
-            <div class="text-sm font-semibold text-slate-700 tabular-nums">52m</div>
-            <span class="text-[10px] text-slate-500">p99</span>
-            <span class="text-[10px] text-slate-400">&middot; baseline 26m / 98m</span>
-          </div>
-          <div class="mt-2 pt-2 border-t border-slate-100 text-[10px] text-slate-500">Beats industry benchmark by <b class="text-emerald-700">47%</b></div>
+      <!-- ===== Secondary metrics + AI wins reframed ===== -->
+      <div class="grid grid-cols-2 lg:grid-cols-6 gap-3 mb-5">
+        <div class="kpi-secondary">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">New referrals</div>
+          <div class="kpi-num">34</div>
+          <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">+18% vs last wk</div>
         </div>
-        <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="flex items-center justify-between mb-2"><div class="text-xs font-semibold text-slate-900">Today&rsquo;s AI wins</div><span class="text-[9px] font-semibold text-indigo-700 bg-indigo-50 rounded px-1.5 py-0.5">live</span></div>
-          <div class="space-y-1.5">
-            <div class="flex items-baseline justify-between"><span class="text-[11px] text-slate-600">Drafts sent</span><span class="text-lg font-bold text-slate-900 tabular-nums">42</span></div>
-            <div class="flex items-baseline justify-between"><span class="text-[11px] text-slate-600">Minutes saved</span><span class="text-lg font-bold text-emerald-700 tabular-nums">168</span></div>
-            <div class="flex items-baseline justify-between"><span class="text-[11px] text-slate-600">Dupe faxes killed</span><span class="text-lg font-bold text-amber-600 tabular-nums">7</span></div>
+        <div class="kpi-secondary">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Conversion to SOC</div>
+          <div class="kpi-num">72<span class="text-base">%</span></div>
+          <div class="text-[10px] text-slate-500 mt-0.5">industry 58%</div>
+        </div>
+        <div class="kpi-secondary">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">1st-pass approval</div>
+          <div class="kpi-num">89<span class="text-base">%</span></div>
+          <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">+31% scrubber</div>
+        </div>
+        <div class="kpi-secondary">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Active episodes</div>
+          <div class="kpi-num">127</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">89 Medicare &middot; 38 Medi-Cal</div>
+        </div>
+        <div class="kpi-secondary">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">SLA inbox &rarr; touch</div>
+          <div class="kpi-num">14<span class="text-base">m</span></div>
+          <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">&minus;47% vs WellSky</div>
+        </div>
+        <div class="kpi-secondary">
+          <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Census growth MoM</div>
+          <div class="kpi-num">+12<span class="text-base">%</span></div>
+          <div class="text-[10px] text-emerald-700 font-semibold mt-0.5">on track</div>
+        </div>
+      </div>
+
+      <!-- ===== AI WINS reframed as $ impact + AI activity feed ===== -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 ai-grad-soft rounded-full -mr-12 -mt-12" aria-hidden="true"></div>
+          <div class="flex items-center justify-between mb-3 relative">
+            <h3 class="text-sm font-semibold text-slate-900">Today&rsquo;s AI impact</h3>
+            <span class="text-[9px] font-bold text-indigo-700 bg-indigo-50 rounded-full px-2 py-0.5 flex items-center gap-1"><span class="w-1 h-1 rounded-full bg-indigo-500 pulse-dot"></span>LIVE</span>
+          </div>
+          <div class="space-y-3 relative">
+            <div class="flex items-baseline justify-between border-b border-slate-100 pb-2.5">
+              <div>
+                <div class="text-[11px] text-slate-500 uppercase font-semibold tracking-wide">Saved in staff time</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">168 min &times; $19/min loaded</div>
+              </div>
+              <div class="text-2xl font-bold text-emerald-700 tabular-nums">$3,200</div>
+            </div>
+            <div class="flex items-baseline justify-between border-b border-slate-100 pb-2.5">
+              <div>
+                <div class="text-[11px] text-slate-500 uppercase font-semibold tracking-wide">Intake workload reduced</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">42 drafts auto-generated</div>
+              </div>
+              <div class="text-2xl font-bold text-slate-900 tabular-nums">&minus;22<span class="text-base">%</span></div>
+            </div>
+            <div class="flex items-baseline justify-between">
+              <div>
+                <div class="text-[11px] text-slate-500 uppercase font-semibold tracking-wide">Lost referrals prevented</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">7 dupes killed + 3 SLA saves</div>
+              </div>
+              <div class="text-right">
+                <div class="text-2xl font-bold text-emerald-700 tabular-nums">$28k</div>
+                <div class="text-[9px] text-slate-400">recovered</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-xs font-semibold text-slate-900">AI activity &middot; last 10 decisions</h3>
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 card-shadow overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-semibold text-slate-900">AI activity</h3>
+              <span class="text-[10px] text-slate-500">last 10 decisions &middot; every row auditable + reversible</span>
+            </div>
             <button onclick="showView('ai-console', document.querySelectorAll('.nav-item')[6])" class="text-[10px] font-semibold text-indigo-700 hover:text-indigo-900">Open AI Console &rarr;</button>
           </div>
-          <div class="space-y-1.5 text-[11px] max-h-40 overflow-y-auto scrollbar-thin pr-1">
-            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:47</span><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1 py-0.5 w-14 text-center">draft</span><span class="flex-1 text-slate-700 truncate">SMS: "Confirming SOC 4/24 10a" &rarr; Mercy / PT-002</span><span class="text-[9px] text-emerald-700 font-semibold">94%</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
-            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:44</span><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1 py-0.5 w-14 text-center">extract</span><span class="flex-1 text-slate-700 truncate">12 fields parsed &rarr; PT-001 fax</span><span class="text-[9px] text-emerald-700 font-semibold">97%</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
-            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:41</span><span class="text-[9px] font-bold bg-violet-100 text-violet-700 rounded px-1 py-0.5 w-14 text-center">thanks</span><span class="flex-1 text-slate-700 truncate">Physician auto-thanks &rarr; Dr. Chen</span><span class="text-[9px] text-amber-700 font-semibold">edit</span><span class="text-[9px] text-amber-700">&#9998;</span></div>
-            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:38</span><span class="text-[9px] font-bold bg-amber-100 text-amber-700 rounded px-1 py-0.5 w-14 text-center">dedupe</span><span class="flex-1 text-slate-700 truncate">Kaiser fax matches PT-001 (95%)</span><span class="text-[9px] text-amber-700 font-semibold">95%</span><span class="text-[9px] text-slate-500">hold</span></div>
-            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:33</span><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1 py-0.5 w-14 text-center">triage</span><span class="flex-1 text-slate-700 truncate">Score 87 &rarr; route to Lopez RN</span><span class="text-[9px] text-emerald-700 font-semibold">87</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
-            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:28</span><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1 py-0.5 w-14 text-center">draft</span><span class="flex-1 text-slate-700 truncate">Email: F2F follow-up &rarr; Pine Ridge SNF</span><span class="text-[9px] text-red-700 font-semibold">62%</span><span class="text-[9px] text-red-700">reject</span></div>
-            <div class="flex items-center gap-2"><span class="text-[9px] text-slate-400 tabular-nums w-10">9:22</span><span class="text-[9px] font-bold bg-sky-100 text-sky-700 rounded px-1 py-0.5 w-14 text-center">eligib</span><span class="flex-1 text-slate-700 truncate">Stedi 270/271 verified &rarr; PT-004</span><span class="text-[9px] text-emerald-700 font-semibold">&mdash;</span><span class="text-[9px] text-emerald-700">&#10003;</span></div>
+          <div class="divide-y divide-slate-100 text-[12px]">
+            <!-- AI rows: confidence pill + Why? + Undo + Override -->
+            <div class="px-4 py-2 flex items-center gap-2.5 hover:bg-slate-50 group density-row">
+              <span class="text-[10px] text-slate-400 tabular-nums w-10 shrink-0">9:47</span>
+              <span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">DRAFT</span>
+              <span class="flex-1 text-slate-700 truncate">SMS &ldquo;Confirming SOC 4/24 10a&rdquo; &rarr; PT-002 Mercy</span>
+              <span class="conf-pill conf-hi shrink-0">94%</span>
+              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Why this draft</b><br/>&middot; Source: face-to-face.pdf p.1, referral-packet.pdf p.2<br/>&middot; Model: Sonnet 4.6 + intake-sms-v12<br/>&middot; Cohort: 89% confirm-on-1st-SMS rate<br/>&middot; TCPA opt-in: 4/22 3:14 PM</span></span>
+              <button class="inline-btn btn-undo shrink-0" onclick="toast('Undone &middot; draft restored to queue', 'info')">&#8634; Undo</button>
+              <button class="inline-btn btn-override shrink-0" onclick="toast('Override modal opened', 'info')">&#9998; Override</button>
+              <span class="text-[9px] bg-slate-100 text-slate-500 rounded px-1 py-0.5 shrink-0 hidden xl:inline">audit&nbsp;evt_4f1a</span>
+            </div>
+            <div class="px-4 py-2 flex items-center gap-2.5 hover:bg-slate-50 density-row">
+              <span class="text-[10px] text-slate-400 tabular-nums w-10 shrink-0">9:44</span>
+              <span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">EXTRACT</span>
+              <span class="flex-1 text-slate-700 truncate">12 fields parsed &rarr; PT-001 fax Sutter</span>
+              <span class="conf-pill conf-hi shrink-0">97%</span>
+              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Extraction provenance</b><br/>&middot; Bedrock Vision &middot; 3 pages<br/>&middot; Highest-confidence fields: dx Z47.1 (98%), DOB (99%), NPI (97%)<br/>&middot; Lowest: secondary insurance (78%)</span></span>
+              <button class="inline-btn btn-override shrink-0" onclick="toast('Field editor opened', 'info')">&#9998; Override</button>
+              <span class="text-[9px] bg-slate-100 text-slate-500 rounded px-1 py-0.5 shrink-0 hidden xl:inline">audit&nbsp;evt_4f0c</span>
+            </div>
+            <div class="px-4 py-2 flex items-center gap-2.5 hover:bg-slate-50 density-row">
+              <span class="text-[10px] text-slate-400 tabular-nums w-10 shrink-0">9:41</span>
+              <span class="text-[9px] font-bold bg-violet-100 text-violet-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">THANKS</span>
+              <span class="flex-1 text-slate-700 truncate">Physician auto-thanks &rarr; Dr. Chen (edited by Christina)</span>
+              <span class="conf-pill conf-md shrink-0">82%</span>
+              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Lower confidence reason</b><br/>&middot; First time using thank-you template for this physician<br/>&middot; Fallback to assist mode &mdash; human edit recommended<br/>&middot; Edit accepted: 4 words changed</span></span>
+              <button class="inline-btn btn-undo shrink-0" onclick="toast('Undone &middot; email recalled', 'info')">&#8634; Undo</button>
+              <span class="text-[9px] bg-slate-100 text-slate-500 rounded px-1 py-0.5 shrink-0 hidden xl:inline">audit&nbsp;evt_4ef3</span>
+            </div>
+            <div class="px-4 py-2 flex items-center gap-2.5 hover:bg-slate-50 density-row">
+              <span class="text-[10px] text-slate-400 tabular-nums w-10 shrink-0">9:38</span>
+              <span class="text-[9px] font-bold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">DEDUPE</span>
+              <span class="flex-1 text-slate-700 truncate">Kaiser fax 95% match PT-001 &rarr; held for review</span>
+              <span class="conf-pill conf-hi shrink-0">95%</span>
+              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Match signals</b><br/>&middot; Same DOB, last name, ZIP<br/>&middot; Same dx Z47.1<br/>&middot; Different MRN (Kaiser vs Sutter) &mdash; cross-system normal<br/>&middot; Embedding cosine: 0.951</span></span>
+              <button class="inline-btn shrink-0" onclick="toast('Merged &middot; PT-001 + Kaiser packet linked', 'success')">Merge</button>
+              <button class="inline-btn shrink-0" onclick="toast('Marked distinct &middot; new PT-### will be assigned', 'info')">Distinct</button>
+            </div>
+            <div class="px-4 py-2 flex items-center gap-2.5 hover:bg-slate-50 density-row">
+              <span class="text-[10px] text-slate-400 tabular-nums w-10 shrink-0">9:33</span>
+              <span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">TRIAGE</span>
+              <span class="flex-1 text-slate-700 truncate">Score 87 &rarr; routed to Lopez RN</span>
+              <span class="conf-pill conf-hi shrink-0">87</span>
+              <button class="inline-btn btn-override shrink-0" onclick="toast('Reassign queue opened', 'info')">&#9998; Reassign</button>
+            </div>
+            <div class="px-4 py-2 flex items-center gap-2.5 hover:bg-slate-50 density-row">
+              <span class="text-[10px] text-slate-400 tabular-nums w-10 shrink-0">9:28</span>
+              <span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">DRAFT</span>
+              <span class="flex-1 text-slate-700 truncate">Email F2F follow-up &rarr; Pine Ridge SNF (rejected)</span>
+              <span class="conf-pill conf-lo shrink-0">62%</span>
+              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Why rejected</b><br/>&middot; Confidence below 75% threshold<br/>&middot; Pine Ridge has no consent on file for AI outbound<br/>&middot; Routed to human queue instead</span></span>
+              <button class="inline-btn shrink-0" onclick="toast('Reopened &middot; sent to manual review', 'info')">Reopen</button>
+            </div>
+            <div class="px-4 py-2 flex items-center gap-2.5 hover:bg-slate-50 density-row">
+              <span class="text-[10px] text-slate-400 tabular-nums w-10 shrink-0">9:22</span>
+              <span class="text-[9px] font-bold bg-sky-100 text-sky-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">ELIGIB</span>
+              <span class="flex-1 text-slate-700 truncate">Stedi 270/271 verified &rarr; PT-004 (UHC MA active)</span>
+              <span class="conf-pill conf-hi shrink-0">&mdash;</span>
+              <span class="text-[9px] bg-slate-100 text-slate-500 rounded px-1 py-0.5 shrink-0 hidden xl:inline">payer&nbsp;resp&nbsp;820ms</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Physician scoreboard + compliance row -->
-      <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
-          <div class="flex items-center justify-between mb-4">
-            <div><h3 class="text-sm font-semibold text-slate-900">Physician scoreboard <span class="text-[10px] font-normal text-indigo-600 bg-indigo-50 rounded px-1.5 py-0.5 ml-1">AI moat</span></h3><p class="text-xs text-slate-500 mt-0.5">Top 5 referring docs by 90-day yield &middot; competitors are blind to this</p></div>
-            <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[10px] font-medium"><button class="subnav-item active px-2 py-0.5 rounded">Yield</button><button class="subnav-item px-2 py-0.5 rounded text-slate-600">Response time</button><button class="subnav-item px-2 py-0.5 rounded text-slate-600">Quality</button></div>
+      <!-- ===== REVENUE LEAKAGE — killer feature ===== -->
+      <div id="leakage" class="leak-panel mb-5 animate-rise">
+        <div class="flex items-end justify-between mb-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <h2 class="text-base font-bold tracking-tight" style="color: var(--text)">&#128680; Why am I losing money?</h2>
+              <span class="text-[10px] font-bold bg-rose-100 text-rose-700 rounded-full px-2 py-0.5">FIX-IT MODE</span>
+            </div>
+            <p class="text-xs text-slate-500">Revenue leaking this week, ranked by $ impact &middot; click any line to drill in.</p>
           </div>
+          <div class="text-right">
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Total leaking</div>
+            <div class="text-3xl font-extrabold tabular-nums" style="color: rgb(190 18 60); letter-spacing: -0.02em;">&#128181; $42,180</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <a href="#view-inbox" onclick="actionLink(event,'inbox','missing-docs')" class="leak-row">
+            <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">&#128196;</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-slate-900">Missing documentation</div>
+              <div class="text-[11px] text-slate-500">3 referrals &middot; 1 fax pending Dr. Lee &middot; oldest 2d</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="leak-amount">$12,400</div>
+              <div class="text-[10px] text-slate-400">Fix &rarr;</div>
+            </div>
+          </a>
+          <a href="#view-pipeline" onclick="actionLink(event,'pipeline','elig-fail')" class="leak-row">
+            <div class="w-9 h-9 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center shrink-0">&#9989;</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-slate-900">Eligibility issues</div>
+              <div class="text-[11px] text-slate-500">2 patients &middot; MBI mismatch &middot; Stedi rejected</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="leak-amount">$8,200</div>
+              <div class="text-[10px] text-slate-400">Fix &rarr;</div>
+            </div>
+          </a>
+          <a href="#view-inbox" onclick="actionLink(event,'inbox','sla-breach')" class="leak-row">
+            <div class="w-9 h-9 rounded-lg bg-red-50 text-red-700 flex items-center justify-center shrink-0">&#9201;</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-slate-900">Slow response &middot; &gt;4h</div>
+              <div class="text-[11px] text-slate-500">4 inbound referrals &middot; SLA breach risk</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="leak-amount">$5,900</div>
+              <div class="text-[10px] text-slate-400">Fix &rarr;</div>
+            </div>
+          </a>
+          <a href="#view-reports" onclick="actionLink(event,'reports','underpayments')" class="leak-row">
+            <div class="w-9 h-9 rounded-lg bg-violet-50 text-violet-700 flex items-center justify-center shrink-0">&#128202;</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-slate-900">Underpayments &middot; claims</div>
+              <div class="text-[11px] text-slate-500">Aetna + UHC &middot; 5 EOBs to appeal</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="leak-amount">$4,180</div>
+              <div class="text-[10px] text-slate-400">Fix &rarr;</div>
+            </div>
+          </a>
+          <a href="#view-orgs" onclick="actionLink(event,'orgs','auth-gap')" class="leak-row md:col-span-2">
+            <div class="w-9 h-9 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center shrink-0">&#128272;</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-semibold text-slate-900">Authorization gaps</div>
+              <div class="text-[11px] text-slate-500">Pine Ridge SNF PA expired &middot; 3 episodes affected &middot; Anthem MA</div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="leak-amount">$11,500</div>
+              <div class="text-[10px] text-slate-400">Fix &rarr;</div>
+            </div>
+          </a>
+        </div>
+        <div class="mt-3 pt-3 border-t border-rose-100/60 flex items-center justify-between text-[11px] text-slate-500">
+          <span>Refreshes every 15 min &middot; AI ranks by recoverability &times; $ impact</span>
+          <button onclick="toast('Snoozed all for 24h', 'info')" class="text-slate-500 hover:text-slate-900 font-medium">Snooze all 24h</button>
+        </div>
+      </div>
+
+      <!-- ===== Physician scoreboard — revenue weapon ===== -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
+          <div class="tier-banner">
+            <span aria-hidden="true">&#128200;</span>
+            <span><b>Tier movement this week:</b> Dr. Patel <span class="tier-arrow">A &rarr; B &darr;</span> &middot; Dr. Lin Wu <span class="text-emerald-700 font-bold">B &rarr; A &uarr;</span> &middot; Dr. Nguyen <span class="text-red-700 font-bold">B &rarr; C &darr;</span></span>
+            <button class="ml-auto text-[10px] font-semibold text-slate-600 hover:text-slate-900">View timeline &rarr;</button>
+          </div>
+          <div class="flex items-center justify-between mb-4 mt-2">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900 flex items-center gap-2">Physician scoreboard <span class="text-[10px] font-normal text-indigo-600 bg-indigo-50 rounded px-1.5 py-0.5">AI moat</span></h3>
+              <p class="text-xs text-slate-500 mt-0.5">Revenue, lost referrals, 30d trend &mdash; competitors are blind to this</p>
+            </div>
+            <div class="flex gap-1 p-1 bg-slate-100 rounded-lg text-[10px] font-medium">
+              <button class="subnav-item active px-2 py-0.5 rounded">Yield</button>
+              <button class="subnav-item px-2 py-0.5 rounded text-slate-600">Response</button>
+              <button class="subnav-item px-2 py-0.5 rounded text-slate-600">Quality</button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
           <table class="w-full text-xs">
-            <thead><tr class="text-[10px] text-slate-500 uppercase tracking-wider"><th class="text-left font-semibold pb-2">Physician</th><th class="text-right font-semibold pb-2">Refs</th><th class="text-right font-semibold pb-2">Conv</th><th class="text-right font-semibold pb-2">Avg resp</th><th class="text-center font-semibold pb-2">Tier</th><th class="text-center font-semibold pb-2">AI signal</th></tr></thead>
+            <thead><tr class="text-[10px] text-slate-500 uppercase tracking-wider border-b border-slate-100">
+              <th class="text-left font-semibold pb-2">Physician</th>
+              <th class="text-right font-semibold pb-2">Refs</th>
+              <th class="text-right font-semibold pb-2">Conv</th>
+              <th class="text-right font-semibold pb-2">Revenue 90d</th>
+              <th class="text-right font-semibold pb-2">Lost</th>
+              <th class="text-center font-semibold pb-2">30d trend</th>
+              <th class="text-center font-semibold pb-2">Tier</th>
+              <th class="text-right font-semibold pb-2">Quick actions</th>
+            </tr></thead>
             <tbody class="divide-y divide-slate-100">
-              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">SC</div><div><div class="font-semibold text-slate-900">Dr. Sarah Chen</div><div class="text-[10px] text-slate-500">Cardiology &middot; NPI 1234567890</div></div></div></td><td class="text-right tabular-nums font-semibold">24</td><td class="text-right tabular-nums text-emerald-700 font-semibold">92%</td><td class="text-right tabular-nums">2.1h</td><td class="text-center"><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">A</span></td><td class="text-center"><span class="text-[9px] text-emerald-700 font-semibold">&uarr; trending</span></td></tr>
-              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center">RP</div><div><div class="font-semibold text-slate-900">Dr. Raj Patel</div><div class="text-[10px] text-slate-500">Internal Med &middot; NPI 1847362514</div></div></div></td><td class="text-right tabular-nums font-semibold">18</td><td class="text-right tabular-nums text-emerald-700 font-semibold">83%</td><td class="text-right tabular-nums">3.8h</td><td class="text-center"><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">A</span></td><td class="text-center"><span class="text-[9px] text-slate-500">stable</span></td></tr>
-              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center">MK</div><div><div class="font-semibold text-slate-900">Dr. Maya Kim</div><div class="text-[10px] text-slate-500">Pulmonology &middot; NPI 1029384756</div></div></div></td><td class="text-right tabular-nums font-semibold">14</td><td class="text-right tabular-nums text-emerald-700 font-semibold">71%</td><td class="text-right tabular-nums">5.2h</td><td class="text-center"><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">B</span></td><td class="text-center"><span class="text-[9px] text-amber-700 font-semibold">&#9888; slow replies</span></td></tr>
-              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center">LW</div><div><div class="font-semibold text-slate-900">Dr. Lin Wu</div><div class="text-[10px] text-slate-500">Ortho &middot; NPI 1765432109</div></div></div></td><td class="text-right tabular-nums font-semibold">11</td><td class="text-right tabular-nums text-slate-700 font-semibold">64%</td><td class="text-right tabular-nums">7.1h</td><td class="text-center"><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">B</span></td><td class="text-center"><span class="text-[9px] text-emerald-700">BD visit due</span></td></tr>
-              <tr data-demo="true"><td class="py-2"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold flex items-center justify-center">TN</div><div><div class="font-semibold text-slate-900">Dr. Tran Nguyen</div><div class="text-[10px] text-slate-500">Geriatrics &middot; NPI 1583920174</div></div></div></td><td class="text-right tabular-nums font-semibold">8</td><td class="text-right tabular-nums text-amber-700 font-semibold">50%</td><td class="text-right tabular-nums">11.4h</td><td class="text-center"><span class="text-[9px] font-bold bg-slate-100 text-slate-700 rounded px-1.5 py-0.5">C</span></td><td class="text-center"><span class="text-[9px] text-red-700 font-semibold">churn risk</span></td></tr>
+              <tr data-demo="true" class="hover:bg-slate-50 density-row">
+                <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">SC</div><div><div class="font-semibold text-slate-900">Dr. Sarah Chen</div><div class="text-[10px] text-slate-500">Cardiology &middot; NPI 1XXXXXXXX0</div></div></div></td>
+                <td class="text-right tabular-nums font-semibold">24</td>
+                <td class="text-right tabular-nums text-emerald-700 font-semibold">92%</td>
+                <td class="text-right tabular-nums font-bold text-slate-900">$108,400</td>
+                <td class="text-right tabular-nums text-slate-500">2 &middot; <span class="text-[10px] text-rose-600">$8.4k</span></td>
+                <td class="text-center"><svg class="sparkline" width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,16 8,14 16,12 24,10 32,8 40,6 48,7 60,4" fill="none" stroke="rgb(16 185 129)" stroke-width="1.8"/></svg></td>
+                <td class="text-center"><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">A</span></td>
+                <td class="text-right">
+                  <button class="inline-btn" onclick="toast('SMS draft &rarr; Dr. Chen', 'success')" title="Send follow-up SMS">&#9993; Follow up</button>
+                  <button class="inline-btn" onclick="toast('BD visit added to route', 'info')" title="Schedule BD visit">&#128197;</button>
+                </td>
+              </tr>
+              <tr data-demo="true" class="hover:bg-slate-50 density-row">
+                <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold flex items-center justify-center">RP</div><div><div class="font-semibold text-slate-900">Dr. Raj Patel <span class="text-[9px] font-bold text-amber-700 bg-amber-50 rounded px-1 py-0.5 ml-1">A&rarr;B</span></div><div class="text-[10px] text-slate-500">Internal Med &middot; NPI 1847362514</div></div></div></td>
+                <td class="text-right tabular-nums font-semibold">18</td>
+                <td class="text-right tabular-nums text-emerald-700 font-semibold">83%</td>
+                <td class="text-right tabular-nums font-bold text-slate-900">$74,600</td>
+                <td class="text-right tabular-nums text-slate-500">3 &middot; <span class="text-[10px] text-rose-600">$11.2k</span></td>
+                <td class="text-center"><svg class="sparkline" width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,8 8,9 16,8 24,11 32,10 40,12 48,11 60,13" fill="none" stroke="rgb(245 158 11)" stroke-width="1.8"/></svg></td>
+                <td class="text-center"><span class="text-[9px] font-bold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">B</span></td>
+                <td class="text-right">
+                  <button class="inline-btn btn-override" onclick="toast('Lunch visit booked &middot; Friday 12:30', 'success')" title="Schedule visit">&#128197; Visit</button>
+                  <button class="inline-btn btn-undo" onclick="toast('Flagged at-risk &middot; weekly review', 'info')" title="Flag at-risk">&#128681;</button>
+                </td>
+              </tr>
+              <tr data-demo="true" class="hover:bg-slate-50 density-row">
+                <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold flex items-center justify-center">MK</div><div><div class="font-semibold text-slate-900">Dr. Maya Kim</div><div class="text-[10px] text-slate-500">Pulmonology &middot; NPI 1029384756</div></div></div></td>
+                <td class="text-right tabular-nums font-semibold">14</td>
+                <td class="text-right tabular-nums text-emerald-700 font-semibold">71%</td>
+                <td class="text-right tabular-nums font-bold text-slate-900">$52,180</td>
+                <td class="text-right tabular-nums text-slate-500">4 &middot; <span class="text-[10px] text-rose-600">$14.8k</span></td>
+                <td class="text-center"><svg class="sparkline" width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,12 8,11 16,13 24,10 32,11 40,9 48,10 60,8" fill="none" stroke="rgb(16 185 129)" stroke-width="1.8"/></svg></td>
+                <td class="text-center"><span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5">B</span></td>
+                <td class="text-right">
+                  <button class="inline-btn" onclick="toast('SMS sent &middot; nudge re: 3 pending packets', 'success')">&#9993; Follow up</button>
+                </td>
+              </tr>
+              <tr data-demo="true" class="hover:bg-slate-50 density-row">
+                <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center">LW</div><div><div class="font-semibold text-slate-900">Dr. Lin Wu <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 rounded px-1 py-0.5 ml-1">B&rarr;A</span></div><div class="text-[10px] text-slate-500">Ortho &middot; NPI 1765432109</div></div></div></td>
+                <td class="text-right tabular-nums font-semibold">11</td>
+                <td class="text-right tabular-nums text-slate-700 font-semibold">64%</td>
+                <td class="text-right tabular-nums font-bold text-slate-900">$38,920</td>
+                <td class="text-right tabular-nums text-slate-500">2 &middot; <span class="text-[10px] text-rose-600">$5.6k</span></td>
+                <td class="text-center"><svg class="sparkline" width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,15 8,13 16,12 24,9 32,8 40,7 48,5 60,3" fill="none" stroke="rgb(16 185 129)" stroke-width="1.8"/></svg></td>
+                <td class="text-center"><span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">A</span></td>
+                <td class="text-right">
+                  <button class="inline-btn" onclick="toast('Thank-you email queued', 'success')">&#9993; Thanks</button>
+                  <button class="inline-btn btn-override" onclick="toast('BD visit added to route', 'info')">&#128197;</button>
+                </td>
+              </tr>
+              <tr data-demo="true" class="hover:bg-slate-50 density-row" style="background: rgba(244,63,94,.04);">
+                <td class="py-2.5"><div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-red-100 text-red-700 text-[10px] font-bold flex items-center justify-center">TN</div><div><div class="font-semibold text-slate-900">Dr. Tran Nguyen <span class="text-[9px] font-bold text-red-700 bg-red-100 rounded px-1 py-0.5 ml-1">B&rarr;C &darr;34%</span></div><div class="text-[10px] text-slate-500">Geriatrics &middot; NPI 1583920174</div></div></div></td>
+                <td class="text-right tabular-nums font-semibold">8</td>
+                <td class="text-right tabular-nums text-amber-700 font-semibold">50%</td>
+                <td class="text-right tabular-nums font-bold text-slate-900">$24,180</td>
+                <td class="text-right tabular-nums text-rose-700 font-semibold">6 &middot; <span class="text-[10px]">$22.4k</span></td>
+                <td class="text-center"><svg class="sparkline" width="60" height="20" viewBox="0 0 60 20" aria-hidden="true"><polyline points="0,4 8,6 16,7 24,9 32,10 40,12 48,15 60,17" fill="none" stroke="rgb(239 68 68)" stroke-width="1.8"/></svg></td>
+                <td class="text-center"><span class="text-[9px] font-bold bg-red-100 text-red-700 rounded px-1.5 py-0.5">C</span></td>
+                <td class="text-right">
+                  <button class="inline-btn btn-undo" onclick="toast('Flagged at-risk &middot; AE escalation', 'info')">&#128681; At-risk</button>
+                  <button class="inline-btn btn-override" onclick="toast('Investigation opened', 'info')">Investigate</button>
+                </td>
+              </tr>
             </tbody>
           </table>
+          </div>
         </div>
-        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="text-sm font-semibold text-slate-900">Compliance posture</h3>
-            <span class="text-[9px] font-bold text-emerald-700 bg-emerald-50 rounded-full px-2 py-0.5">GREEN</span>
+
+        <!-- Compliance collapsed -->
+        <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow flex flex-col">
+          <h3 class="text-sm font-semibold text-slate-900 mb-3">Compliance posture</h3>
+          <button onclick="toggleCompliance()" class="compliance-pill self-start" aria-expanded="false" id="compliance-toggle">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Compliance: 6 / 6 controls active</span>
+            <svg id="compliance-chev" class="w-3 h-3 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <p class="text-[11px] text-slate-500 mt-2">All green &middot; auto-expands if any control flips. Per-record controls stay visible inside referrals.</p>
+          <div id="compliance-detail" class="compliance-detail">
+            <div class="space-y-2 text-[11px] mt-2 pt-3 border-t border-slate-100">
+              <div class="flex items-center justify-between"><span class="text-slate-700">TCPA opt-ins on file</span><span class="font-semibold text-slate-900 tabular-nums">118 / 127</span></div>
+              <div class="flex items-center justify-between"><span class="text-slate-700">CA 2-party disclosures fired</span><span class="font-semibold text-emerald-700 tabular-nums">100%</span></div>
+              <div class="flex items-center justify-between"><span class="text-slate-700">FCC 24-28 AI-disclosures</span><span class="font-semibold text-emerald-700 tabular-nums">100%</span></div>
+              <div class="flex items-center justify-between"><span class="text-slate-700">Supervised-mode coverage</span><span class="font-semibold text-emerald-700 tabular-nums">8 / 8 templates</span></div>
+              <div class="flex items-center justify-between"><span class="text-slate-700">Audit events (today)</span><span class="font-semibold text-slate-900 tabular-nums">1,284</span></div>
+              <div class="flex items-center justify-between"><span class="text-slate-700">PHI scrubber hits</span><span class="font-semibold text-slate-900 tabular-nums">0</span></div>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500 leading-snug">No AI outbound fires until consent is on file &middot; <b class="text-slate-700">Supervised Mode</b> on by default.</div>
           </div>
-          <div class="space-y-2 text-[11px]">
-            <div class="flex items-center justify-between"><span class="text-slate-700">TCPA opt-ins on file</span><span class="font-semibold text-slate-900 tabular-nums">118 / 127</span></div>
-            <div class="flex items-center justify-between"><span class="text-slate-700">CA 2-party disclosures fired</span><span class="font-semibold text-emerald-700 tabular-nums">100%</span></div>
-            <div class="flex items-center justify-between"><span class="text-slate-700">FCC 24-28 AI-disclosures</span><span class="font-semibold text-emerald-700 tabular-nums">100%</span></div>
-            <div class="flex items-center justify-between"><span class="text-slate-700">Supervised-mode coverage</span><span class="font-semibold text-emerald-700 tabular-nums">8 / 8 templates</span></div>
-            <div class="flex items-center justify-between"><span class="text-slate-700">Audit events (today)</span><span class="font-semibold text-slate-900 tabular-nums">1,284</span></div>
-            <div class="flex items-center justify-between"><span class="text-slate-700">PHI scrubber hits</span><span class="font-semibold text-slate-900 tabular-nums">0</span></div>
+          <div class="mt-auto pt-4 grid grid-cols-3 gap-2 text-center text-[10px]">
+            <div class="rounded-lg p-2" style="background: var(--surface-2)"><div class="font-bold text-emerald-700 text-base">$3,200</div><div class="text-slate-500">saved today</div></div>
+            <div class="rounded-lg p-2" style="background: var(--surface-2)"><div class="font-bold text-slate-900 text-base">1,284</div><div class="text-slate-500">audit events</div></div>
+            <div class="rounded-lg p-2" style="background: var(--surface-2)"><div class="font-bold text-slate-900 text-base">0</div><div class="text-slate-500">PHI hits</div></div>
           </div>
-          <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500 leading-snug">No AI outbound fires until consent is on file &middot; <b class="text-slate-700">Supervised Mode</b> on by default across all surfaces.</div>
         </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-4 mb-6">
-        <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
+      <!-- ===== Referral velocity + insight cards ===== -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
           <div class="flex items-center justify-between mb-4">
-            <div><h3 class="text-sm font-semibold text-slate-900">Referral velocity</h3><p class="text-xs text-slate-500 mt-0.5">Inbound vs admitted, last 14 days</p></div>
+            <div><h3 class="text-sm font-semibold text-slate-900">Referral velocity</h3><p class="text-xs text-slate-500 mt-0.5">Inbound vs admitted &middot; last 14 days</p></div>
             <div class="flex items-center gap-3 text-xs">
               <span class="flex items-center gap-1.5"><span class="w-2 h-2 bg-emerald-500 rounded-full"></span>Inbound</span>
               <span class="flex items-center gap-1.5"><span class="w-2 h-2 bg-slate-300 rounded-full"></span>Admitted</span>
             </div>
           </div>
-          <svg viewBox="0 0 600 200" class="w-full h-48" role="img" aria-label="Referral velocity chart, synthetic data">
-            <defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(16 185 129)" stop-opacity="0.25"/><stop offset="100%" stop-color="rgb(16 185 129)" stop-opacity="0"/></linearGradient></defs>
-            <g stroke="rgb(226 232 240)" stroke-width="1"><line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="90" x2="600" y2="90"/><line x1="0" y1="140" x2="600" y2="140"/><line x1="0" y1="190" x2="600" y2="190"/></g>
+          <svg viewBox="0 0 600 200" class="w-full h-44" role="img" aria-label="Referral velocity chart, synthetic data">
+            <defs><linearGradient id="grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgb(16 185 129)" stop-opacity="0.30"/><stop offset="100%" stop-color="rgb(16 185 129)" stop-opacity="0"/></linearGradient></defs>
+            <g stroke="currentColor" stroke-width="1" style="color: var(--hairline)"><line x1="0" y1="40" x2="600" y2="40"/><line x1="0" y1="90" x2="600" y2="90"/><line x1="0" y1="140" x2="600" y2="140"/><line x1="0" y1="190" x2="600" y2="190"/></g>
             <path d="M 20 150 L 60 130 L 100 140 L 140 100 L 180 110 L 220 75 L 260 85 L 300 60 L 340 70 L 380 50 L 420 65 L 460 40 L 500 55 L 540 30 L 580 45 L 580 190 L 20 190 Z" fill="url(#grad)"/>
             <path d="M 20 150 L 60 130 L 100 140 L 140 100 L 180 110 L 220 75 L 260 85 L 300 60 L 340 70 L 380 50 L 420 65 L 460 40 L 500 55 L 540 30 L 580 45" fill="none" stroke="rgb(16 185 129)" stroke-width="2.5"/>
             <path d="M 20 165 L 60 155 L 100 160 L 140 135 L 180 140 L 220 115 L 260 120 L 300 95 L 340 100 L 380 85 L 420 95 L 460 75 L 500 85 L 540 65 L 580 75" fill="none" stroke="rgb(148 163 184)" stroke-width="2" stroke-dasharray="4 4"/>
           </svg>
+          <!-- Insight cards: AI-narrated "so what" layer -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-100">
+            <div class="insight-card">
+              <div class="insight-title">&#128201; Admissions lagging inbound by 18%</div>
+              <div class="insight-sub">Staffing bottleneck &mdash; need +1 RN intake shift on Fri AM peak.</div>
+            </div>
+            <div class="insight-card">
+              <div class="insight-title">&#128640; Spike from Mercy General +47%</div>
+              <div class="insight-sub">Investigate source &mdash; likely the post-cardiac discharge pathway expanded.</div>
+            </div>
+            <div class="insight-card">
+              <div class="insight-title">&#9201; Cycle time stretching 1.8d &rarr; 2.4d</div>
+              <div class="insight-sub">14-day creep from Pine Ridge backlog &middot; eligibility re-runs eating slack.</div>
+            </div>
+          </div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow">
           <h3 class="text-sm font-semibold text-slate-900 mb-4">Top referral sources</h3>
           <div class="space-y-3">
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Mercy General Hospital</span><span class="text-slate-500 tabular-nums">12</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 95%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Sutter Roseville</span><span class="text-slate-500 tabular-nums">9</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 72%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">UC Davis Medical Center</span><span class="text-slate-500 tabular-nums">7</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 56%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Pine Ridge SNF</span><span class="text-slate-500 tabular-nums">6</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 48%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Kaiser South Sacramento</span><span class="text-slate-500 tabular-nums">5</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 40%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Dr. Chen Cardiology</span><span class="text-slate-500 tabular-nums">4</span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 32%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Mercy General Hospital</span><span class="text-slate-500 tabular-nums">12 &middot; <b class="text-emerald-700">$54k</b></span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 95%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Sutter Roseville</span><span class="text-slate-500 tabular-nums">9 &middot; <b class="text-emerald-700">$41k</b></span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 72%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">UC Davis Medical Center</span><span class="text-slate-500 tabular-nums">7 &middot; <b class="text-emerald-700">$32k</b></span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 56%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Pine Ridge SNF</span><span class="text-slate-500 tabular-nums">6 &middot; <b class="text-amber-700">$22k</b></span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width: 48%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Kaiser South Sacramento</span><span class="text-slate-500 tabular-nums">5 &middot; <b class="text-emerald-700">$19k</b></span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 40%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1"><span class="font-medium text-slate-700">Dr. Chen Cardiology</span><span class="text-slate-500 tabular-nums">4 &middot; <b class="text-emerald-700">$18k</b></span></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-500 rounded-full" style="width: 32%"></div></div></div>
           </div>
         </div>
       </div>
 
       <!-- Heatmap + activity -->
-      <div class="grid grid-cols-3 gap-4">
-        <div class="col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-5 card-shadow">
           <div class="flex items-center justify-between mb-4">
             <div><h3 class="text-sm font-semibold text-slate-900">Intake heatmap</h3><p class="text-xs text-slate-500 mt-0.5">When referrals arrive by weekday and hour &middot; darker = more</p></div>
             <div class="flex items-center gap-1 text-[10px] text-slate-500">less <span class="w-3 h-3 rounded heat-0"></span><span class="w-3 h-3 rounded heat-1"></span><span class="w-3 h-3 rounded heat-2"></span><span class="w-3 h-3 rounded heat-3"></span><span class="w-3 h-3 rounded heat-4"></span> more</div>
@@ -418,15 +1105,15 @@
             <div class="pr-1">Sat</div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-2"></div><div class="h-6 rounded heat-1"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div><div class="h-6 rounded heat-0"></div>
           </div>
           <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
-            <span class="text-slate-500">Peak: <b class="text-slate-900">Fri 10&ndash;11 AM</b> discharge surge</span>
-            <button class="text-emerald-700 font-semibold">Staff up intake &rarr;</button>
+            <span class="text-slate-500">Peak: <b class="text-slate-900">Fri 10&ndash;11 AM</b> discharge surge &middot; <span class="text-amber-700 font-semibold">Insight: schedule +1 RN that window</span></span>
+            <button class="text-emerald-700 font-semibold" onclick="toast('Staffing request drafted', 'success')">Staff up intake &rarr;</button>
           </div>
         </div>
 
         <div class="bg-white rounded-xl border border-slate-200 p-5 card-shadow">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-sm font-semibold text-slate-900">Activity</h3>
-            <span class="text-[10px] text-slate-500">real-time</span>
+            <span class="text-[10px] text-slate-500 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 pulse-dot"></span>real-time</span>
           </div>
           <div class="space-y-3 text-xs">
             <div class="flex gap-2">
@@ -447,7 +1134,7 @@
             </div>
             <div class="flex gap-2">
               <div class="w-1.5 h-1.5 rounded-full bg-violet-500 mt-1.5 shrink-0"></div>
-              <div class="flex-1"><div><b class="text-slate-900">Clay Ikeem</b> logged BD visit at Mercy</div><div class="text-[10px] text-slate-400 mt-0.5">1 hr ago</div></div>
+              <div class="flex-1"><div><b class="text-slate-900">Christina</b> logged BD visit at Mercy</div><div class="text-[10px] text-slate-400 mt-0.5">1 hr ago</div></div>
             </div>
             <div class="flex gap-2">
               <div class="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0"></div>
@@ -930,9 +1617,9 @@
             <h3 class="text-sm font-semibold text-slate-900 mb-3">Notes</h3>
             <div class="space-y-3">
               <div class="flex gap-2">
-                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center shrink-0">CI</div>
+                <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center shrink-0">CW</div>
                 <div class="flex-1">
-                  <div class="text-xs text-slate-700"><b>Clay Ikeem</b> &middot; 10m ago</div>
+                  <div class="text-xs text-slate-700"><b>Christina W.</b> &middot; 10m ago</div>
                   <div class="text-xs text-slate-600 mt-0.5">Family available 24/7, spouse is primary caregiver. Home has stairs to entry.</div>
                 </div>
               </div>
@@ -1022,9 +1709,9 @@
         <table class="w-full text-xs">
           <thead class="text-[10px] uppercase text-slate-500 border-b border-slate-100"><tr><th class="text-left font-semibold py-2">Report</th><th class="text-left font-semibold py-2">Actor</th><th class="text-left font-semibold py-2">When</th><th class="text-left font-semibold py-2">Records</th><th class="text-left font-semibold py-2">PHI level</th></tr></thead>
           <tbody class="divide-y divide-slate-100">
-            <tr><td class="py-2">BD rep scorecard Q2</td><td class="py-2">Clay Ikeem</td><td class="py-2">2h ago</td><td class="py-2 tabular-nums">127</td><td class="py-2"><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">aggregate</span></td></tr>
+            <tr><td class="py-2">BD rep scorecard Q2</td><td class="py-2">Christina W.</td><td class="py-2">2h ago</td><td class="py-2 tabular-nums">127</td><td class="py-2"><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">aggregate</span></td></tr>
             <tr><td class="py-2">Referral velocity 30d</td><td class="py-2">Sarah Lopez RN</td><td class="py-2">yesterday</td><td class="py-2 tabular-nums">34</td><td class="py-2"><span class="text-[10px] bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">min-necessary</span></td></tr>
-            <tr><td class="py-2">F2F compliance 04/2026</td><td class="py-2">Clay Ikeem</td><td class="py-2">3d ago</td><td class="py-2 tabular-nums">89</td><td class="py-2"><span class="text-[10px] bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">full PHI</span></td></tr>
+            <tr><td class="py-2">F2F compliance 04/2026</td><td class="py-2">Christina W.</td><td class="py-2">3d ago</td><td class="py-2 tabular-nums">89</td><td class="py-2"><span class="text-[10px] bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">full PHI</span></td></tr>
             <tr><td class="py-2">Audit log CY-TD</td><td class="py-2">Compliance agent</td><td class="py-2">7d ago</td><td class="py-2 tabular-nums">4,821</td><td class="py-2"><span class="text-[10px] bg-slate-100 rounded px-1.5 py-0.5">metadata</span></td></tr>
           </tbody>
         </table>
@@ -1827,15 +2514,228 @@
   <div class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot" aria-hidden="true"></div>
   <div>
     <div class="font-semibold">Christina CRM &middot; pilot demo</div>
-    <div class="text-slate-300 text-[11px] mt-0.5">Want this for your agency? <a href="mailto:clayikeem11@gmail.com?subject=Christina%20CRM%20pilot" class="text-emerald-300 font-semibold hover:text-emerald-200">Email Clay &rarr;</a></div>
+    <div class="text-slate-300 text-[11px] mt-0.5">Built by AIDEGENS for HH/hospice agencies. <a href="mailto:clayikeem11@gmail.com?subject=Christina%20CRM%20pilot" class="text-emerald-300 font-semibold hover:text-emerald-200">Request access &rarr;</a></div>
   </div>
   <button onclick="document.getElementById('cta-card').remove()" aria-label="Dismiss CTA" class="ml-2 text-slate-400 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
 </div>
 
 <script>
+  // ===== Theme + density (persisted in localStorage) =====
+  (function bootTheme(){
+    try {
+      const t = localStorage.getItem('cc-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+      const d = localStorage.getItem('cc-density') || 'comfortable';
+      document.documentElement.setAttribute('data-density', d);
+    } catch(_) {}
+  })();
+  function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('cc-theme', next); } catch(_) {}
+    paintThemeIcon();
+    toast(next === 'dark' ? '&#127769; Dark mode on' : '&#9728;&#65039; Light mode on', 'info');
+  }
+  function paintThemeIcon() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const icon = document.getElementById('theme-icon');
+    if (!icon) return;
+    icon.innerHTML = isDark
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+      : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>';
+  }
+  function toggleDensity() {
+    const cur = document.documentElement.getAttribute('data-density') || 'comfortable';
+    const next = cur === 'compact' ? 'comfortable' : 'compact';
+    document.documentElement.setAttribute('data-density', next);
+    try { localStorage.setItem('cc-density', next); } catch(_) {}
+    toast('Density: ' + next, 'info');
+  }
+
+  // ===== Greeting (synthetic; respects time of day) =====
+  function paintGreeting() {
+    const el = document.getElementById('greeting');
+    if (!el) return;
+    const h = new Date().getHours();
+    el.textContent = h < 5 ? 'Burning the midnight oil' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : h < 21 ? 'Good evening' : 'Working late';
+    const d = document.getElementById('today-date');
+    if (d) {
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const now = new Date();
+      d.textContent = days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + now.getDate();
+    }
+  }
+
+  // ===== Tip-of-day rotator =====
+  const TIPS = [
+    'Press &#8984;K to jump to anything in 1 second',
+    'Hover any AI confidence pill to see why',
+    '&#128176; Revenue at risk auto-ranks fixes by recoverability',
+    'Compliance pill auto-expands if any control flips amber',
+    'Toggle Supervised Mode off only after 30d of clean metrics'
+  ];
+  function startTipRotator() {
+    const el = document.getElementById('tip-text');
+    if (!el) return;
+    let i = Math.floor(Math.random() * TIPS.length);
+    el.innerHTML = TIPS[i];
+    setInterval(() => {
+      el.classList.add('fade-out');
+      setTimeout(() => {
+        i = (i + 1) % TIPS.length;
+        el.innerHTML = TIPS[i];
+        el.classList.remove('fade-out');
+      }, 350);
+    }, 9000);
+  }
+
+  // ===== Toast (slide-in top-right) =====
+  function toast(msg, kind) {
+    const stack = document.getElementById('toast-stack');
+    if (!stack) return;
+    const t = document.createElement('div');
+    t.className = 'toast';
+    if (kind === 'success') t.style.borderLeftColor = 'rgb(16 185 129)';
+    else if (kind === 'warn') t.style.borderLeftColor = 'rgb(245 158 11)';
+    else if (kind === 'error') t.style.borderLeftColor = 'rgb(239 68 68)';
+    t.innerHTML = msg;
+    stack.appendChild(t);
+    setTimeout(() => { t.classList.add('toast-out'); setTimeout(() => t.remove(), 240); }, 2600);
+  }
+
+  // ===== Top action bar — dismiss + deep link router =====
+  function dismissActionBar() {
+    document.querySelector('.action-bar').style.display = 'none';
+    try { sessionStorage.setItem('cc-action-bar-hidden', '1'); } catch(_) {}
+    toast('Action bar hidden &middot; refresh to bring it back', 'info');
+  }
+  function actionLink(e, viewName, filter) {
+    e.preventDefault();
+    const navBtns = document.querySelectorAll('.nav-item');
+    const navMap = { 'dashboard': 0, 'inbox': 1, 'pipeline': 2, 'referral-detail': 3, 'orgs': 4, 'reports': 5, 'ai-console': 6, 'conversations': 7, 'outbound-queue': 8, 'bd-mobile': 9, 'settings': 10 };
+    const idx = navMap[viewName] || 0;
+    showView(viewName, navBtns[idx]);
+    if (filter) {
+      const filterMessages = {
+        'at-risk': '&#9888; Filtered to 6 SLA-at-risk referrals',
+        'pending-approvals': '&#128176; Filtered to 9 drafts awaiting send',
+        'dr-nguyen': '&#128269; Jumped to Dr. Nguyen org card',
+        'missing-docs': '&#128196; Filtered to 3 referrals missing docs',
+        'elig-fail': '&#9989; Filtered to 2 eligibility failures',
+        'sla-breach': '&#9201; Filtered to 4 SLA breaches',
+        'underpayments': '&#128202; Filtered to 5 EOB appeals',
+        'auth-gap': '&#128272; Pine Ridge PA expiry detail'
+      };
+      setTimeout(() => toast(filterMessages[filter] || 'Filter applied', 'info'), 200);
+    }
+  }
+
+  // ===== Compliance collapsible =====
+  function toggleCompliance() {
+    const detail = document.getElementById('compliance-detail');
+    const chev = document.getElementById('compliance-chev');
+    const btn = document.getElementById('compliance-toggle');
+    if (!detail) return;
+    const open = detail.classList.toggle('open');
+    if (chev) chev.style.transform = open ? 'rotate(180deg)' : '';
+    if (btn) btn.setAttribute('aria-expanded', String(open));
+  }
+
+  // ===== Command palette =====
+  const CMDK_ITEMS = [
+    { sec: 'Quick actions', icon: '&#128221;', name: 'Create new referral', meta: 'N R', action: () => toast('&#10003; New referral form opened', 'success') },
+    { sec: 'Quick actions', icon: '&#9989;', name: 'Check eligibility (Stedi 270)', meta: '', action: () => toast('&#10003; Eligibility request queued &middot; Stedi', 'success') },
+    { sec: 'Quick actions', icon: '&#128227;', name: 'Send doc request', meta: '', action: () => toast('&#10003; Doc request fax queued &middot; Documo', 'success') },
+    { sec: 'Quick actions', icon: '&#128193;', name: 'Run duplicate scan', meta: '', action: () => toast('&#10003; Dedupe scan started &middot; running on 127 active', 'success') },
+    { sec: 'Quick actions', icon: '&#128176;', name: 'Open revenue leakage panel', meta: '', action: () => { showView('dashboard', document.querySelectorAll('.nav-item')[0]); setTimeout(() => document.getElementById('leakage')?.scrollIntoView({behavior:'smooth'}), 300); } },
+    { sec: 'Navigate', icon: '&#127968;', name: 'Dashboard', meta: 'G D', action: () => showView('dashboard', document.querySelectorAll('.nav-item')[0]) },
+    { sec: 'Navigate', icon: '&#128231;', name: 'Intake inbox', meta: 'G I', action: () => showView('inbox', document.querySelectorAll('.nav-item')[1]) },
+    { sec: 'Navigate', icon: '&#128203;', name: 'Referral pipeline', meta: 'G P', action: () => showView('pipeline', document.querySelectorAll('.nav-item')[2]) },
+    { sec: 'Navigate', icon: '&#128100;', name: 'Referral detail', meta: '', action: () => showView('referral-detail', document.querySelectorAll('.nav-item')[3]) },
+    { sec: 'Navigate', icon: '&#127970;', name: 'Organizations', meta: '', action: () => showView('orgs', document.querySelectorAll('.nav-item')[4]) },
+    { sec: 'Navigate', icon: '&#128202;', name: 'Reports', meta: '', action: () => showView('reports', document.querySelectorAll('.nav-item')[5]) },
+    { sec: 'Navigate', icon: '&#129302;', name: 'AI Console', meta: 'G A', action: () => showView('ai-console', document.querySelectorAll('.nav-item')[6]) },
+    { sec: 'Navigate', icon: '&#128172;', name: 'Conversations', meta: '', action: () => showView('conversations', document.querySelectorAll('.nav-item')[7]) },
+    { sec: 'Navigate', icon: '&#9203;', name: 'Outbound queue', meta: '', action: () => showView('outbound-queue', document.querySelectorAll('.nav-item')[8]) },
+    { sec: 'Navigate', icon: '&#128241;', name: 'BD rep mobile', meta: '', action: () => showView('bd-mobile', document.querySelectorAll('.nav-item')[9]) },
+    { sec: 'Navigate', icon: '&#9881;', name: 'Settings', meta: '', action: () => showView('settings', document.querySelectorAll('.nav-item')[10]) },
+    { sec: 'Recent', icon: '&#128100;', name: 'Jane Doe (PT-001) &middot; post-op hip', meta: 'ref_4821', action: () => showView('referral-detail', document.querySelectorAll('.nav-item')[3]) },
+    { sec: 'Recent', icon: '&#128100;', name: 'John Sample (PT-002) &middot; CHF', meta: 'ref_4822', action: () => showView('referral-detail', document.querySelectorAll('.nav-item')[3]) },
+    { sec: 'Recent', icon: '&#127970;', name: 'Mercy General Hospital', meta: 'org_mg01', action: () => showView('orgs', document.querySelectorAll('.nav-item')[4]) },
+    { sec: 'Recent', icon: '&#127970;', name: 'Pine Ridge SNF &middot; PA gap', meta: 'org_pr01', action: () => showView('orgs', document.querySelectorAll('.nav-item')[4]) },
+    { sec: 'Theme', icon: '&#127769;', name: 'Toggle dark / light mode', meta: '', action: toggleTheme },
+    { sec: 'Theme', icon: '&#9776;', name: 'Toggle compact / comfortable density', meta: '', action: toggleDensity }
+  ];
+  let cmdkActiveIdx = 0;
+  let cmdkFiltered = CMDK_ITEMS;
+  function openCmdK() {
+    const m = document.getElementById('cmdk');
+    if (!m) return;
+    m.classList.add('open');
+    const inp = document.getElementById('cmdk-input');
+    if (inp) { inp.value = ''; inp.focus(); }
+    renderCmdK('');
+  }
+  function closeCmdK() {
+    const m = document.getElementById('cmdk');
+    if (m) m.classList.remove('open');
+  }
+  function renderCmdK(query) {
+    const q = (query || '').trim().toLowerCase();
+    cmdkFiltered = q
+      ? CMDK_ITEMS.filter(it => it.name.toLowerCase().includes(q) || it.sec.toLowerCase().includes(q))
+      : CMDK_ITEMS;
+    cmdkActiveIdx = 0;
+    const root = document.getElementById('cmdk-results');
+    if (!root) return;
+    if (cmdkFiltered.length === 0) {
+      root.innerHTML = '<div style="padding: 32px; text-align: center; font-size: 12px; color: var(--text-faint)">No results for "' + escapeHTML(query) + '"</div>';
+      return;
+    }
+    const sections = {};
+    cmdkFiltered.forEach((it, i) => {
+      if (!sections[it.sec]) sections[it.sec] = [];
+      sections[it.sec].push({ it, i });
+    });
+    let html = '';
+    for (const sec in sections) {
+      html += '<div class="cmdk-section">';
+      html += '<div class="cmdk-label">' + sec + '</div>';
+      sections[sec].forEach(({ it, i }) => {
+        html += '<div class="cmdk-row" data-i="' + i + '" onclick="cmdkRun(' + i + ')">';
+        html += '<div class="cmdk-icon">' + it.icon + '</div>';
+        html += '<div>' + escapeHTML(it.name) + '</div>';
+        if (it.meta) html += '<div class="cmdk-meta">' + escapeHTML(it.meta) + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    root.innerHTML = html;
+    paintCmdKActive();
+  }
+  function paintCmdKActive() {
+    document.querySelectorAll('.cmdk-row').forEach(r => r.classList.remove('cmdk-active'));
+    const rows = document.querySelectorAll('.cmdk-row');
+    if (rows[cmdkActiveIdx]) {
+      rows[cmdkActiveIdx].classList.add('cmdk-active');
+      rows[cmdkActiveIdx].scrollIntoView({ block: 'nearest' });
+    }
+  }
+  function cmdkRun(i) {
+    const it = cmdkFiltered[i];
+    if (!it) return;
+    closeCmdK();
+    setTimeout(() => it.action && it.action(), 80);
+  }
+  function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ===== Existing handlers =====
   function showView(name, btn) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + name).classList.add('active');
+    const target = document.getElementById('view-' + name);
+    if (target) target.classList.add('active');
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     if (btn) btn.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1872,22 +2772,76 @@
     const t = e.target.closest('.sm-toggle');
     if (t) { t.dataset.on = (t.dataset.on === 'true' ? 'false' : 'true'); e.stopPropagation(); }
   });
-  // ESC closes phone bot modal
+  // Click outside cmdk to close
+  document.addEventListener('click', (e) => {
+    const back = e.target.closest('.cmdk-backdrop');
+    if (back && back.id === 'cmdk' && e.target === back) closeCmdK();
+  });
+  // Cmd-K input wiring
+  document.addEventListener('input', (e) => {
+    if (e.target && e.target.id === 'cmdk-input') renderCmdK(e.target.value);
+  });
+  // ESC closes phone bot modal + cmdk
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closePhoneBot();
+    if (e.key === 'Escape') { closePhoneBot(); closeCmdK(); }
+    // Arrow keys + enter inside cmdk
+    const cmdkEl = document.getElementById('cmdk');
+    if (cmdkEl && cmdkEl.classList.contains('open')) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); cmdkActiveIdx = Math.min(cmdkFiltered.length - 1, cmdkActiveIdx + 1); paintCmdKActive(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); cmdkActiveIdx = Math.max(0, cmdkActiveIdx - 1); paintCmdKActive(); }
+      if (e.key === 'Enter') { e.preventDefault(); cmdkRun(cmdkActiveIdx); }
+      // Focus trap: Tab keeps focus pinned to the input
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const inp = document.getElementById('cmdk-input');
+        if (inp) inp.focus();
+      }
+    }
+    // Focus trap: phone-bot modal cycles within modal-internal focusables
+    const phoneBot = document.getElementById('modal-phone-bot');
+    if (phoneBot && phoneBot.classList.contains('open') && e.key === 'Tab') {
+      const focusables = phoneBot.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusables.length > 0) {
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement;
+        if (e.shiftKey && (active === first || !phoneBot.contains(active))) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && (active === last || !phoneBot.contains(active))) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
   });
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#tenant-dropdown') && !e.target.closest('[onclick*="tenant-dropdown"]')) {
-      document.getElementById('tenant-dropdown').classList.remove('open');
+      const td = document.getElementById('tenant-dropdown');
+      if (td) td.classList.remove('open');
     }
   });
-  // keyboard: ctrl/cmd+K focuses search
+  // keyboard: ctrl/cmd+K opens command palette
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
-      const input = document.querySelector('header input[type=""], header input:not([type])');
-      if (input) input.focus();
+      openCmdK();
     }
+  });
+  // Boot
+  document.addEventListener('DOMContentLoaded', () => {
+    paintThemeIcon();
+    paintGreeting();
+    startTipRotator();
+    // Auto-expand compliance card when its alert flag is set (amber/red posture)
+    const compliancePill = document.getElementById('compliance-toggle');
+    if (compliancePill && compliancePill.dataset.alert === 'true') toggleCompliance();
+    try {
+      if (sessionStorage.getItem('cc-action-bar-hidden') === '1') {
+        const bar = document.querySelector('.action-bar');
+        if (bar) bar.style.display = 'none';
+      }
+    } catch(_) {}
   });
 </script>
 
