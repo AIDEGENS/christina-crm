@@ -634,7 +634,7 @@
           <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
           <div class="text-xs font-semibold text-emerald-900">HIPAA · WorkOS SSO</div>
         </div>
-        <div class="text-[11px] text-emerald-800 leading-snug">AWS RDS · KMS encrypted · Bedrock AI · BAA chain verified</div>
+        <div class="text-[11px] text-emerald-800 leading-snug">AWS RDS · KMS encrypted · AI models · BAA chain verified</div>
       </div>
       <div class="flex items-center justify-between px-1">
         <div class="text-[10px] text-slate-400">powered by</div>
@@ -787,7 +787,7 @@
               <span class="text-[9px] font-bold bg-blue-100 text-blue-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">DRAFT</span>
               <span class="flex-1 text-slate-700 truncate">SMS &ldquo;Confirming SOC 4/24 10a&rdquo; &rarr; PT-001 Jane Doe (Sutter)</span>
               <span class="conf-pill conf-hi shrink-0">94%</span>
-              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Why this draft</b><br/>&middot; Source: face-to-face.pdf p.1, referral-packet.pdf p.2<br/>&middot; Model: Sonnet 4.7 + intake-sms-v12<br/>&middot; Cohort: 89% confirm-on-1st-SMS rate<br/>&middot; TCPA opt-in: 4/22 3:14 PM</span></span>
+              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Why this draft</b><br/>&middot; Source: face-to-face.pdf p.1, referral-packet.pdf p.2<br/>&middot; Model: AI assistant + intake-sms-v12<br/>&middot; Cohort: 89% confirm-on-1st-SMS rate<br/>&middot; TCPA opt-in: 4/22 3:14 PM</span></span>
               <button class="inline-btn btn-undo shrink-0" onclick="toast('Undone &middot; draft restored to queue', 'info')">&#8634; Undo</button>
               <button class="inline-btn btn-override shrink-0" onclick="toast('Override modal opened', 'info')">&#9998; Override</button>
               <span class="text-[9px] bg-slate-100 text-slate-500 rounded px-1 py-0.5 shrink-0 hidden xl:inline">audit&nbsp;evt_4f1a</span>
@@ -797,7 +797,7 @@
               <span class="text-[9px] font-bold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5 w-14 text-center shrink-0">EXTRACT</span>
               <span class="flex-1 text-slate-700 truncate">12 fields parsed &rarr; PT-001 fax Sutter</span>
               <span class="conf-pill conf-hi shrink-0">97%</span>
-              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Extraction provenance</b><br/>&middot; Bedrock Vision &middot; 3 pages<br/>&middot; Highest-confidence fields: dx Z47.1 (98%), DOB (99%), NPI (97%)<br/>&middot; Lowest: secondary insurance (78%)</span></span>
+              <span class="why-tip shrink-0"><svg class="w-3.5 h-3.5 text-slate-400 hover:text-slate-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="why-pop"><b>Extraction provenance</b><br/>&middot; AI vision &middot; 3 pages<br/>&middot; Highest-confidence fields: dx Z47.1 (98%), DOB (99%), NPI (97%)<br/>&middot; Lowest: secondary insurance (78%)</span></span>
               <button class="inline-btn btn-override shrink-0" onclick="toast('Field editor opened', 'info')">&#9998; Override</button>
               <span class="text-[9px] bg-slate-100 text-slate-500 rounded px-1 py-0.5 shrink-0 hidden xl:inline">audit&nbsp;evt_4f0c</span>
             </div>
@@ -1164,7 +1164,7 @@
     <!-- ============ INTAKE INBOX ============ -->
     <div id="view-inbox" class="view p-6 max-w-7xl">
       <div class="flex items-end justify-between mb-4">
-        <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Intake inbox</h1><p class="text-sm text-slate-500 mt-0.5">Faxes, emails, and e-referrals waiting to be triaged &middot; parsed on AWS Bedrock</p></div>
+        <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight">Intake inbox</h1><p class="text-sm text-slate-500 mt-0.5">Faxes, emails, and e-referrals waiting to be triaged &middot; AI-parsed</p></div>
         <div class="flex items-center gap-2">
           <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-2.5 py-1" title="Supervised Mode keeps AI drafts in a human queue. Toggle off to enable full auto-send for this surface.">
             <span class="text-[10px] font-semibold text-slate-700">Supervised</span>
@@ -1194,7 +1194,7 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1 flex-wrap"><span class="text-sm font-semibold text-slate-900">Sutter Roseville &mdash; Case Mgmt</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5">PARSED</span><span class="text-[10px] font-semibold bg-emerald-100 text-emerald-700 rounded px-1.5 py-0.5" title="Extraction confidence">&#9679; 94% CONF</span><span class="text-[10px] font-semibold bg-red-50 text-red-700 rounded px-1.5 py-0.5" title="SLA-at-risk flag">&#9201; SLA 1h 22m</span></div>
               <div class="text-xs text-slate-600 mb-2"><b>Jane Doe (PT-001), 82 F</b> &middot; DOB 01/15/1945 &middot; MRN DEMO-4821 &middot; Post-op right hip replacement &middot; Medicare Part A &middot; SN + PT + OT &middot; Dr. Sarah Chen NPI <span class="tabular-nums">1XXXXXXXX0</span></div>
-              <div class="text-[11px] text-slate-500 flex items-center gap-2"><span>Fax &middot; 18 min ago &middot; Bedrock extracted 12 fields &middot; 3 pages</span><span class="text-indigo-600 font-semibold">&#128279; duplicate candidate &rarr; PT-001</span></div>
+              <div class="text-[11px] text-slate-500 flex items-center gap-2"><span>Fax &middot; 18 min ago &middot; AI extracted 12 fields &middot; 3 pages</span><span class="text-indigo-600 font-semibold">&#128279; duplicate candidate &rarr; PT-001</span></div>
             </div>
             <button onclick="showView('referral-detail', document.querySelectorAll('.nav-item')[3])" class="text-xs font-semibold text-emerald-700 shrink-0">Open &rarr;</button>
           </div>
@@ -1230,7 +1230,7 @@
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1"><span class="text-sm font-semibold text-slate-900">Kaiser South Sacramento</span><span class="text-[10px] font-semibold bg-red-100 text-red-700 rounded px-1.5 py-0.5">POSSIBLE DUPE</span><span class="text-[10px] font-semibold bg-slate-100 text-slate-600 rounded px-1.5 py-0.5">95% match PT-001</span></div>
               <div class="text-xs text-slate-600 mb-2"><b>J. Doe, 82 F</b> &middot; DOB 01/15/1945 &middot; MRN KAISER-99812 &middot; Matches existing Sutter referral &mdash; merge or reject</div>
-              <div class="text-[11px] text-slate-500">Fax &middot; 3 hr ago &middot; Bedrock flagged deduplication</div>
+              <div class="text-[11px] text-slate-500">Fax &middot; 3 hr ago &middot; AI flagged deduplication</div>
             </div>
             <button class="text-xs font-semibold text-red-700 shrink-0">Resolve &rarr;</button>
           </div>
@@ -1255,7 +1255,7 @@
         </div>
         <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
           <span>Showing 7 of 7 &middot; Auto-refresh on</span>
-          <span>Bedrock Sonnet 4.7 &middot; avg latency 1.4s</span>
+          <span>AI assistant &middot; avg latency 1.4s</span>
         </div>
       </div>
     </div>
@@ -1546,7 +1546,7 @@
               <button class="text-xs font-bold bg-emerald-600 text-white rounded-lg px-4 py-1.5 hover:bg-emerald-700">Send &rarr;</button>
             </div>
           </div>
-          <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500 flex items-center gap-2"><span class="font-semibold text-slate-700">Provenance:</span><span>Bedrock Claude Sonnet 4.7 &middot; prompt v12 &middot; PHI-scrubbed &middot; audit log <span class="font-mono text-indigo-600">evt_04ba1f</span></span></div>
+          <div class="mt-3 pt-3 border-t border-slate-100 text-[10px] text-slate-500 flex items-center gap-2"><span class="font-semibold text-slate-700">Provenance:</span><span>AI assistant &middot; prompt v12 &middot; PHI-scrubbed &middot; audit log <span class="font-mono text-indigo-600">evt_04ba1f</span></span></div>
         </div>
       </div>
 
@@ -1575,7 +1575,7 @@
             <div class="relative mb-4">
               <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
               <div class="text-xs font-semibold text-slate-900">AI extracted 12 fields</div>
-              <div class="text-[11px] text-slate-500">4/23 &middot; 9:42 AM &middot; Bedrock Sonnet 4.7 &middot; conf 94%</div>
+              <div class="text-[11px] text-slate-500">4/23 &middot; 9:42 AM &middot; AI assistant &middot; conf 94%</div>
             </div>
             <div class="relative mb-4">
               <div class="timeline-dot absolute -left-6 w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center ring-4 ring-emerald-100"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></div>
@@ -1895,7 +1895,7 @@
                     <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:75%;animation-delay:.04s"></div>
                     <div class="w-1 bg-emerald-400 rounded-full wave-bar" style="height:60%;animation-delay:.14s"></div>
                   </div>
-                  <div class="text-center text-[10px] text-slate-400 mt-2 tabular-nums font-mono">04:23 &middot; <span class="text-emerald-400">Deepgram</span></div>
+                  <div class="text-center text-[10px] text-slate-400 mt-2 tabular-nums font-mono">04:23 &middot; <span class="text-emerald-400">AI transcript</span></div>
                 </div>
                 <!-- Post-visit summary preview (live-streaming) -->
                 <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 mb-3">
@@ -2103,14 +2103,14 @@
       <!-- Cost + activity top row -->
       <div class="grid grid-cols-4 gap-4 mb-6">
         <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="text-xs font-medium text-slate-500 mb-1">Spend today</div>
-          <div class="text-2xl font-bold text-slate-900 tabular-nums">$4.82</div>
-          <div class="text-[11px] text-slate-500 mt-1">budget $25 &middot; <span class="text-emerald-700 font-semibold">on track</span></div>
+          <div class="text-xs font-medium text-slate-500 mb-1">Actions today</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">87</div>
+          <div class="text-[11px] text-slate-500 mt-1">vs 7-day avg 73 &middot; <span class="text-emerald-700 font-semibold">+19%</span></div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
-          <div class="text-xs font-medium text-slate-500 mb-1">Spend MTD</div>
-          <div class="text-2xl font-bold text-slate-900 tabular-nums">$81.20</div>
-          <div class="text-[11px] text-slate-500 mt-1">projected $112 &middot; well under $400 cap</div>
+          <div class="text-xs font-medium text-slate-500 mb-1">Actions MTD</div>
+          <div class="text-2xl font-bold text-slate-900 tabular-nums">1,640</div>
+          <div class="text-[11px] text-slate-500 mt-1">projected 2,250 &middot; pace above goal</div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 card-shadow">
           <div class="text-xs font-medium text-slate-500 mb-1">Draft queue depth</div>
@@ -2399,7 +2399,7 @@
             <div class="flex items-center gap-2 mb-1 flex-wrap">
               <span class="text-sm font-bold text-slate-900">Voicemail drop &rarr; Pine Ridge SNF case mgr</span>
               <span class="text-[9px] font-bold bg-sky-100 text-sky-700 rounded-full px-2 py-0.5">&#10003; FCC 24-28 disclosure script locked</span>
-              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">Cartesia TTS</span>
+              <span class="text-[9px] font-bold bg-slate-100 text-slate-600 rounded-full px-2 py-0.5">AI voice</span>
             </div>
             <div class="text-xs text-slate-700 bg-slate-50 rounded-lg p-3 my-2 leading-relaxed italic">&ldquo;This is an AI assistant for Meridian Health. I&rsquo;m following up on the referral for PT-003 sent Tuesday. The F2F date we have does not match the packet &mdash; could a human at Pine Ridge please call us back at (916) 555-0100? This call may be recorded and used for quality. California law requires both parties consent. Press 1 to consent, 2 to decline.&rdquo;</div>
             <div class="text-[11px] text-slate-500">to: Pine Ridge main &middot; generated 1h ago &middot; 32s &middot; &#127760; CA 2-party language included</div>
@@ -2442,7 +2442,7 @@
         <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center"><span class="w-2 h-2 rounded-full bg-red-400 pulse-dot"></span></div>
         <div>
           <div id="phone-bot-title" class="font-bold text-sm">Voice bot &middot; LIVE &middot; PT-002 CHF check-in</div>
-          <div class="text-[11px] text-indigo-100">Outbound &middot; Twilio + Deepgram + Cartesia &middot; round-trip 1.12s</div>
+          <div class="text-[11px] text-indigo-100">Outbound &middot; voice pipeline &middot; round-trip 1.12s</div>
         </div>
         <span class="text-[10px] font-bold bg-white/20 rounded-full px-2 py-0.5 tabular-nums">02:14</span>
       </div>
@@ -2464,7 +2464,7 @@
     <div class="grid grid-cols-2 divide-x divide-slate-200 flex-1 overflow-hidden">
       <!-- Live STT -->
       <div class="p-5 overflow-y-auto">
-        <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Live transcript &middot; Deepgram</h3><span class="text-[10px] text-slate-500">PHI scrubbed &middot; on wire</span></div>
+        <div class="flex items-center justify-between mb-3"><h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Live transcript &middot; AI</h3><span class="text-[10px] text-slate-500">PHI scrubbed &middot; on wire</span></div>
         <div class="space-y-3 text-sm">
           <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:02</span><div class="flex-1"><div class="text-[10px] font-semibold text-indigo-700">AI</div><div class="text-slate-800">Hello, this is an AI assistant for Meridian Health. Am I speaking with John?</div></div></div>
           <div class="flex gap-2"><span class="text-[10px] text-slate-400 tabular-nums shrink-0 pt-0.5">0:09</span><div class="flex-1"><div class="text-[10px] font-semibold text-slate-600">Patient</div><div class="text-slate-800">Yes, this is John.</div></div></div>
